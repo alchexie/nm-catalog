@@ -58,15 +58,21 @@ const importdata = (files, settings, db = require('../db')) => {
                 return !existedGameIds.includes(row.id);
               }
             })
-            .map((row, k) => [
-              row.id,
-              row.year,
-              row.hardware,
-              row.islink ? sheet[settings.descend ? k - 1 : k + 1].id : '',
-              row.thumbnailurl.split('/').reverse()[0],
-              row.name,
-              ms + (settings.descend ? -k : k),
-            ])
+            .map((row, k) => {
+              let linkIdx = settings.descend ? k - 1 : k + 1;
+              if (!fullUpdate) {
+                linkIdx += existedGameIds.length;
+              }
+              return [
+                row.id,
+                row.year,
+                row.hardware,
+                row.islink ? sheet[linkIdx].id : '',
+                row.thumbnailurl.split('/').reverse()[0],
+                row.name,
+                ms + (settings.descend ? -k : k),
+              ];
+            })
         );
       } else {
         const games = workbook[0];
