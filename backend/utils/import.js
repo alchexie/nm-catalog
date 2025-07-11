@@ -1,20 +1,18 @@
-const fs = require('fs');
-const path = require('path');
 const excel = require('./excel');
-const [lang, hardware, game, track] = [
+const [lang, game, track] = [
   require('../db/schema/lang'),
-  require('../db/schema/hardware'),
   require('../db/schema/game'),
   require('../db/schema/track'),
 ];
 const { getTransaction } = require('../db/transaction');
+const rw = require('./rw');
 
 /**
  * Import data from .xlsx
- *
  * @param { { path: string[], fileName: string[] }[]} files
- * @param { descend: boolean, fullUpdate: boolean } settings
- * @param { object } [db=require('../db')]
+ * @param { { descend: boolean, fullUpdate: boolean } } settings
+ * @param { BetterSqlite3.Database } [db=require('../db')]
+ * @returns { { total: number, new: number} }
  */
 const importdata = (files, settings, db = require('../db')) => {
   const fullUpdate = settings.fullUpdate;
@@ -23,7 +21,10 @@ const importdata = (files, settings, db = require('../db')) => {
     db.prepare(track.delete()).run();
   }
 
-  const [sources, filenames] = [excel.readFile(files.map((x) => x.path)), files.map((x) => x.filename)];
+  const [sources, filenames] = [
+    excel.readFile(files.map((x) => x.path)),
+    files.map((x) => x.filename),
+  ];
   const ms = Date.now();
   const langs = db
     .prepare(lang.select())
@@ -35,22 +36,27 @@ const importdata = (files, settings, db = require('../db')) => {
         .all()
         .map((x) => x.id)
     : [];
-  const newGameIds = sources[0][0].filter((row) => !existedGameIds.includes(row.id)).map((row) => row.id);
-  const json = JSON.stringify(newGameIds);
-  console.log('\x1b[32m%s\x1b[0m', `+++++++++ ${newGameIds.length} new game(s) found. +++++++++`);
+  const newGameIds = sources[0][0]
+    .filter((row) => !existedGameIds.includes(row.id))
+    .map((row) => row.id);
+
+  console.log(
+    '\x1b[32m%s\x1b[0m',
+    `+++++++++ ${newGameIds.length} new game(s) found. +++++++++`
+  );
 
   sources.forEach((workbook, i) => {
     const lang = ((fileName) => {
       return langs[langs.map((x) => fileName.includes(x)).indexOf(true)];
     })(filenames[i]);
     let diff = -1;
-    const tracks = [];
+    const gameData = [];
+    const trackData = [];
 
     workbook.forEach((sheet, j) => {
       if (j === 0) {
-        const trans = getTransaction(game.insert(lang), db);
-        trans(
-          sheet
+        gameData.push(
+          ...sheet
             .filter((row) => {
               if (fullUpdate) {
                 return true;
@@ -76,8 +82,11 @@ const importdata = (files, settings, db = require('../db')) => {
         );
       } else {
         const games = workbook[0];
-        if (fullUpdate || (!fullUpdate && newGameIds.includes(workbook[0][j + diff].id))) {
-          tracks.push(
+        if (
+          fullUpdate ||
+          (!fullUpdate && newGameIds.includes(workbook[0][j + diff].id))
+        ) {
+          trackData.push(
             ...sheet.map((row) => [
               row.id,
               games[j + diff].id,
@@ -97,17 +106,19 @@ const importdata = (files, settings, db = require('../db')) => {
         }
       }
 
-      const trans = getTransaction(track.insert(lang), db);
-      trans(tracks);
+      let trans = getTransaction(game.insert(lang), db);
+      trans(gameData);
+      trans = getTransaction(track.insert(lang), db);
+      trans(trackData);
     });
   });
 
   setTimeout(() => {
-    const filePath = path.join(__dirname, '../files', 'new_game.json');
-    fs.writeFileSync(filePath, json, 'utf8');
+    rw.writeText('new_game.json', newGameIds);
   });
 
-  console.log('Sucessfully updated.');
+  console.log('Data successfully updated.');
+
   return {
     total: sources[0][0].length,
     new: newGameIds.length,
