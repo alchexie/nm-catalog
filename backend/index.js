@@ -3,14 +3,14 @@ const cors = require('cors');
 const compression = require('compression');
 require('dotenv').config();
 
-const routes = require('./routes');
+const apiRoutes = require('./api');
 
 const app = express();
 app.use(compression());
 app.use(cors());
 app.use(express.json());
 app.disable('x-powered-by');
-routes(app);
+app.use('/api', apiRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, '127.0.0.1', () => {

@@ -1,9 +1,9 @@
 <template>
   <div class="loading" v-if="loading"></div>
   <div class="container" v-else>
-    <div class="game">
+    <div class="game" v-if="game">
       <img
-        :src="gameImgMap.get(store.mainLang)"
+        :src="gameImgMap.get(store.mainLang)?.get(game.id)"
         @click.stop="openSourceImg(game, store.mainLang)"
         loading="lazy"
       />
@@ -20,8 +20,19 @@
         </p>
       </div>
     </div>
-    <div class="track">
-      <h3>{{ trackList.length }} tracks</h3>
+    <div class="tabs">
+      <div class="tab" :class="{ active: showTrack }" @click.stop="showTrack = true">
+        {{ trackList.length }} Tracks
+      </div>
+      <div
+        class="tab"
+        :class="{ active: !showTrack, blank: !relateList.length }"
+        @click.stop="showTrack = false"
+      >
+        {{ relateList.length }} Related Games
+      </div>
+    </div>
+    <div class="track" :hidden="!showTrack">
       <div v-for="track in trackList" :key="track.idx">
         <div>
           <img
@@ -44,11 +55,31 @@
         </div>
       </div>
     </div>
+    <div class="track" :hidden="showTrack">
+      <div v-for="relate in relateList" :key="relate.id">
+        <div>
+          <img
+            :src="gameImgMap?.get(store.mainLang)?.get(relate.id)"
+            @click.stop="openSourceImg(relate, store.mainLang)"
+            loading="lazy"
+          />
+        </div>
+        <div>
+          <h4>
+            <router-link :to="`/${relate.id}`">
+              {{ getLangTitle(relate, store.mainLang) }}</router-link
+            >
+            <small class="xs-visible">({{ relate.year }})</small>
+          </h4>
+          <p>{{ relate.year }} | {{ relate.hardware }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import { useStore } from '../stores';
@@ -62,37 +93,61 @@ const gid = route.params.gid as string;
 const store = useStore();
 const game = ref<Game>();
 const trackList = ref<Track[]>([]);
-const gameImgMap = ref<Map<string, string>>(new Map<string, string>());
+const relateList = ref<Game[]>([]);
+const gameImgMap = ref<Map<string, Map<string, string>>>(
+  new Map<string, Map<string, string>>()
+);
 const trackImgMap = ref<Map<string, Map<string, string>>>(
   new Map<string, Map<string, string>>()
 );
 const loading = ref<boolean>(false);
+const showTrack = ref<boolean>(true);
 
-getTrackList();
+onMounted(async () => {
+  await getTrackList();
+  await getRelateList();
+});
 
-function getTrackList() {
+async function getTrackList() {
   loading.value = true;
-  axios
-    .get(`/api/game/track/${gid}`)
-    .then((res) => {
-      game.value = res.data.game;
-      trackList.value = res.data.tracks;
+  try {
+    const res = await axios.get(`/api/game/track/${gid}`);
+    game.value = res.data.game as Game;
+    trackList.value = res.data.tracks;
 
-      for (const lang of store.langList) {
-        gameImgMap.value.set(lang.id, getImgSrc(game.value, lang.id));
+    for (const lang of store.langList) {
+      let imgMap = new Map<string, string>();
+      imgMap.set(game.value.id, getImgSrc(game.value, lang.id));
+      gameImgMap.value.set(lang.id, imgMap);
 
-        if (!trackImgMap.value.has(lang.id)) {
-          const imgMap = new Map<string, string>();
-          for (const track of trackList.value) {
-            imgMap.set(track.id, getImgSrc(track, lang.id));
-          }
-          trackImgMap.value.set(lang.id, imgMap);
+      if (!trackImgMap.value.has(lang.id)) {
+        imgMap = new Map<string, string>();
+        for (const track of trackList.value) {
+          imgMap.set(track.id, getImgSrc(track, lang.id));
         }
+        trackImgMap.value.set(lang.id, imgMap);
       }
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function getRelateList() {
+  try {
+    const res = await axios.get(`/api/game/relate/${gid}`);
+    relateList.value = res.data;
+    for (const lang of store.langList) {
+      const imgMap = gameImgMap.value.get(lang.id);
+      for (const game of relateList.value) {
+        imgMap?.set(game.id, getImgSrc(game, lang.id));
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
 }
 </script>
 
@@ -108,7 +163,6 @@ function getTrackList() {
     display: flex;
     min-height: 200px;
     margin-bottom: 1rem;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.5);
     padding-bottom: 1rem;
 
     > img {
@@ -124,12 +178,32 @@ function getTrackList() {
     }
   }
 
-  .track {
-    text-align: left;
+  .tabs {
+    display: flex;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 
-    > h3 {
-      margin-bottom: 0.8rem;
+    .tab {
+      flex: 1;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+      padding: 10px 20px;
+      opacity: 0.3;
+      cursor: pointer;
+
+      &.active {
+        opacity: 1;
+        font-weight: bold;
+      }
+
+      &.blank {
+        visibility: hidden;
+      }
     }
+  }
+
+  .track {
+    padding-top: 0.8rem;
+    text-align: left;
 
     > div {
       display: flex;
@@ -160,11 +234,16 @@ function getTrackList() {
   }
 
   h2,
-  h3,
   h4 {
     margin: 0 0 0.5rem;
     small {
+      display: inline-block;
+      margin-left: 0.5em;
       color: rgba(128, 128, 128, 0.7);
+
+      &.xs-visible {
+        display: none;
+      }
     }
   }
 
@@ -214,6 +293,12 @@ function getTrackList() {
 
     h4 {
       font-size: 0.8rem;
+
+      small {
+        &.xs-visible {
+          display: inline-block;
+        }
+      }
     }
 
     p {

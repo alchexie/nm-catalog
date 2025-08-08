@@ -29,8 +29,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
-import { useStore } from '../stores';
 import { useRouter } from 'vue-router';
+import { useStore } from '../stores';
 import type { Game, GameGroup } from '../types';
 import { getLangTitle, getImgSrc } from '../utils/common';
 
@@ -140,7 +140,14 @@ $gap: 16px;
       }
 
       > a {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
         font-size: 1.1rem;
+        text-overflow: ellipsis;
+        word-break: break-word;
+        max-height: calc(1.1rem * 3 * 1.5);
         cursor: pointer;
       }
     }

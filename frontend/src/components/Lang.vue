@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import axios from 'axios';
 import type { Lang } from '../types';
 import { useStore } from '../stores';
@@ -22,10 +22,12 @@ const store = useStore();
 const langList = ref<Lang[]>([]);
 const lang = ref<string>(store.mainLang);
 
-axios.get('/api/list/lang').then((res) => {
-  const result = res.data;
-  store.setLangList(result);
-  langList.value = res.data;
+onMounted(() => {
+  axios.get('/api/list/lang').then((res) => {
+    const result = res.data;
+    store.setLangList(result);
+    langList.value = res.data;
+  });
 });
 
 function onLangChange(event: Event) {
