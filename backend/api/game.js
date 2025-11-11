@@ -136,50 +136,67 @@ router.get('/release', async (_, res) => {
     });
 });
 
-router.get('/track/:id', (req, res) => {
+router.get('/:id/detail', async (req, res) => {
   const id = req.params.id;
-  const result = {};
   try {
-    let rows = stmt.game.selectById.all(id);
-    result.game = rows[0];
-    delete result.game.inserted;
-    const gid = stmt.game.selectEntityById.all(id)[0].id;
-    rows = stmt.track.selectByGid.all(gid);
-    result.tracks = rows;
-    res.json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
+    const [game, tracks, relates] = await Promise.all([
+      new Promise((resolve, reject) => {
+        try {
+          const result = stmt.game.selectById.all(id)[0];
+          delete result.inserted;
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      }),
 
-router.get('/relate/:id', async (req, res) => {
-  const id = req.params.id;
+      new Promise((resolve, reject) => {
+        try {
+          const gid = stmt.game.selectEntityById.all(id)[0].id;
+          const result = stmt.track.selectByGid.all(gid);
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      }),
 
-  try {
-    const rgids = stmt.relate.selectByGid.all(id).map((x) => x.rgid);
-    const linkIds = stmt.game.selectLinkChainById.all(id).map((x) => x.id);
-    const linkRgids = [];
-    if (linkIds.length > 0) {
-      const validLinkIds = linkIds.filter((x) => x !== id);
-      for (const linkId of validLinkIds) {
-        const linkGameIds = stmt.game.selectLinkChainById
-          .all(linkId)
-          .map((x) => x.id)
-          .filter((x) => x !== id);
-        linkRgids.push(
-          ...linkGameIds
-            .map((x) => stmt.relate.selectByGid.all(x).map((y) => y.rgid))
-            .flat()
-        );
-      }
-    }
-    const set = new Set([...rgids, ...linkIds, ...linkRgids]);
-    set.delete(id);
-    const result = (await getGameByYear())
-      .map((x) => x.games)
-      .reduce((a, b) => [...a, ...b])
-      .filter((x) => x.id !== id && (set.has(x.id) || set.has(x.link)));
+      new Promise(async (resolve, reject) => {
+        try {
+          const rgids = stmt.relate.selectByGid.all(id).map((x) => x.rgid);
+          const linkIds = stmt.game.selectLinkChainById.all(id).map((x) => x.id);
+          const linkRgids = [];
+          if (linkIds.length > 0) {
+            const validLinkIds = linkIds.filter((x) => x !== id);
+            for (const linkId of validLinkIds) {
+              const linkGameIds = stmt.game.selectLinkChainById
+                .all(linkId)
+                .map((x) => x.id)
+                .filter((x) => x !== id);
+              linkRgids.push(
+                ...linkGameIds
+                  .map((x) => stmt.relate.selectByGid.all(x).map((y) => y.rgid))
+                  .flat()
+              );
+            }
+          }
+          const set = new Set([...rgids, ...linkIds, ...linkRgids]);
+          set.delete(id);
+          const result = (await getGameByYear())
+            .map((x) => x.games)
+            .reduce((a, b) => [...a, ...b])
+            .filter((x) => x.id !== id && (set.has(x.id) || set.has(x.link)));
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      }),
+    ]);
+
+    const result = {
+      game: game,
+      tracks: tracks,
+      relateds: relates,
+    };
     res.json(result);
   } catch (err) {
     console.error(err);

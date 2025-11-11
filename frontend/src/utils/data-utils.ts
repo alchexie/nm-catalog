@@ -1,4 +1,4 @@
-import { useStore } from '../stores';
+import { useStore } from '@/stores';
 
 export const getLangTitle = (target: any, lang: string): string => {
   lang = lang.replace('-', '_');

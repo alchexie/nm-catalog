@@ -1,0 +1,219 @@
+@use '@/styles/variables.scss' as *;
+
+#main {
+  max-width: 992px;
+  margin: 4rem auto 3rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  transform: translateY(0.5rem);
+
+  .game {
+    display: flex;
+    min-height: 200px;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+
+    > img {
+      width: 200px;
+      height: 200px;
+    }
+
+    > div {
+      flex: 1;
+      padding-left: 2rem;
+      text-align: left;
+    }
+  }
+
+  .tabs {
+    display: flex;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+
+    .tab {
+      flex: 1;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+      padding: 10px 20px;
+      opacity: 0.3;
+      cursor: pointer;
+
+      &.active {
+        opacity: 1;
+        font-weight: bold;
+      }
+
+      &.blank {
+        visibility: hidden;
+      }
+    }
+  }
+
+  .detail {
+    padding-top: 0.8rem;
+    text-align: left;
+
+    ol {
+      > li {
+        display: flex;
+        padding: 0.5rem 0;
+
+        > div {
+          &:first-child {
+            width: 200px;
+            height: 100px;
+
+            > img {
+              height: 100px;
+              margin: 0 auto;
+            }
+          }
+
+          &:last-child {
+            flex: 1;
+            padding-left: 1rem;
+
+            h4 {
+              position: relative;
+              padding-right: 3em;
+
+              .tag {
+                position: absolute;
+                bottom: 0;
+                right: .5em;
+                display: flex;
+                align-items: flex-end;
+                height: 100%;
+
+                .svg-icon {
+                  margin-left: 0.3em;
+                  opacity: 0.2;
+                  transform: translateY(-0.2em);
+
+                  &.active {
+                    opacity: 0.5;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        &.hidden {
+          display: none;
+        }
+      }
+    }
+
+    .radio-group {
+      margin-bottom: 1.5em;
+      text-align: right;
+    }
+  }
+
+  img {
+    display: block;
+    cursor: pointer;
+  }
+
+  h2,
+  h4 {
+    margin: 0 0 0.5rem;
+    small {
+      display: inline-block;
+      color: rgba(128, 128, 128, 0.7);
+
+      &.xs-visible {
+        display: none;
+      }
+    }
+  }
+
+  ul {
+    > li {
+      margin: 0 0 0.2rem;
+      font-size: 0.9rem;
+
+      > b {
+        display: inline-block;
+        width: 3.5rem;
+      }
+    }
+  }
+
+  ul,
+  p {
+    margin-top: 0;
+    opacity: 0.5;
+    font-size: 0.8rem;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  #main {
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+
+    .detail {
+      .svg-icon {
+        color: $root-linkColor;
+        opacity: 0.4 !important;
+
+        &.active {
+          opacity: 1 !important;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  #main {
+    margin-top: 2rem;
+    margin-bottom: 0;
+    box-shadow: none !important;
+    font-size: 0.7rem;
+
+    .game {
+      min-height: 90px;
+      padding-bottom: 0;
+
+      > img {
+        width: 80px;
+        height: 80px;
+      }
+
+      > div {
+        padding-left: 1rem;
+      }
+    }
+
+    .detail {
+      ol {
+        > li {
+          > div:first-child {
+            display: none !important;
+          }
+        }
+      }
+
+      .svg-icon {
+        display: none;
+      }
+    }
+
+    h4 {
+      font-size: 0.8rem;
+
+      small {
+        &.xs-visible {
+          display: inline-block;
+          margin-left: 0.5em;
+        }
+      }
+    }
+
+    ul,
+    p {
+      display: none;
+    }
+  }
+}

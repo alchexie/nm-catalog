@@ -1,7 +1,14 @@
 <template>
-  <div class="container">
+  <form class="container">
     <div>
-      <input type="file" ref="fileInput" multiple @change="handleFiles" accept=".xlsx" :disabled="loading" />
+      <input
+        type="file"
+        ref="fileInput"
+        multiple
+        @change="handleFiles"
+        accept=".xlsx"
+        :disabled="loading"
+      />
     </div>
     <div>
       <label>
@@ -11,14 +18,19 @@
     </div>
     <div>
       <label>
-        <input type="checkbox" name="fullUpdate" v-model="fullUpdate" :disabled="loading" />
+        <input
+          type="checkbox"
+          name="fullUpdate"
+          v-model="fullUpdate"
+          :disabled="loading"
+        />
         Full update
       </label>
     </div>
     <div>
       <button @click="uploadFiles" :disabled="loading">Upload</button>
     </div>
-  </div>
+  </form>
 </template>
 
 <script setup lang="ts">

@@ -1,0 +1,107 @@
+@use '@/styles/variables.scss' as *;
+
+$width: 8px;
+
+#nav {
+  position: fixed;
+  top: 120px;
+  bottom: 84px;
+  right: 36px;
+  z-index: 1;
+  width: $width;
+  border-right: 1px$sideNav-bgColor dotted;
+
+  > ul {
+    position: relative;
+    height: 100%;
+
+    > li {
+      position: absolute;
+      right: calc(-#{$width} / 2);
+      display: block;
+      width: $width;
+      height: $width;
+      border-radius: 50%;
+      background-color: $sideNav-bgColor;
+      cursor: pointer;
+
+      span {
+        visibility: hidden;
+      }
+
+      &:after {
+        content: attr(data-name);
+        position: absolute;
+        top: -50%;
+        right: 1rem;
+        display: none;
+        border: 2px solid $sideNav-bgColor;
+        padding: 0 0.5em;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 5px 2px rgba($root-bgColor, 0.7);
+        background-color: $root-bgColor;
+        transform: translateY(-0.2em);
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      &:hover {
+        &::after {
+          display: block;
+        }
+      }
+
+      &:hover,
+      &.active {
+        box-shadow: 0 0 1px 3px rgba($sideNav-bgColor, 0.9);
+      }
+
+      &.hidden {
+        display: none;
+      }
+    }
+  }
+
+  > div {
+    position: relative;
+  }
+
+  &.hidden {
+    border: none;
+
+    ul {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  #nav {
+    border-color: $sideNav-bgColor-light;
+
+    > ul {
+      > li {
+        background-color: $sideNav-bgColor-light;
+
+        &:after {
+          border-color: $sideNav-bgColor-light;
+          box-shadow: 0 0 5px 2px rgba($root-bgColor-light, 0.3);
+          background-color: $root-bgColor-light;
+          color: $sideNav-bgColor-light;
+        }
+
+        &:hover,
+        &.active {
+          box-shadow: 0 0 1px 3px $sideNav-bgColor-light;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  #nav {
+    display: none;
+  }
+}
