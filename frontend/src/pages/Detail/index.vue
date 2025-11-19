@@ -41,83 +41,16 @@
         </div>
       </nav>
       <section class="detail">
-        <section :hidden="gameDataSection !== 'TRACK'">
-          <div class="radio-group">
-            <label
-              v-for="(label, key) in TrackMode"
-              :key="key"
-              :class="{ disabled: !getTrackCount(key) }"
-            >
-              <input
-                type="radio"
-                :value="key"
-                v-model="trackMode"
-              />
-              <span>{{ label }} ({{ getTrackCount(key) }})</span>
-            </label>
-          </div>
-          <ol>
-            <li
-              v-for="track in data.tracks"
-              :key="track.idx"
-              :class="{
-                hidden:
-                  (trackMode === 'TOP' && !track.isbest) ||
-                  (trackMode === 'LOOP' && !track.isloop),
-              }"
-            >
-              <div>
-                <img
-                  :src="trackImgMap?.get(store.mainLang)?.get(track.id)"
-                  @click.stop="openSourceImg(track, store.mainLang)"
-                  loading="lazy"
-                />
-              </div>
-              <div>
-                <h4>
-                  {{ track.idx }}. {{ getLangTitle(track, store.mainLang) }}
-                  <small>({{ track.duration }})</small>
-                  <div class="tag">
-                    <SvgIcon type="star" :class="{ active: track.isbest }"></SvgIcon>
-                    <SvgIcon type="repeat" :class="{ active: track.isloop }"></SvgIcon>
-                  </div>
-                </h4>
-                <ul>
-                  <li
-                    v-for="lang of store.langList.filter((x) => isShowTitle(track, x.id))"
-                    :key="lang.id"
-                  >
-                    <b>{{ lang.id }}</b> {{ getLangTitle(track, lang.id) }}
-                  </li>
-                </ul>
-              </div>
-            </li>
-          </ol>
-        </section>
-        <section :hidden="gameDataSection !== 'RELATED'">
-          <ol>
-            <li v-for="relate in data.relateds" :key="relate.id">
-              <div>
-                <img
-                  :src="gameImgMap?.get(store.mainLang)?.get(relate.id)"
-                  @click.stop="openSourceImg(relate, store.mainLang)"
-                  loading="lazy"
-                />
-              </div>
-              <div>
-                <h4>
-                  <router-link :to="`/${relate.id}`">
-                    {{ getLangTitle(relate, store.mainLang) }}</router-link
-                  >
-                  <small class="xs-visible"
-                    >({{ relate.year }} | {{ relate.hardware }})</small
-                  >
-                </h4>
-                <p>{{ relate.year }} | {{ relate.hardware }}</p>
-              </div>
-            </li>
-          </ol>
-        </section>
+        <Track
+          :hidden="gameDataSection !== 'TRACK'"
+          :data="data.tracks"
+          :img-map="trackImgMap"
+        ></Track>
+        <Related
+          :hidden="gameDataSection !== 'RELATED'"
+          :data="data.relateds"
+          :img-map="gameImgMap"
+        ></Related>
       </section>
     </main>
   </template>
@@ -129,11 +62,12 @@ import axios from 'axios';
 import { useRoute } from 'vue-router';
 import { useStore } from '@/stores';
 import Header from '@/components/Header.vue';
-import SvgIcon from '@/components/SvgIcon.vue';
-import { GameDataSection, TrackMode, type GameDetail } from '@/types';
+import Track from './components/Track.vue';
+import Related from './components/Related.vue';
+import { GameDataSection, type GameDetail } from '@/types';
 import { getLangTitle, isShowTitle, getImgSrc, openSourceImg } from '@/utils/data-utils';
 
-defineOptions({ name: 'Track' });
+defineOptions({ name: 'Detail' });
 
 const route = useRoute();
 const gid = route.params.gid as string;
@@ -148,7 +82,6 @@ const trackImgMap = ref<Map<string, Map<string, string>>>(
 );
 const loading = ref<boolean>(false);
 const titleRef = ref<HTMLElement>();
-const trackMode = ref<TrackMode>('ALL');
 
 onMounted(async () => {
   await getDetail();
@@ -187,17 +120,6 @@ async function getDetail() {
     console.error(err);
   } finally {
     loading.value = false;
-  }
-}
-
-function getTrackCount(mode: TrackMode): number {
-  switch (mode) {
-    case 'ALL':
-      return data.value!.tracks.length;
-    case 'TOP':
-      return data.value!.tracks.filter((x) => x.isbest).length;
-    case 'LOOP':
-      return data.value!.tracks.filter((x) => x.isloop).length;
   }
 }
 </script>

@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import GameComponent from '@/pages/Game';
-import TrackComponent from '@/pages/Track';
+import HomeComponent from '@/pages/Home';
+import DetailComponent from '@/pages/Detail';
 // import UploadComponent from '@/pages/Upload.vue';
 
 const routes = [
-  { path: '/', component: GameComponent },
-  { path: '/:gid', component: TrackComponent },
+  { path: '/', component: HomeComponent },
+  { path: '/:gid', component: DetailComponent },
   // { path: '/upload', component: UploadComponent },
 ];
 

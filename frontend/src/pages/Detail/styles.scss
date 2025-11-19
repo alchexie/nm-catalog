@@ -48,7 +48,7 @@
     }
   }
 
-  .detail {
+  :deep(.detail) {
     padding-top: 0.8rem;
     text-align: left;
 
@@ -75,25 +75,6 @@
             h4 {
               position: relative;
               padding-right: 3em;
-
-              .tag {
-                position: absolute;
-                bottom: 0;
-                right: .5em;
-                display: flex;
-                align-items: flex-end;
-                height: 100%;
-
-                .svg-icon {
-                  margin-left: 0.3em;
-                  opacity: 0.2;
-                  transform: translateY(-0.2em);
-
-                  &.active {
-                    opacity: 0.5;
-                  }
-                }
-              }
             }
           }
         }
@@ -110,25 +91,21 @@
     }
   }
 
-  img {
+  :deep(img) {
     display: block;
     cursor: pointer;
   }
 
   h2,
-  h4 {
+  :deep(h4) {
     margin: 0 0 0.5rem;
     small {
       display: inline-block;
-      color: rgba(128, 128, 128, 0.7);
-
-      &.xs-visible {
-        display: none;
-      }
+      opacity: 0.4;
     }
   }
 
-  ul {
+  :deep(ul) {
     > li {
       margin: 0 0 0.2rem;
       font-size: 0.9rem;
@@ -140,8 +117,7 @@
     }
   }
 
-  ul,
-  p {
+  :deep(ul) {
     margin-top: 0;
     opacity: 0.5;
     font-size: 0.8rem;
@@ -151,17 +127,6 @@
 @media (prefers-color-scheme: light) {
   #main {
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
-
-    .detail {
-      .svg-icon {
-        color: $root-linkColor;
-        opacity: 0.4 !important;
-
-        &.active {
-          opacity: 1 !important;
-        }
-      }
-    }
   }
 }
 
@@ -169,6 +134,7 @@
   #main {
     margin-top: 2rem;
     margin-bottom: 0;
+    padding: 1rem;
     box-shadow: none !important;
     font-size: 0.7rem;
 
@@ -186,7 +152,7 @@
       }
     }
 
-    .detail {
+    :deep(.detail) {
       ol {
         > li {
           > div:first-child {
@@ -194,25 +160,13 @@
           }
         }
       }
-
-      .svg-icon {
-        display: none;
-      }
     }
 
-    h4 {
+    :deep(h4) {
       font-size: 0.8rem;
-
-      small {
-        &.xs-visible {
-          display: inline-block;
-          margin-left: 0.5em;
-        }
-      }
     }
 
-    ul,
-    p {
+    :deep(ul) {
       display: none;
     }
   }

@@ -70,7 +70,7 @@ import SvgIcon from '@/components/SvgIcon.vue';
 import { GameGroupBy, type GameGroup } from '@/types';
 import { getLangTitle, getImgSrc } from '@/utils/data-utils';
 
-defineOptions({ name: 'Game' });
+defineOptions({ name: 'Home' });
 
 const route = useRouter();
 const store = useStore();
