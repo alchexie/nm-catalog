@@ -128,6 +128,7 @@ async function getDetail() {
         img_ko_KR: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
         img_zh_CN: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
         img_zh_TW: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
+        isRelatedGame: 1,
       });
     }
     for (let j = 0; j < 10; j++) {
@@ -153,6 +154,7 @@ async function getDetail() {
         img_ko_KR: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
         img_zh_CN: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
         img_zh_TW: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
+        isRelatedGame: 1,
       });
     }
     for (const lang of store.langList) {

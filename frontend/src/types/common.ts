@@ -42,6 +42,7 @@ export interface Playlist extends WithLangData {
   id: string;
   type: PlaylistType;
   tracksNum: number;
+  isRelatedGame: number;
   desc?: string; //type为MULTIPLE/SPECIAL/LOOP时可能存在
   gid?: string; //type为SINGLE_GAME_ALL/SINGLE_GAME/LOOP/BEST时存在
 }
