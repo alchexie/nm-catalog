@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useStore } from '@/stores';
-import type { Playlist } from '@/types';
+import { PlaylistType, type Playlist } from '@/types';
 import { getLangTitle, openSourceImg } from '@/utils/data-utils';
 
 const props = defineProps<{
@@ -54,8 +54,8 @@ const groupedPlaylists = computed(() => {
 
 function getTypeLabel(type: string): string {
   const typeLabels: { [key: string]: string } = {
-    'SINGLE_GAME': '单游戏播放列表',
-    'MULTIPLE': '多游戏播放列表',
+    [PlaylistType.SINGLE_GAME]: '单游戏播放列表',
+    [PlaylistType.MULTIPLE]: '多游戏播放列表',
   };
   return typeLabels[type] || type;
 }
