@@ -1,4 +1,50 @@
-import type { PlaylistType } from "./enums";
+import { LangCode, type PlaylistType } from "./enums";
+import { useStore } from '@/stores';
+
+export class LocalizationString {
+  private localizationMap: { [key: string]: string } = {}
+  private defaultLangCode: string = LangCode.EN_US;
+  constructor(data?: any, prefix: string = '', suffix: string = '', isAutoAddUnderscore: boolean = true) {
+    if (!data) {
+      return;
+    }
+    for (const langCode of Object.values(LangCode)) {
+      if (isAutoAddUnderscore) {
+        prefix = prefix && !prefix.endsWith('_') ? `${prefix}_` : prefix;
+        suffix = suffix && !suffix.startsWith('_') ? `_${suffix}` : suffix;
+      }
+      const key = `${prefix}${langCode}${suffix}`;
+      if (!(key in data)) {
+        continue;
+      }
+      this.localizationMap[langCode] = data[key];
+    }
+  }
+
+  set(langCode: string, value: string) {
+    langCode = this.convertLangCode(langCode);
+    this.localizationMap[langCode] = value;
+  }
+
+  get(langCode?: string): string {
+    langCode = this.convertLangCode(langCode);
+    return this.localizationMap[langCode] || this.localizationMap[this.defaultLangCode] || '';
+  }
+
+  has(langCode: string): boolean {
+    langCode = this.convertLangCode(langCode);
+    return langCode in this.localizationMap;
+  }
+
+  toString(): string {
+    return this.get();
+  }
+
+  private convertLangCode(langCode?: string): string {
+    langCode = langCode ? langCode : useStore().mainLang;
+    return langCode.replace('-', '_');
+  }
+}
 
 interface WithLangData {
   title_de_DE: string;
@@ -43,7 +89,7 @@ export interface Playlist extends WithLangData {
   type: PlaylistType;
   tracksNum: number;
   isRelatedGame: number;
-  desc?: string; //type为MULTIPLE/SPECIAL/LOOP时可能存在
+  desc?: LocalizationString; //type为MULTIPLE/SPECIAL/LOOP时可能存在
   gid?: string; //type为SINGLE_GAME_ALL/SINGLE_GAME/LOOP/BEST时存在
 }
 

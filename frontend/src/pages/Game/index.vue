@@ -121,9 +121,9 @@ async function getDetail() {
       // 临时指定一个资源
       const img = "7bd01ff9-6710-4372-96d6-5d5f1b6a569e"; //playlist.thumbnailURL.split('/').pop()?.split('.').shift();
       const type = playlist.type;
-      if (type !== 'SINGLE_GAME' && type !== 'MULTIPLE') {
-        continue;
-      }
+      // if (type !== 'SINGLE_GAME' && type !== 'MULTIPLE') {
+      //   continue;
+      // }
       data.value.playlists.push({
         id: playlist.id,
         type: playlist.type,

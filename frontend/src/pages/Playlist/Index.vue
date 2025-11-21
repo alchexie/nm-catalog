@@ -9,6 +9,7 @@
           <h2 ref="titleRef">
             {{ getLangTitle(data, store.mainLang) }}<br />
             <small>{{ getPlaylistTypeDesc(data.type) }} · {{ data.tracksNum }}首 · {{ getTotalDuration() }}</small>
+            <small>{{ data.desc }}</small>
           </h2>
         </div>
       </section>
@@ -29,7 +30,7 @@ import Header from '@/components/Header.vue';
 import TrackComp from '../Game/components/Track.vue';
 import { useRoute } from 'vue-router';
 import { useStore } from '@/stores';
-import { PlaylistType, type Playlist, type Track } from '@/types';
+import { LocalizationString, PlaylistType, type Playlist, type Track } from '@/types';
 
 import { getLangTitle, isShowTitle, getImgSrc, openSourceImg } from '@/utils/data-utils';
 import axios from 'axios';
@@ -146,8 +147,8 @@ async function getDetail() {
     }
 
     const name = res.data.name;
-    const img = "7bd01ff9-6710-4372-96d6-5d5f1b6a569e"; //res.data.thumbnailURL.split('/').pop()?.split('.').shift();
-    var playlist = {
+    const img = res.data.thumbnailURL.split('/').pop()?.split('.').shift();
+    var playlist: Playlist = {
       id: res.data.id,
       type: res.data.type,
       tracksNum: res.data.tracks.length,
@@ -170,6 +171,10 @@ async function getDetail() {
       img_ko_KR: img,
       img_zh_CN: img,
       img_zh_TW: img,
+    }
+    if (res.data.description) {
+      playlist.desc = new LocalizationString();
+      playlist.desc.set(useStore().mainLang, res.data.description);
     }
 
     data.value = playlist;
