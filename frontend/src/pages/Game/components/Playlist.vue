@@ -20,7 +20,7 @@
 import { computed } from 'vue';
 import { useStore } from '@/stores';
 import { PlaylistType, type Playlist } from '@/types';
-import { getLangTitle, openSourceImg } from '@/utils/data-utils';
+import { getLangTitle } from '@/utils/data-utils';
 
 const props = defineProps<{
   hidden: boolean;

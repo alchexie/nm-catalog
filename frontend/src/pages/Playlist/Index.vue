@@ -32,7 +32,7 @@ import { useRoute } from 'vue-router';
 import { useStore } from '@/stores';
 import { LocalizationString, PlaylistType, type Playlist, type Track } from '@/types';
 
-import { getLangTitle, isShowTitle, getImgSrc, openSourceImg } from '@/utils/data-utils';
+import { getLangTitle, getImgSrc, openSourceImg } from '@/utils/data-utils';
 import axios from 'axios';
 
 const route = useRoute();
