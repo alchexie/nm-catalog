@@ -18,6 +18,7 @@ import { onMounted, ref } from 'vue';
 import Header from '@/components/Header.vue';
 import { LocalizationString, PlaylistType, type Playlist } from '@/types';
 import PlaylistCard from '@/components/PlaylistCard.vue';
+import { useStore } from '@/stores';
 
 const loading = ref<boolean>(false);
 const sections = ref<Map<string, Playlist[]>>(new Map<string, Playlist[]>());
@@ -26,17 +27,14 @@ onMounted(async () => {
   const response = await fetch('/playlist_section.json');
   const playlistSectionData = await response.json();
   for (const [sectionName, sectionPlaylists] of Object.entries(playlistSectionData)) {
-    const playlists: Playlist[] = (sectionPlaylists as any[]).map((playlist: any) => {
-      const name = playlist.name;
-      const img = playlist.thumbnailURL.split('/').pop()?.split('.').shift();
-      const desc = new LocalizationString();
-      desc.set('en_US', playlist.description);
-      const playlistObj: Playlist = {
-        id: playlist.id,
-        type: playlist.type as PlaylistType,
-        tracksNum: playlist.tracksNum,
+    const playlists: Playlist[] = (sectionPlaylists as any[]).map((playlistData: any) => {
+      const name = playlistData.name;
+      const img = playlistData.thumbnailURL.split('/').pop()?.split('.').shift();
+      const playlist: Playlist = {
+        id: playlistData.id,
+        type: playlistData.type as PlaylistType,
+        tracksNum: playlistData.tracksNum,
         isRelatedGame: 0,
-        desc: desc,
         title_de_DE: name,
         title_en_US: name,
         title_es_ES: name,
@@ -56,7 +54,12 @@ onMounted(async () => {
         img_zh_CN: img,
         img_zh_TW: img,
       };
-      return playlistObj;
+      if (playlistData.description) {
+        const desc = new LocalizationString();
+        desc.set(useStore().mainLang, playlistData.description);
+        playlist.desc = desc;
+      }
+      return playlist;
     });
     sections.value.set(sectionName, playlists);
   }

@@ -35,7 +35,7 @@ export const LangCode = {
   ES_ES: 'es_ES',
   FR_FR: 'fr_FR',
   IT_IT: 'it_IT',
-  JA_IP: 'ja_IP',
+  JA_JP: 'ja_JP',
   KO_KR: 'ko_KR',
   ZH_CN: 'zh_CN',
   ZH_TW: 'zh_TW',
