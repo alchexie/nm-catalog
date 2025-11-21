@@ -1,7 +1,7 @@
 <template>
   <Header :static="true"></Header>
   <div class="loading" v-if="loading"></div>
-  <main v-else>
+  <main id="main" v-else>
     <div class="group" v-for="[name, section] in sections" :key="name">
       <h3 class="group-title">{{ name }}</h3>
       <ul class="playlist">
@@ -71,6 +71,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+#main {
+  max-width: 992px;
+  margin: 4rem auto 3rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  transform: translateY(0.5rem);
+}
+
 .group {
   margin-bottom: 32px;
 }
