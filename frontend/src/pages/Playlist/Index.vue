@@ -46,7 +46,7 @@ const trackImgMap = ref<Map<string, Map<string, string>>>(
 );
 
 onMounted(async () => {
-  await getDetail();
+  await getPlaylist();
 });
 
 function getPlaylistTypeDesc(playlistType: PlaylistType): string {
@@ -90,7 +90,7 @@ function getTotalDuration(): string {
 }
 
 
-async function getDetail() {
+async function getPlaylist() {
   loading.value = true;
   try {
     // 临时用代理接口获取播放列表数据，当前切换语言时不会刷新
