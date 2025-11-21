@@ -104,59 +104,51 @@ async function getDetail() {
     if (!data.value) {
       return;
     }
-    data.value.playlists = []; // Dummy data for playlists
-    for (let j = 0; j < 10; j++) {
+
+    // 临时用代理接口获取播放列表数据，当前切换语言时不会刷新
+    data.value.playlists = [];
+    const playlistRes = await axios.get(`/api/proxy/nm/game/${gid}/playlists`, {
+      params: {
+        lang: store.mainLang,
+      },
+    });
+    if (!playlistRes.data || !playlistRes.data.miscPlaylistSet || !playlistRes.data.miscPlaylistSet.officialPlaylists) {
+      return;
+    }
+    for (const playlist of playlistRes.data.miscPlaylistSet.officialPlaylists) {
+      const name = playlist.name
+      // 临时指定一个资源
+      const img = "7bd01ff9-6710-4372-96d6-5d5f1b6a569e"; //playlist.thumbnailURL.split('/').pop()?.split('.').shift();
+      const type = playlist.type;
+      if (type !== 'SINGLE_GAME' && type !== 'MULTIPLE') {
+        continue;
+      }
       data.value.playlists.push({
-        id: '772a2b39-c35d-43fd-b3b1-bf267c01f342',
-        type: 'SINGLE_GAME',
-        tracksNum: 10,
-        title_de_DE: "",
-        title_en_US: "",
-        title_es_ES: "",
-        title_fr_FR: "",
-        title_it_IT: "",
-        title_ja_IP: "",
-        title_ko_KR: "",
-        title_zh_CN: "世界",
-        title_zh_TW: "",
-        img_de_DE: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_en_US: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_es_ES: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_fr_FR: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_it_IT: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_ja_IP: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_ko_KR: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_zh_CN: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_zh_TW: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
+        id: playlist.id,
+        type: playlist.type,
+        tracksNum: playlist.tracksNum,
+        title_de_DE: name,
+        title_en_US: name,
+        title_es_ES: name,
+        title_fr_FR: name,
+        title_it_IT: name,
+        title_ja_IP: name,
+        title_ko_KR: name,
+        title_zh_CN: name,
+        title_zh_TW: name,
+        img_de_DE: img,
+        img_en_US: img,
+        img_es_ES: img,
+        img_fr_FR: img,
+        img_it_IT: img,
+        img_ja_IP: img,
+        img_ko_KR: img,
+        img_zh_CN: img,
+        img_zh_TW: img,
         isRelatedGame: 1,
       });
     }
-    for (let j = 0; j < 10; j++) {
-      data.value.playlists.push({
-        id: '772a2b39-c35d-43fd-b3b1-bf267c01f342',
-        type: 'MULTIPLE',
-        tracksNum: 10,
-        title_de_DE: "",
-        title_en_US: "",
-        title_es_ES: "",
-        title_fr_FR: "",
-        title_it_IT: "",
-        title_ja_IP: "",
-        title_ko_KR: "",
-        title_zh_CN: "世界",
-        title_zh_TW: "",
-        img_de_DE: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_en_US: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_es_ES: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_fr_FR: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_it_IT: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_ja_IP: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_ko_KR: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_zh_CN: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        img_zh_TW: "7bd01ff9-6710-4372-96d6-5d5f1b6a569e",
-        isRelatedGame: 1,
-      });
-    }
+
     for (const lang of store.langList) {
       let imgMap = new Map<string, string>();
       imgMap.set(data.value.game.id, getImgSrc(data.value.game, lang.id));

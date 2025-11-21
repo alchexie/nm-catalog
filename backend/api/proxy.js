@@ -50,7 +50,7 @@ router.get('/nm/playlist/:pid', async (req, res) => {
 });
 
 // 代理任天堂游戏相关播放列表API
-router.get('/nm/playlist/:gid', async (req, res) => {
+router.get('/nm/game/:gid/playlists', async (req, res) => {
     const gid = req.params.gid;
     const url = `catalog/games/${gid}/relatedPlaylists`;
     const response = await fetchNintendoMusicData(url, req.query.lang, res);
