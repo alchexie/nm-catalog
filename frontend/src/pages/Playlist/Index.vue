@@ -4,17 +4,16 @@
   <template v-else>
     <main id="main" v-if="data">
       <section class="game">
-        <img :src="getImgSrc(data, store.mainLang)"
-          @click.stop="openSourceImg(data, store.mainLang)" loading="lazy" />
+        <img :src="getImgSrc(data, store.mainLang)" @click.stop="openSourceImg(data, store.mainLang)" loading="lazy" />
         <div>
           <h2 ref="titleRef">
             {{ getLangTitle(data, store.mainLang) }}<br />
-            <small>{{ data.type }} | {{ data.tracksNum }}</small>
+            <small>{{ getPlaylistTypeDesc(data.type) }} · {{ data.tracksNum }}首</small>
           </h2>
         </div>
       </section>
       <section class="detail">
-        <TrackComp :hidden="false" :data="tracks" :img-map="trackImgMap">
+        <TrackComp :hidden="false" :isShowFilter="false" :data="tracks" :img-map="trackImgMap">
         </TrackComp>
       </section>
     </main>
@@ -30,7 +29,8 @@ import Header from '@/components/Header.vue';
 import TrackComp from '../Game/components/Track.vue';
 import { useRoute } from 'vue-router';
 import { useStore } from '@/stores';
-import type { Playlist, Track } from '@/types';
+import { PlaylistType, type Playlist, type Track } from '@/types';
+
 import { getLangTitle, isShowTitle, getImgSrc, openSourceImg } from '@/utils/data-utils';
 import axios from 'axios';
 
@@ -47,6 +47,25 @@ const trackImgMap = ref<Map<string, Map<string, string>>>(
 onMounted(async () => {
   await getDetail();
 });
+
+function getPlaylistTypeDesc(playlistType: PlaylistType): string {
+  switch (playlistType) {
+    case PlaylistType.BEST:
+      return '精选';
+    case PlaylistType.LOOP:
+      return '更改时长';
+    case PlaylistType.MULTIPLE:
+      return '系列歌单';
+    case PlaylistType.SINGLE_GAME:
+      return '游戏歌单';
+    case PlaylistType.SINGLE_GAME_ALL:
+      return '所有乐曲';
+    case PlaylistType.SPECIAL:
+      return '特别发布';
+    default:
+      return '未知类型';
+  }
+}
 
 async function getDetail() {
   loading.value = true;
@@ -68,7 +87,7 @@ async function getDetail() {
       tracks.value?.push({
         id: track.id,
         gid: track.game.id,
-        idx: index+1,
+        idx: index + 1,
         duration: "0:00",
         isloop: 0,
         isbest: 0,
@@ -101,7 +120,7 @@ async function getDetail() {
         trackImgMap.value.set(lang.id, imgMap);
       }
     }
-    
+
     const name = res.data.name;
     const img = "7bd01ff9-6710-4372-96d6-5d5f1b6a569e"; //res.data.thumbnailURL.split('/').pop()?.split('.').shift();
     var playlist = {

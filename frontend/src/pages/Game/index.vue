@@ -43,6 +43,7 @@
       <section class="detail">
         <Track
           :hidden="gameDataSection !== 'TRACK'"
+          :isShowFilter="true"
           :data="data.tracks"
           :img-map="trackImgMap"
         ></Track>
