@@ -127,6 +127,7 @@ async function getDetail() {
         id: playlist.id,
         type: playlist.type,
         tracksNum: playlist.tracksNum,
+        isRelatedGame: 1,
         title_de_DE: name,
         title_en_US: name,
         title_es_ES: name,
@@ -145,7 +146,6 @@ async function getDetail() {
         img_ko_KR: img,
         img_zh_CN: img,
         img_zh_TW: img,
-        isRelatedGame: 1,
       });
     }
 
