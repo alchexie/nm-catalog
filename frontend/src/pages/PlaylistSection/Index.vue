@@ -2,7 +2,7 @@
   <Header :static="true"></Header>
   <div class="loading" v-if="loading"></div>
   <main id="main" v-else>
-    <div class="group" v-for="[name, section] in sections" :key="name">
+    <div class="group" v-for="[name, section] in Object.entries(sections)" :key="name">
       <h3 class="group-title">{{ name }}</h3>
       <ul class="playlist">     
         <li v-for="playlist in section" :key="playlist.id">
@@ -21,7 +21,7 @@ import PlaylistCard from '@/components/PlaylistCard.vue';
 import { useStore } from '@/stores';
 
 const loading = ref<boolean>(false);
-const sections = ref<Map<string, Playlist[]>>(new Map<string, Playlist[]>());
+const sections = ref<Record<string, Playlist[]>>({});
 onMounted(async () => {
   loading.value = true;
   const response = await fetch('/playlist_section.json');
@@ -61,7 +61,7 @@ onMounted(async () => {
       }
       return playlist;
     });
-    sections.value.set(sectionName, playlists);
+    sections.value[sectionName] = playlists;
   }
   loading.value = false;
 });
