@@ -30,14 +30,14 @@ export const TrackMode = {
 export type TrackMode = keyof typeof TrackMode;
 
 export const LangCode = {
-  DE_DE: 'de_DE',
-  EN_US: 'en_US',
-  ES_ES: 'es_ES',
-  FR_FR: 'fr_FR',
-  IT_IT: 'it_IT',
-  JA_JP: 'ja_JP',
-  KO_KR: 'ko_KR',
-  ZH_CN: 'zh_CN',
-  ZH_TW: 'zh_TW',
+  de_DE: 'de-DE',
+  en_US: 'en-US',
+  es_ES: 'es-ES',
+  fr_FR: 'fr-FR',
+  it_IT: 'it-IT',
+  ja_JP: 'ja-JP',
+  ko_KR: 'ko-KR',
+  zh_CN: 'zh-CN',
+  zh_TW: 'zh-TW',
 };
 export type LangCode = keyof typeof LangCode;

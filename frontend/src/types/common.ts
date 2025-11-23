@@ -1,10 +1,15 @@
-import { LangCode, type PlaylistType } from "./enums";
+import { LangCode, type PlaylistType } from './enums';
 import { useStore } from '@/stores';
 
 export class LocalizationString {
-  private localizationMap: { [key: string]: string } = {}
-  private defaultLangCode: string = LangCode.EN_US;
-  constructor(data?: any, prefix: string = '', suffix: string = '', isAutoAddUnderscore: boolean = true) {
+  private localizationMap: { [key: string]: string } = {};
+  private defaultLangCode: string = LangCode.en_US;
+  constructor(
+    data?: any,
+    prefix: string = '',
+    suffix: string = '',
+    isAutoAddUnderscore: boolean = true
+  ) {
     if (!data) {
       return;
     }
@@ -28,7 +33,9 @@ export class LocalizationString {
 
   get(langCode?: string): string {
     langCode = this.convertLangCode(langCode);
-    return this.localizationMap[langCode] || this.localizationMap[this.defaultLangCode] || '';
+    return (
+      this.localizationMap[langCode] || this.localizationMap[this.defaultLangCode] || ''
+    );
   }
 
   has(langCode: string): boolean {
@@ -46,28 +53,32 @@ export class LocalizationString {
   }
 }
 
-interface WithLangData {
-  title_de_DE: string;
-  title_en_US: string;
-  title_es_ES: string;
-  title_fr_FR: string;
-  title_it_IT: string;
-  title_ja_IP: string;
-  title_ko_KR: string;
-  title_zh_CN: string;
-  title_zh_TW: string;
-  img_de_DE: string;
-  img_en_US: string;
-  img_es_ES: string;
-  img_fr_FR: string;
-  img_it_IT: string;
-  img_ja_IP: string;
-  img_ko_KR: string;
-  img_zh_CN: string;
-  img_zh_TW: string;
-}
+// interface WithLangData {
+//   title_de_DE: string;
+//   title_en_US: string;
+//   title_es_ES: string;
+//   title_fr_FR: string;
+//   title_it_IT: string;
+//   title_ja_JP: string;
+//   title_ko_KR: string;
+//   title_zh_CN: string;
+//   title_zh_TW: string;
+//   img_de_DE: string;
+//   img_en_US: string;
+//   img_es_ES: string;
+//   img_fr_FR: string;
+//   img_it_IT: string;
+//   img_ja_JP: string;
+//   img_ko_KR: string;
+//   img_zh_CN: string;
+//   img_zh_TW: string;
+// }
 
-export interface Game extends WithLangData {
+export type MultiLangField<Name extends string> = {
+  [key in `${Name}_${LangCode}`]: string;
+};
+
+export interface Game extends MultiLangField<'title'>, MultiLangField<'img'> {
   id: string;
   year: number;
   hardware: string;
@@ -75,7 +86,7 @@ export interface Game extends WithLangData {
   inserted: number;
 }
 
-export interface Track extends WithLangData {
+export interface Track extends MultiLangField<'title'>, MultiLangField<'img'> {
   id: string;
   gid?: string;
   idx: number;
@@ -84,7 +95,7 @@ export interface Track extends WithLangData {
   isbest: number;
 }
 
-export interface Playlist extends WithLangData {
+export interface Playlist extends MultiLangField<'title'>, MultiLangField<'img'> {
   id: string;
   type: PlaylistType;
   tracksNum: number;

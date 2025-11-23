@@ -40,7 +40,7 @@ onMounted(async () => {
         title_es_ES: name,
         title_fr_FR: name,
         title_it_IT: name,
-        title_ja_IP: name,
+        title_ja_JP: name,
         title_ko_KR: name,
         title_zh_CN: name,
         title_zh_TW: name,
