@@ -15,6 +15,8 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import rw from '../utils/rw.js';
 import stmt from '../db/statements.js';
+import tools from '../utils/tools.js';
+const { info } = tools;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -79,7 +81,7 @@ for (const lang of langs) {
 
 const host = 'https://image-assets.m.nintendo.com';
 const sum = tasks.map((x) => x.imgIds.length).reduce((a, b) => a + b, 0);
-console.log('\x1b[32m%s\x1b[0m', `To download ${sum} image(s).`);
+info(`To download ${sum} image(s).`);
 
 async function processImage(imgId, index, task) {
   try {
@@ -117,7 +119,7 @@ async function run(task) {
     msg += `, with ${task.errors.length} errors`;
   }
   msg += '.';
-  console.log('\x1b[33m%s\x1b[0m', msg);
+  info(msg);
 }
 
 async function runAll() {

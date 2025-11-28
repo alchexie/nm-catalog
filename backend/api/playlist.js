@@ -9,12 +9,19 @@ router.get('/:id/detail', (req, res) => {
     const games = [];
     const tracks = [];
 
-    if (playlist.type === 'SPECIAL') {
-      // TODO
-    } else {
+    if (playlist.isrelatedgame) {
       games.push(...stmt.playlist_game.selectGameByPid.all(id));
-      
-      if (playlist.isrelatedgame) {
+
+      if (playlist.type === 'MULTIPLE') {
+        const ptIds = stmt.playlist_track.selectTrackByPid.all(id).map((x) => x.id);
+        const pTracks = stmt
+          .sql(
+            `select * from track where id in (${ptIds.map((x) => `'${x}'`).join(',')})`
+          )
+          .all()
+          .sort((a, b) => ptIds.indexOf(a.id) - ptIds.indexOf(b.id));
+        tracks.push(...pTracks);
+      } else {
         const allTracks = stmt.track.selectByGid.all(games[0].id);
         if (playlist.type !== 'SINGLE_GAME') {
           tracks.push(
@@ -37,16 +44,9 @@ router.get('/:id/detail', (req, res) => {
               .sort((a, b) => ptIds.indexOf(a.id) - ptIds.indexOf(b.id))
           );
         }
-      } else {
-        const ptIds = stmt.playlist_track.selectTrackByPid.all(id).map((x) => x.id);
-        const pTracks = stmt
-          .sql(
-            `select * from track where id in (${ptIds.map((x) => `'${x}'`).join(',')})`
-          )
-          .all()
-          .sort((a, b) => ptIds.indexOf(a.id) - ptIds.indexOf(b.id));
-        tracks.push(...pTracks);
       }
+    } else {
+      // TODO
     }
 
     const result = {

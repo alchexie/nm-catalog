@@ -53,7 +53,7 @@ let hasError = false;
         ].map((x) => [
           x.id,
           x.type,
-          !x.game ? 0 : 1,
+          1,
           x.tracksNum ?? x.tracks.length,
           x.name,
           x.thumbnailURL.split('/').reverse()[0],
