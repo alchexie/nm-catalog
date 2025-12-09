@@ -78,9 +78,13 @@ let hasError = false;
           );
           stmt.playlist_track.deleteByPid.run(playlist.id);
           playlistTrackData.push(...data);
-          updateds.playlistIds.push(playlist.id);
         }
+        updateds.playlistIds.push(playlist.id);
       }
+      updateds.playlistIds.push(
+        rawPlaylistData.allPlaylist.id,
+        rawPlaylistData.bestPlaylist.id
+      );
       updateds.gameIds.push(gameId);
 
       trans = getTransactionByStatement(stmt.playlist_track.insert);
