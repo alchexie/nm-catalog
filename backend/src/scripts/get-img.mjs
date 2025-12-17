@@ -17,6 +17,7 @@ import rw from '../utils/rw.js';
 import stmt from '../db/statements.js';
 import tools from '../utils/tools.js';
 const { info } = tools;
+import PATHS from '../utils/paths.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,7 +25,6 @@ const __dirname = dirname(__filename);
 const args = process.argv.slice(2);
 const isSaveOriginal = args.includes('original');
 const isDownloadError = args.includes('error');
-const prodDir = args.find((x) => x.startsWith('--dir='))?.split('=')[1];
 
 let langs = stmt.lang.select.all().map((x) => x.id);
 const targetLangs = langs.filter((x) => args.includes(x));
@@ -35,12 +35,17 @@ if (!targetLangs.length) {
   langs = targetLangs;
 }
 
-const sGameIds = rw.readText(rw.paths['new_game.json']).slice(1, -1).replace(/"/g, `'`);
+const sGameIds = rw
+  .readText(PATHS.COMMON_PATHS['new_game.json'])
+  .slice(1, -1)
+  .replace(/"/g, `'`);
 const tasks = [];
-const sPalylistIds = JSON.parse(rw.readText(rw.paths['updated_playlist.json']))
+const sPalylistIds = JSON.parse(rw.readText(PATHS.COMMON_PATHS['updated_playlist.json']))
   .playlistIds.map((x) => `'${x}'`)
   .join(',');
-const sSectionPalylistIds = JSON.parse(rw.readText(rw.paths['updated_playlist.json']))
+const sSectionPalylistIds = JSON.parse(
+  rw.readText(PATHS.COMMON_PATHS['updated_playlist.json'])
+)
   .sectionPlaylistIds.map((x) => `'${x}'`)
   .join(',');
 
@@ -69,14 +74,14 @@ for (const lang of langs) {
       .all()
       .map((x) => x[`img_${langStr}`]);
   } else {
-    const errors = JSON.parse(rw.readText(rw.paths['error_img.json']));
+    const errors = JSON.parse(rw.readText(PATHS.COMMON_PATHS['error_img.json']));
     imgIds = errors[lang];
   }
 
   const originalDir = path.join(__dirname, '../files/img', `original_${lang}`);
   const compressedDir = path.join(
     __dirname,
-    `../${!prodDir ? '../frontend/public/assets/new' : prodDir}`,
+    '../../frontend/public/assets/new',
     `img_${lang}`
   );
   fs.mkdirSync(originalDir, { recursive: true });
@@ -140,7 +145,7 @@ async function runAll() {
   for (const task of tasks) {
     errors[task.lang] = task.errors;
   }
-  rw.writeText(rw.paths['error_img.json'], errors);
+  rw.writeText(PATHS.COMMON_PATHS['error_img.json'], errors);
   console.log(`All tasks completed`);
 }
 

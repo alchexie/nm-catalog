@@ -15,20 +15,20 @@ const [lang, hardware, game, track, game_related] = [
   require('../db/schema/game_related'),
 ];
 const { getTransactionBySql } = require('../db/transaction');
+const { DB_PATH } = require('../utils/paths');
 
-const dbPath = path.join(__dirname, '../files/data.db');
 const args = process.argv.slice(2);
 const isForced = args.includes('force');
 
 if (isForced) {
-  fs.unlinkSync(dbPath);
+  fs.unlinkSync(DB_PATH);
   console.warn('Delete existed database.');
 }
 
-if (!fs.existsSync(dbPath)) {
+if (!fs.existsSync(DB_PATH)) {
   console.log('No database, initializing...');
 
-  const db = new Database(dbPath);
+  const db = new Database(DB_PATH);
   try {
     [lang, hardware, game, track, game_related].forEach((x) => {
       db.exec(x.create());
@@ -43,7 +43,7 @@ if (!fs.existsSync(dbPath)) {
   } catch (err) {
     console.error(err);
     db.close();
-    fs.unlinkSync(dbPath);
+    fs.unlinkSync(DB_PATH);
   }
 } else {
   console.log('Database existed.');

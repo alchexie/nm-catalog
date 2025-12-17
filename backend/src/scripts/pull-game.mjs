@@ -11,6 +11,7 @@ import stmt from '../db/statements.js';
 import { getTransactionByStatement } from '../db/transaction.js';
 import rw from '../utils/rw.js';
 import tools from '../utils/tools.js';
+import PATHS from '../utils/paths.js';
 const { request, info, getDuration } = tools;
 
 const args = process.argv.slice(2);
@@ -168,13 +169,13 @@ const existedGameIds = stmt.game.select.all().map((x) => x.id);
 
     if (!isFullUpdate) {
       rw.writeText(
-        rw.paths['new_game.json'],
+        PATHS.COMMON_PATHS['new_game.json'],
         games.map((x) => x.id)
       );
     }
-    rw.writeText(rw.paths['res_game_platform.json'], '');
-    rw.writeText(rw.paths['res_game_year.json'], '');
-    rw.writeText(rw.paths['updated_playlist.json'], '{}');
+    rw.writeText(PATHS.COMMON_PATHS['res_game_platform.json'], '');
+    rw.writeText(PATHS.COMMON_PATHS['res_game_year.json'], '');
+    rw.writeText(PATHS.COMMON_PATHS['updated_playlist.json'], '{}');
   } catch (err) {
     console.error(err);
     process.exit(1);

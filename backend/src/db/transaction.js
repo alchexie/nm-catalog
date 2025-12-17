@@ -1,4 +1,4 @@
-const getTransactionBySql = (sql, db = require('./')) => {
+const getTransactionBySql = (sql, db = require('.')) => {
   const stmt = db.prepare(sql);
   const trans = db.transaction((rows) => {
     for (const row of rows) {
@@ -8,7 +8,7 @@ const getTransactionBySql = (sql, db = require('./')) => {
   return trans;
 };
 
-const getTransactionByStatement = (stmt, db = require('./')) => {
+const getTransactionByStatement = (stmt, db = require('.')) => {
   const trans = db.transaction((rows) => {
     for (const row of rows) {
       stmt.run(...row);

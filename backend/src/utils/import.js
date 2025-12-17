@@ -2,7 +2,8 @@ const excel = require('./excel');
 const stmt = require('../db/statements');
 const { getTransactionByStatement } = require('../db/transaction');
 const rw = require('./rw');
-const { info } = require('../utils/tools.js');
+const { info } = require('./tools.js');
+const { COMMON_PATHS } = require('./paths');
 
 /**
  * Import data from .xlsx
@@ -120,9 +121,9 @@ const importdata = (files, settings, db = require('../db')) => {
   });
 
   setTimeout(() => {
-    rw.writeText(rw.paths['new_game.json'], newGameIds);
-    rw.writeText(rw.paths['res_game_platform.json'], '');
-    rw.writeText(rw.paths['res_game_year.json'], '');
+    rw.writeText(COMMON_PATHS['new_game.json'], newGameIds);
+    rw.writeText(COMMON_PATHS['res_game_platform.json'], '');
+    rw.writeText(COMMON_PATHS['res_game_year.json'], '');
   });
 
   console.log('Data successfully updated.');

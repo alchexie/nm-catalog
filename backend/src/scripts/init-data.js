@@ -10,8 +10,9 @@ const path = require('path');
 const Database = require('better-sqlite3');
 
 const { importdata } = require('../utils/import');
+const { FILES_DIR } = require('../utils/paths');
 
-const folderPath = path.join(__dirname, '../files/xlsx');
+const folderPath = path.join(FILES_DIR, 'xlsx');
 const files = fs
   .readdirSync(folderPath)
   .filter((filename) => filename.endsWith('.xlsx'))

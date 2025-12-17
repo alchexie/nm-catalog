@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const stmt = require('../db/statements');
 const rw = require('../utils/rw');
+const { COMMON_PATHS } = require('../utils/paths');
 
 function getGameList(groupBy = '') {
   const rows = stmt.game.selectGroupBy(groupBy).all();
@@ -14,7 +15,7 @@ function getGameList(groupBy = '') {
 
 function getGameByYear() {
   return new Promise(async (resolve, reject) => {
-    const fileName = rw.paths['res_game_year.json'];
+    const fileName = COMMON_PATHS['res_game_year.json'];
     const data = rw.readText(fileName);
 
     if (!data) {
@@ -79,7 +80,7 @@ router.get('/recent', (_, res) => {
 });
 
 router.get('/hardware', async (_, res) => {
-  const fileName = rw.paths['res_game_platform.json'];
+  const fileName = COMMON_PATHS['res_game_platform.json'];
   const data = rw.readText(fileName);
 
   if (!data) {

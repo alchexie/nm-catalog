@@ -9,6 +9,7 @@ import stmt from '../db/statements.js';
 import { getTransactionByStatement } from '../db/transaction.js';
 import rw from '../utils/rw.js';
 import tools from '../utils/tools.js';
+import PATHS from '../utils/paths.js';
 const { request, info, getDuration } = tools;
 
 const args = process.argv.slice(2);
@@ -22,7 +23,7 @@ let hasError = false;
 (async () => {
   let updateds;
   try {
-    updateds = JSON.parse(rw.readText(rw.paths['updated_playlist.json']));
+    updateds = JSON.parse(rw.readText(PATHS.COMMON_PATHS['updated_playlist.json']));
   } catch (error) {
     updateds = {};
   }
@@ -36,7 +37,7 @@ let hasError = false;
     if (!isFromSection) {
       const sGameIds = (
         !specificIds.length
-          ? JSON.parse(rw.readText(rw.paths['new_game.json']))
+          ? JSON.parse(rw.readText(PATHS.COMMON_PATHS['new_game.json']))
           : specificIds
       )
         .map((x) => `'${x}'`)
@@ -110,7 +111,7 @@ let hasError = false;
         trans(playlistTrackData);
       }
     } else {
-      const sections = JSON.parse(rw.readText(rw.paths['res_playlist_section.json']));
+      const sections = JSON.parse(rw.readText(PATHS.COMMON_PATHS['res_playlist_section.json']));
       let playlists = Object.values(sections).reduce((a, b) => [...a, ...b]);
       if (specificIds.length) {
         playlists = playlists.filter((x) => specificIds.includes(x.id));
@@ -174,7 +175,7 @@ let hasError = false;
           }
         }
 
-        rw.writeText(rw.paths['new_game.json'], '[]');
+        rw.writeText(PATHS.COMMON_PATHS['new_game.json'], '[]');
         updateds.gameIds = [];
         updateds.playlistIds = [];
         updateds.sectionPlaylistIds.push(playlist.id);
@@ -186,7 +187,7 @@ let hasError = false;
     console.error(err);
     hasError = true;
   } finally {
-    rw.writeText(rw.paths['updated_playlist.json'], updateds);
+    rw.writeText(PATHS.COMMON_PATHS['updated_playlist.json'], updateds);
     if (hasError) {
       process.exit(1);
     }

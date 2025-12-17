@@ -1,5 +1,6 @@
 const path = require('path');
 const Database = require('better-sqlite3');
+const { DB_PATH } = require('../../utils/paths');
 const [playlist, playlist_game, playlist_track] = [
   require('../schema/playlist'),
   require('../schema/playlist_game'),
@@ -7,8 +8,7 @@ const [playlist, playlist_game, playlist_track] = [
 ];
 
 function update() {
-  const dbPath = path.join(__dirname, '../../files/data.db');
-  const db = new Database(dbPath);
+  const db = new Database(DB_PATH);
   const sqlList = [
     playlist.create(),
     playlist_game.create(),
