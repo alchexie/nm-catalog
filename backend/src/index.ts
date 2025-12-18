@@ -13,7 +13,7 @@ app.use(express.json());
 app.disable('x-powered-by');
 app.use('/api', apiRoutes);
 
-const port = +(process.env.PORT ?? 3000);
+const port = +(process.env.PORT ?? 5002);
 app.listen(port, '127.0.0.1', () => {
   console.log(`Server running on http://127.0.0.1:${port}`);
 });

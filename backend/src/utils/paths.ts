@@ -1,7 +1,11 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-export const ROOT_DIR = process.cwd();
+export const ROOT_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../'
+);
 export const FILES_DIR = path.join(ROOT_DIR, 'files');
 export const RES_DIR = path.join(FILES_DIR, 'response');
 
