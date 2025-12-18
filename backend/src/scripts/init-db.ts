@@ -4,21 +4,15 @@
   -- force    # force to create new database file
 */
 
-const fs = require('fs');
-const path = require('path');
-const Database = require('better-sqlite3');
-const [lang, hardware, game, track, game_related] = [
-  require('../db/schema/lang'),
-  require('../db/schema/hardware'),
-  require('../db/schema/game'),
-  require('../db/schema/track'),
-  require('../db/schema/game_related'),
-];
-const { getTransactionBySql } = require('../db/transaction');
-const { DB_PATH } = require('../utils/paths');
+import fs from 'fs';
+import Database from 'better-sqlite3';
+import { tbGame, tbGameRelated, tbHardware, tbLang, tbTrack } from '../db/schema/index.js';
+import { getTransactionBySql } from '../db/transaction.js';
+import { DB_PATH } from '../utils/paths.js';
 
 const args = process.argv.slice(2);
 const isForced = args.includes('force');
+const schemas = [tbLang, tbHardware, tbGame, tbTrack, tbGameRelated];
 
 if (isForced) {
   fs.unlinkSync(DB_PATH);
@@ -30,9 +24,9 @@ if (!fs.existsSync(DB_PATH)) {
 
   const db = new Database(DB_PATH);
   try {
-    [lang, hardware, game, track, game_related].forEach((x) => {
+    schemas.forEach((x) => {
       db.exec(x.create());
-      if (!!x.preparedData) {
+      if (x.preparedData) {
         const trans = getTransactionBySql(x.insert(), db);
         trans(x.preparedData);
       }
@@ -40,8 +34,8 @@ if (!fs.existsSync(DB_PATH)) {
     db.close();
 
     console.log('Database initialized!');
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     db.close();
     fs.unlinkSync(DB_PATH);
   }

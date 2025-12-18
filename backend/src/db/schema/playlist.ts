@@ -1,4 +1,7 @@
-module.exports = {
+import { LangCodeValue } from '@nm-catalog/shared';
+import { DBTableConfig } from './index.js';
+
+const tbPlaylist: DBTableConfig = {
   create: () => `
     CREATE TABLE IF NOT EXISTS playlist (
       id TEXT PRIMARY KEY,
@@ -49,19 +52,21 @@ module.exports = {
         ELSE 99
       END;
   `,
-  insert: (lang) => {
-    lang = lang.replace('-', '_');
+  insert: (lang: LangCodeValue) => {
+    const sLang = lang.replace('-', '_');
     return `
       INSERT INTO playlist (
-        id, type, isrelatedgame, tracksnum, title_${lang}, img_${lang}, desc_${lang}
+        id, type, isrelatedgame, tracksnum, title_${sLang}, img_${sLang}, desc_${sLang}
       )
       VALUES (?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(id) DO
       UPDATE SET
-        title_${lang}=excluded.title_${lang},
-        img_${lang}=excluded.img_${lang},
-        desc_${lang}=excluded.desc_${lang}
+        title_${sLang}=excluded.title_${sLang},
+        img_${sLang}=excluded.img_${sLang},
+        desc_${sLang}=excluded.desc_${sLang}
     `;
   },
   delete: () => `DELETE FROM playlist`,
 };
+
+export default tbPlaylist;

@@ -1,4 +1,6 @@
-module.exports = {
+import { DBTableConfig } from './index.js';
+
+const tbLang: DBTableConfig = {
   create: () => `
     CREATE TABLE IF NOT EXISTS lang (
       id TEXT PRIMARY KEY,
@@ -19,3 +21,5 @@ module.exports = {
     ['zh-TW', 'Chinese (T)'],
   ],
 };
+
+export default tbLang;

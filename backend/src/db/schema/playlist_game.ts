@@ -1,4 +1,6 @@
-module.exports = {
+import { DBTableConfig } from './index.js';
+
+const tbPlaylistGame: DBTableConfig = {
   create: () => `
     CREATE TABLE IF NOT EXISTS playlist_game (
         pid TEXT,
@@ -15,3 +17,5 @@ module.exports = {
   insert: () => `INSERT OR IGNORE INTO playlist_game (pid, gid) VALUES (?, ?)`,
   delete: () => `DELETE FROM playlist_game`,
 };
+
+export default tbPlaylistGame;

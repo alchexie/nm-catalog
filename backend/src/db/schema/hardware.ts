@@ -1,4 +1,6 @@
-module.exports = {
+import { DBTableConfig } from './index.js';
+
+const tbHardware: DBTableConfig = {
   create: () => `
     CREATE TABLE IF NOT EXISTS hardware (
       name TEXT PRIMARY KEY,
@@ -22,3 +24,5 @@ module.exports = {
     ['Nintendo Switch 2', 2025],
   ],
 };
+
+export default tbHardware;

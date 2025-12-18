@@ -1,5 +1,5 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from 'fs';
+import path from 'path';
 
 export const ROOT_DIR = process.cwd();
 export const FILES_DIR = path.join(ROOT_DIR, 'files');

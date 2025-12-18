@@ -11,43 +11,44 @@ import path from 'path';
 import axios from 'axios';
 import sharp from 'sharp';
 import pLimit from 'p-limit';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import rw from '../utils/rw.js';
-import stmt from '../db/statements.js';
-import tools from '../utils/tools.js';
-const { info } = tools;
-import PATHS from '../utils/paths.js';
+import { DEFAULT_LANG, LangCode, LangCodeValue } from '@nm-catalog/shared';
+import { stmt } from '../db/statements.js';
+import { COMMON_PATHS, FILES_DIR, ROOT_DIR } from '../utils/paths.js';
+import { info, readText, toError, writeText } from '../utils/tools.js';
+import { DataRow } from '../db/schema/index.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+type Task = {
+  lang: LangCodeValue;
+  imgIds: string[];
+  originalDir: string;
+  compressedDir: string;
+  errors: string[];
+};
 
 const args = process.argv.slice(2);
 const isSaveOriginal = args.includes('original');
 const isDownloadError = args.includes('error');
 
-let langs = stmt.lang.select.all().map((x) => x.id);
+let langs = Object.values(LangCode);
 const targetLangs = langs.filter((x) => args.includes(x));
 if (!targetLangs.length) {
-  const enIdx = langs.indexOf('en-US');
+  const enIdx = langs.indexOf(DEFAULT_LANG);
   [langs[0], langs[enIdx]] = [langs[enIdx], langs[0]];
 } else {
   langs = targetLangs;
 }
 
-const sGameIds = rw
-  .readText(PATHS.COMMON_PATHS['new_game.json'])
-  .slice(1, -1)
-  .replace(/"/g, `'`);
-const tasks = [];
-const sPalylistIds = JSON.parse(rw.readText(PATHS.COMMON_PATHS['updated_playlist.json']))
-  .playlistIds.map((x) => `'${x}'`)
-  .join(',');
-const sSectionPalylistIds = JSON.parse(
-  rw.readText(PATHS.COMMON_PATHS['updated_playlist.json'])
-)
-  .sectionPlaylistIds.map((x) => `'${x}'`)
-  .join(',');
+let [palylistIds, sectionPalylistIds]: [string[], string[]] = [[], []];
+try {
+  const updateds = JSON.parse(readText(COMMON_PATHS['updated_playlist.json']));
+  palylistIds = updateds.playlistIds ?? [];
+  sectionPalylistIds = updateds.sectionPlaylistIds ?? [];
+} catch (error) {}
+
+const sGameIds = readText(COMMON_PATHS['new_game.json']).slice(1, -1).replace(/"/g, `'`);
+const tasks: Task[] = [];
+const sPalylistIds = palylistIds.map((x: string) => `'${x}'`).join(',');
+const sSectionPalylistIds = sectionPalylistIds.map((x: string) => `'${x}'`).join(',');
 
 for (const lang of langs) {
   let imgIds = [];
@@ -72,20 +73,21 @@ for (const lang of langs) {
     imgIds = stmt
       .sql(sql)
       .all()
-      .map((x) => x[`img_${langStr}`]);
+      .map((x) => (<DataRow>x)[`img_${langStr}`]);
   } else {
-    const errors = JSON.parse(rw.readText(PATHS.COMMON_PATHS['error_img.json']));
+    const errors = JSON.parse(readText(COMMON_PATHS['error_img.json']));
     imgIds = errors[lang];
   }
 
-  const originalDir = path.join(__dirname, '../files/img', `original_${lang}`);
+  const originalDir = path.join(FILES_DIR, 'img', `original_${lang}`);
   const compressedDir = path.join(
-    __dirname,
-    '../../frontend/public/assets/new',
+    ROOT_DIR,
+    '../frontend/public/assets/new',
     `img_${lang}`
   );
   fs.mkdirSync(originalDir, { recursive: true });
   fs.mkdirSync(compressedDir, { recursive: true });
+  console.log(compressedDir);
 
   tasks.push({
     lang: lang,
@@ -100,7 +102,7 @@ const host = 'https://image-assets.m.nintendo.com';
 const sum = tasks.map((x) => x.imgIds.length).reduce((a, b) => a + b, 0);
 info(`To download ${sum} image(s).`);
 
-async function processImage(imgId, index, task) {
+const processImage = async (imgId: string, index: number, task: Task) => {
   try {
     const res = await axios.get(`${host}/${imgId}`, { responseType: 'arraybuffer' });
     const buffer = Buffer.from(res.data);
@@ -121,13 +123,14 @@ async function processImage(imgId, index, task) {
       .toFile(compressedPath);
 
     console.log(`✅ ${task.lang}-${index + 1}: ${filename}`);
-  } catch (err) {
+  } catch (error) {
+    const err = toError(error);
     console.error(`❌ ${task.lang}-${index + 1} (${imgId}): ${err.message}`);
     task.errors.push(imgId);
   }
-}
+};
 
-async function run(task) {
+const run = async (task: Task) => {
   const limit = pLimit(5);
   const tasks = task.imgIds.map((id, idx) => limit(() => processImage(id, idx, task)));
   await Promise.all(tasks);
@@ -137,16 +140,16 @@ async function run(task) {
   }
   msg += '.';
   info(msg);
-}
+};
 
-async function runAll() {
+const runAll = async () => {
   await Promise.all(tasks.map((x) => run(x)));
-  const errors = {};
+  const errors: Record<string, string[]> = {};
   for (const task of tasks) {
     errors[task.lang] = task.errors;
   }
-  rw.writeText(PATHS.COMMON_PATHS['error_img.json'], errors);
+  writeText(COMMON_PATHS['error_img.json'], errors);
   console.log(`All tasks completed`);
-}
+};
 
 runAll();

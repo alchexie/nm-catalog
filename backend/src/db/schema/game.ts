@@ -1,4 +1,7 @@
-module.exports = {
+import { LangCodeValue, GameGroupBy } from '@nm-catalog/shared';
+import { DBTableConfig } from './index.js';
+
+const tbGame: DBTableConfig = {
   create: () => `
     CREATE TABLE IF NOT EXISTS game (
       id TEXT PRIMARY KEY,
@@ -28,7 +31,8 @@ module.exports = {
   `,
   select: () => `SELECT * FROM game ORDER BY inserted DESC`,
   selectById: () => `SELECT * FROM game WHERE id = ?`,
-  selectByIds: (ids = []) => `SELECT * FROM game WHERE id in (${ids.join(',')})`,
+  selectByIds: (ids: string[] = []) =>
+    `SELECT * FROM game WHERE id in (${ids.join(',')})`,
   selectEntityById: () => `
     WITH RECURSIVE chain AS (
       SELECT *
@@ -66,28 +70,31 @@ module.exports = {
     )
     SELECT DISTINCT id, link
     FROM chain`,
-  selectGroupBy: (group) => {
-    if (group === 'hardware') {
-      return `SELECT * FROM game t1 INNER JOIN hardware t2 ON t1.hardware=t2.name ORDER BY t2.year desc, inserted DESC`;
-    } else if (group === 'year') {
-      return `SELECT * FROM game ORDER BY year desc, inserted DESC`;
-    } else {
-      return `SELECT * FROM game ORDER BY inserted DESC`;
+  selectGroupBy: (groupBy: GameGroupBy) => {
+    switch (groupBy) {
+      case 'PLATFORM':
+        return `SELECT * FROM game t1 INNER JOIN hardware t2 ON t1.hardware=t2.name ORDER BY t2.year desc, inserted DESC`;
+      case 'RELEASE':
+        return `SELECT * FROM game ORDER BY year desc, inserted DESC`;
+      case 'ADDED':
+        return `SELECT * FROM game ORDER BY inserted DESC`;
     }
   },
-  insert: (lang) => {
-    lang = lang.replace('-', '_');
+  insert: (lang: LangCodeValue) => {
+    const sLang = lang.replace('-', '_');
     return `
       INSERT INTO game (
-        id, year, hardware, link, title_${lang}, img_${lang}, inserted
+        id, year, hardware, link, title_${sLang}, img_${sLang}, inserted
       )
       VALUES (?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(id) DO
       UPDATE SET
-        title_${lang}=excluded.title_${lang},
-        img_${lang}=excluded.img_${lang},
+        title_${sLang}=excluded.title_${sLang},
+        img_${sLang}=excluded.img_${sLang},
         link=excluded.link
     `;
   },
   delete: () => `DELETE FROM game`,
 };
+
+export default tbGame;

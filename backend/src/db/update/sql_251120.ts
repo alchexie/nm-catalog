@@ -1,18 +1,13 @@
-const path = require('path');
-const Database = require('better-sqlite3');
-const { DB_PATH } = require('../../utils/paths');
-const [playlist, playlist_game, playlist_track] = [
-  require('../schema/playlist'),
-  require('../schema/playlist_game'),
-  require('../schema/playlist_track'),
-];
+import Database from 'better-sqlite3';
+import { DB_PATH } from '../../utils/paths.js';
+import { tbPlaylist, tbPlaylistGame, tbPlaylistTrack } from '../schema/index.js';
 
-function update() {
+const update = () => {
   const db = new Database(DB_PATH);
   const sqlList = [
-    playlist.create(),
-    playlist_game.create(),
-    playlist_track.create(),
+    tbPlaylist.create(),
+    tbPlaylistGame.create(),
+    tbPlaylistTrack.create(),
     `CREATE INDEX idx_game_hardware ON game(hardware)`,
     `CREATE INDEX idx_track_gid ON track(gid)`,
     `CREATE INDEX idx_track_gid_idx ON track(gid, idx)`,
@@ -28,6 +23,6 @@ function update() {
   });
   trans();
   db.close();
-}
+};
 
-module.exports = update;
+export default update;

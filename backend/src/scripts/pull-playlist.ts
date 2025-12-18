@@ -5,25 +5,34 @@
   -- (gid | pid)   # update playlists of specific games or playlists (with "-- section")
 */
 
-import stmt from '../db/statements.js';
+import { LangCode, LangCodeValue, PlaylistType } from '@nm-catalog/shared';
+import { stmt } from '../db/statements.js';
 import { getTransactionByStatement } from '../db/transaction.js';
-import rw from '../utils/rw.js';
-import tools from '../utils/tools.js';
-import PATHS from '../utils/paths.js';
-const { request, info, getDuration } = tools;
+import { COMMON_PATHS } from '../utils/paths.js';
+import {
+  getDuration,
+  info,
+  isUuid,
+  readText,
+  request,
+  writeText,
+} from '../utils/tools.js';
+import { DataCell, DataRow } from '../db/schema/index.js';
 
 const args = process.argv.slice(2);
-const specificIds = args.filter((x) =>
-  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(x)
-);
+const specificIds = args.filter((x) => isUuid(x));
 const isFromSection = args.includes('section');
-const langs = stmt.lang.select.all().map((x) => x.id);
+const langs = Object.values(LangCode);
 let hasError = false;
 
 (async () => {
-  let updateds;
+  let updateds: {
+    gameIds?: string[];
+    playlistIds?: string[];
+    sectionPlaylistIds?: string[];
+  };
   try {
-    updateds = JSON.parse(rw.readText(PATHS.COMMON_PATHS['updated_playlist.json']));
+    updateds = JSON.parse(readText(COMMON_PATHS['updated_playlist.json']));
   } catch (error) {
     updateds = {};
   }
@@ -35,31 +44,31 @@ let hasError = false;
     let trans;
 
     if (!isFromSection) {
-      const sGameIds = (
+      const sGameIds: string[] = (
         !specificIds.length
-          ? JSON.parse(rw.readText(PATHS.COMMON_PATHS['new_game.json']))
+          ? JSON.parse(readText(COMMON_PATHS['new_game.json']))
           : specificIds
       )
-        .map((x) => `'${x}'`)
+        .map((x: string) => `'${x}'`)
         .join(',');
       const sql = `select id from game where id in (${sGameIds}) and link == ''`;
       const gameIds = stmt
         .sql(sql)
         .all()
-        .map((x) => x.id);
+        .map((x) => (x as DataRow).id);
       let rawPlaylistData;
 
       for (const gameId of gameIds) {
-        if (updateds.gameIds.includes(gameId)) {
+        if (updateds.gameIds.includes(<string>gameId)) {
           continue;
         }
 
-        const playlistGameData = [];
-        const playlistTrackData = [];
+        const playlistGameData: DataCell[][] = [];
+        const playlistTrackData: DataCell[][] = [];
 
         for (const lang of langs) {
-          rawPlaylistData = await getGamePlayListInfo(gameId, lang);
-          const playlistData = [
+          rawPlaylistData = await getGamePlayListInfo(<string>gameId, lang);
+          const playlistData: DataCell[][] = [
             rawPlaylistData.allPlaylist,
             rawPlaylistData.bestPlaylist,
             ...rawPlaylistData.miscPlaylistSet.officialPlaylists,
@@ -82,18 +91,24 @@ let hasError = false;
         }
 
         for (const playlist of rawPlaylistData.miscPlaylistSet.officialPlaylists) {
-          if (playlist.type !== 'LOOP' && !updateds.playlistIds.includes(playlist.id)) {
+          if (
+            playlist.type !== <PlaylistType>'LOOP' &&
+            !updateds.playlistIds.includes(playlist.id)
+          ) {
             const rawData = await getPlaylistTrack(playlist.id, langs[0]);
-            const data = rawData.tracks.map((x, i) => [playlist.id, i + 1, x.id]);
-            stmt.playlist_track.deleteByPid.run(playlist.id);
+            const data: DataCell[][] = rawData.tracks.map((x: DataRow, i: number) => [
+              playlist.id,
+              i + 1,
+              x.id,
+            ]);
+            stmt.playlist_track.deleteByPid().run(playlist.id);
             playlistTrackData.push(...data);
 
-            if (playlist.type === 'MULTIPLE') {
+            if (playlist.type === <PlaylistType>'MULTIPLE') {
               playlistGameData.push(
-                ...[...new Set(rawData.tracks.map((x) => x.game.id))].map((x) => [
-                  playlist.id,
-                  x,
-                ])
+                ...[...new Set<string>(rawData.tracks.map((x: any) => x.game.id))].map(
+                  (x) => [playlist.id, x]
+                )
               );
             }
           }
@@ -103,41 +118,44 @@ let hasError = false;
           rawPlaylistData.allPlaylist.id,
           rawPlaylistData.bestPlaylist.id
         );
-        updateds.gameIds.push(gameId);
+        updateds.gameIds.push(<string>gameId);
 
-        trans = getTransactionByStatement(stmt.playlist_game.insert);
+        trans = getTransactionByStatement(stmt.playlist_game.insert());
         trans(playlistGameData);
-        trans = getTransactionByStatement(stmt.playlist_track.insert);
+        trans = getTransactionByStatement(stmt.playlist_track.insert());
         trans(playlistTrackData);
       }
     } else {
-      const sections = JSON.parse(rw.readText(PATHS.COMMON_PATHS['res_playlist_section.json']));
-      let playlists = Object.values(sections).reduce((a, b) => [...a, ...b]);
+      const sections = JSON.parse(readText(COMMON_PATHS['res_playlist_section.json']));
+      let playlists = (<DataRow[][]>Object.values(sections)).reduce((a, b) => [
+        ...a,
+        ...b,
+      ]);
       if (specificIds.length) {
-        playlists = playlists.filter((x) => specificIds.includes(x.id));
+        playlists = playlists.filter((x) => specificIds.includes(<string>x.id));
       }
 
       let i = 0;
       for (const playlist of playlists) {
-        if (updateds.sectionPlaylistIds.includes(playlist.id)) {
+        if (updateds.sectionPlaylistIds.includes(<string>playlist.id)) {
           continue;
         }
-        const isSpecial = playlist.type === 'SPECIAL',
-          isAnnual = /20\d{2}/.test(playlist.name);
+        const isSpecial = playlist.type === <PlaylistType>'SPECIAL',
+          isAnnual = /20\d{2}/.test(<string>playlist.name);
 
         for (const lang of langs) {
-          const playlistData = [];
-          const trackData = [];
-          const playlistTrackData = [];
+          const playlistData: DataCell[][] = [];
+          const trackData: DataCell[][] = [];
+          const playlistTrackData: DataCell[][] = [];
 
-          const rawData = await getPlaylistTrack(playlist.id, lang);
+          const rawData: DataRow = await getPlaylistTrack(<string>playlist.id, lang);
           playlistData.push([
             rawData.id,
             rawData.type,
             0,
-            isSpecial || isAnnual ? rawData.tracks.length : 0,
+            isSpecial || isAnnual ? (<any>rawData.tracks).length : 0,
             rawData.name,
-            rawData.thumbnailURL.split('/').reverse()[0],
+            (<string>rawData.thumbnailURL).split('/').reverse()[0],
             rawData.description || '',
           ]);
 
@@ -146,15 +164,15 @@ let hasError = false;
 
           if (isSpecial) {
             trackData.push(
-              ...rawData.tracks.map((x) => [
+              ...(<any>rawData.tracks).map((x: DataRow) => [
                 x.id,
                 '',
                 0,
-                getDuration(x.media.payloadList[0].durationMillis),
+                getDuration((<any>x.media).payloadList[0].durationMillis),
                 0,
                 0,
                 x.name,
-                x.thumbnailURL.split('/').reverse()[0],
+                (<string>rawData.thumbnailURL).split('/').reverse()[0],
               ])
             );
 
@@ -165,42 +183,46 @@ let hasError = false;
           if (!langs.indexOf(lang)) {
             if (isSpecial || isAnnual) {
               playlistTrackData.push(
-                ...rawData.tracks.map((x, i) => [playlist.id, i + 1, x.id])
+                ...(<any>rawData.tracks).map((x: DataRow, i: number) => [
+                  playlist.id,
+                  i + 1,
+                  x.id,
+                ])
               );
 
-              stmt.playlist_track.deleteByPid.run(playlist.id);
-              trans = getTransactionByStatement(stmt.playlist_track.insert);
+              stmt.playlist_track.deleteByPid().run(playlist.id);
+              trans = getTransactionByStatement(stmt.playlist_track.insert());
               trans(playlistTrackData);
             }
           }
         }
 
-        rw.writeText(PATHS.COMMON_PATHS['new_game.json'], '[]');
+        writeText(COMMON_PATHS['new_game.json'], '[]');
         updateds.gameIds = [];
         updateds.playlistIds = [];
-        updateds.sectionPlaylistIds.push(playlist.id);
+        updateds.sectionPlaylistIds.push(<string>playlist.id);
       }
     }
 
     info(`Playlist data successfully pulled.`);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     hasError = true;
   } finally {
-    rw.writeText(PATHS.COMMON_PATHS['updated_playlist.json'], updateds);
+    writeText(COMMON_PATHS['updated_playlist.json'], updateds);
     if (hasError) {
       process.exit(1);
     }
   }
 })();
 
-async function getGamePlayListInfo(gameId, lang) {
+async function getGamePlayListInfo(gameId: string, lang: LangCodeValue) {
   return await request(
     `https://api.m.nintendo.com/catalog/games/${gameId}/relatedPlaylists?country=JP&lang=${lang}`
   );
 }
 
-async function getPlaylistTrack(playlistId, lang) {
+async function getPlaylistTrack(playlistId: string, lang: LangCodeValue) {
   return await request(
     `https://api.m.nintendo.com/catalog/officialPlaylists/${playlistId}?country=JP&lang=${lang}`
   );

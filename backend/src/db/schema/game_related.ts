@@ -1,4 +1,6 @@
-module.exports = {
+import { DBTableConfig } from './index.js';
+
+const tbGameRelated: DBTableConfig = {
   create: () => `
     CREATE TABLE IF NOT EXISTS game_related (
         gid TEXT,
@@ -10,3 +12,5 @@ module.exports = {
   insert: () => `INSERT OR IGNORE INTO game_related (gid, rgid) VALUES (?, ?)`,
   delete: () => `DELETE FROM game_related`,
 };
+
+export default tbGameRelated;
