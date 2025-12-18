@@ -1,0 +1,229 @@
+/*
+  Pull data of playlists from Nintendo APIs (run [pull-game] first when update)
+  
+  -- section       # from playlist_section.json
+  -- (gid | pid)   # update playlists of specific games or playlists (with "-- section")
+*/
+
+import { LangCode, LangCodeValue, PlaylistType } from '@nm-catalog/shared';
+import { stmt } from '../db/statements.js';
+import { getTransactionByStatement } from '../db/transaction.js';
+import { COMMON_PATHS } from '../utils/paths.js';
+import {
+  getDuration,
+  info,
+  isUuid,
+  readText,
+  request,
+  writeText,
+} from '../utils/tools.js';
+import { DataCell, DataRow } from '../db/schema/index.js';
+
+const args = process.argv.slice(2);
+const specificIds = args.filter((x) => isUuid(x));
+const isFromSection = args.includes('section');
+const langs = Object.values(LangCode);
+let hasError = false;
+
+(async () => {
+  let updateds: {
+    gameIds?: string[];
+    playlistIds?: string[];
+    sectionPlaylistIds?: string[];
+  };
+  try {
+    updateds = JSON.parse(readText(COMMON_PATHS['updated_playlist.json']));
+  } catch (error) {
+    updateds = {};
+  }
+  updateds.gameIds = updateds.gameIds ?? [];
+  updateds.playlistIds = updateds.playlistIds ?? [];
+  updateds.sectionPlaylistIds = updateds.sectionPlaylistIds ?? [];
+
+  try {
+    let trans;
+
+    if (!isFromSection) {
+      const sGameIds: string[] = (
+        !specificIds.length
+          ? JSON.parse(readText(COMMON_PATHS['new_game.json']))
+          : specificIds
+      )
+        .map((x: string) => `'${x}'`)
+        .join(',');
+      const sql = `select id from game where id in (${sGameIds}) and link == ''`;
+      const gameIds = stmt
+        .sql(sql)
+        .all()
+        .map((x) => (x as DataRow).id);
+      let rawPlaylistData;
+
+      for (const gameId of gameIds) {
+        if (updateds.gameIds.includes(<string>gameId)) {
+          continue;
+        }
+
+        const playlistGameData: DataCell[][] = [];
+        const playlistTrackData: DataCell[][] = [];
+
+        for (const lang of langs) {
+          rawPlaylistData = await getGamePlayListInfo(<string>gameId, lang);
+          const playlistData: DataCell[][] = [
+            rawPlaylistData.allPlaylist,
+            rawPlaylistData.bestPlaylist,
+            ...rawPlaylistData.miscPlaylistSet.officialPlaylists,
+          ].map((x) => [
+            x.id,
+            x.type,
+            1,
+            x.tracksNum ?? x.tracks.length,
+            x.name,
+            x.thumbnailURL.split('/').reverse()[0],
+            x.description || '',
+          ]);
+
+          trans = getTransactionByStatement(stmt.playlist.insert(lang));
+          trans(playlistData);
+
+          if (!langs.indexOf(lang)) {
+            playlistGameData.push(...playlistData.map((x) => [x[0], gameId]));
+          }
+        }
+
+        for (const playlist of rawPlaylistData.miscPlaylistSet.officialPlaylists) {
+          if (
+            playlist.type !== <PlaylistType>'LOOP' &&
+            !updateds.playlistIds.includes(playlist.id)
+          ) {
+            const rawData = await getPlaylistTrack(playlist.id, langs[0]);
+            const data: DataCell[][] = rawData.tracks.map((x: DataRow, i: number) => [
+              playlist.id,
+              i + 1,
+              x.id,
+            ]);
+            stmt.playlist_track.deleteByPid().run(playlist.id);
+            playlistTrackData.push(...data);
+
+            if (playlist.type === <PlaylistType>'MULTIPLE') {
+              playlistGameData.push(
+                ...[...new Set<string>(rawData.tracks.map((x: any) => x.game.id))].map(
+                  (x) => [playlist.id, x]
+                )
+              );
+            }
+          }
+          updateds.playlistIds.push(playlist.id);
+        }
+        updateds.playlistIds.push(
+          rawPlaylistData.allPlaylist.id,
+          rawPlaylistData.bestPlaylist.id
+        );
+        updateds.gameIds.push(<string>gameId);
+
+        trans = getTransactionByStatement(stmt.playlist_game.insert());
+        trans(playlistGameData);
+        trans = getTransactionByStatement(stmt.playlist_track.insert());
+        trans(playlistTrackData);
+      }
+    } else {
+      const sections = JSON.parse(readText(COMMON_PATHS['res_playlist_section.json']));
+      let playlists = (<DataRow[][]>Object.values(sections)).reduce((a, b) => [
+        ...a,
+        ...b,
+      ]);
+      if (specificIds.length) {
+        playlists = playlists.filter((x) => specificIds.includes(<string>x.id));
+      }
+
+      let i = 0;
+      for (const playlist of playlists) {
+        if (updateds.sectionPlaylistIds.includes(<string>playlist.id)) {
+          continue;
+        }
+        const isSpecial = playlist.type === <PlaylistType>'SPECIAL',
+          isAnnual = /20\d{2}/.test(<string>playlist.name);
+
+        for (const lang of langs) {
+          const playlistData: DataCell[][] = [];
+          const trackData: DataCell[][] = [];
+          const playlistTrackData: DataCell[][] = [];
+
+          const rawData: DataRow = await getPlaylistTrack(<string>playlist.id, lang);
+          playlistData.push([
+            rawData.id,
+            rawData.type,
+            0,
+            isSpecial || isAnnual ? (<any>rawData.tracks).length : 0,
+            rawData.name,
+            (<string>rawData.thumbnailURL).split('/').reverse()[0],
+            rawData.description || '',
+          ]);
+
+          trans = getTransactionByStatement(stmt.playlist.insert(lang));
+          trans(playlistData);
+
+          if (isSpecial) {
+            trackData.push(
+              ...(<any>rawData.tracks).map((x: DataRow) => [
+                x.id,
+                '',
+                0,
+                getDuration((<any>x.media).payloadList[0].durationMillis),
+                0,
+                0,
+                x.name,
+                (<string>rawData.thumbnailURL).split('/').reverse()[0],
+              ])
+            );
+
+            trans = getTransactionByStatement(stmt.track.insert(lang));
+            trans(trackData);
+          }
+
+          if (!langs.indexOf(lang)) {
+            if (isSpecial || isAnnual) {
+              playlistTrackData.push(
+                ...(<any>rawData.tracks).map((x: DataRow, i: number) => [
+                  playlist.id,
+                  i + 1,
+                  x.id,
+                ])
+              );
+
+              stmt.playlist_track.deleteByPid().run(playlist.id);
+              trans = getTransactionByStatement(stmt.playlist_track.insert());
+              trans(playlistTrackData);
+            }
+          }
+        }
+
+        writeText(COMMON_PATHS['new_game.json'], '[]');
+        updateds.gameIds = [];
+        updateds.playlistIds = [];
+        updateds.sectionPlaylistIds.push(<string>playlist.id);
+      }
+    }
+
+    info(`Playlist data successfully pulled.`);
+  } catch (error) {
+    console.error(error);
+    hasError = true;
+  } finally {
+    writeText(COMMON_PATHS['updated_playlist.json'], updateds);
+    if (hasError) {
+      process.exit(1);
+    }
+  }
+})();
+
+async function getGamePlayListInfo(gameId: string, lang: LangCodeValue) {
+  return await request(
+    `https://api.m.nintendo.com/catalog/games/${gameId}/relatedPlaylists?country=JP&lang=${lang}`
+  );
+}
+
+async function getPlaylistTrack(playlistId: string, lang: LangCodeValue) {
+  return await request(
+    `https://api.m.nintendo.com/catalog/officialPlaylists/${playlistId}?country=JP&lang=${lang}`
+  );
+}

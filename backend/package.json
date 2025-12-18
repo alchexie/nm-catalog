@@ -3,19 +3,24 @@
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "init-db": "node scripts/init-db.js",
-    "init-data": "node scripts/init-data.js",
-    "modify-db": "node scripts/modify-db.js",
-    "pull-game": "node scripts/pull-game.mjs",
-    "pull-playlist": "node scripts/pull-playlist.mjs",
-    "get-img": "node scripts/get-img.mjs",
-    "get-img-prod": "node scripts/get-img.mjs --dir=../nia.itomka.com/assets"
+    "start": "node dist/index.js",
+    "dev": "nodemon",
+    "build": "rimraf dist && tsc",
+    "init-db": "tsx src/scripts/init-db.ts",
+    "init-data": "tsx src/scripts/init-data.ts",
+    "modify-db": "tsx src/scripts/modify-db.ts",
+    "pull-game": "tsx src/scripts/pull-game.ts",
+    "pull-playlist": "tsx src/scripts/pull-playlist.ts",
+    "get-img": "tsx src/scripts/get-img.ts",
+    "modify-db:prod": "node dist/scripts/modify-db.js",
+    "pull-game:prod": "node dist/scripts/pull-game.js",
+    "pull-playlist:prod": "node dist/scripts/pull-playlist.js",
+    "get-img:prod": "node dist/scripts/get-img.js"
   },
   "dependencies": {
+    "@types/xlsx": "^0.0.36",
     "axios": "^1.9.0",
     "better-sqlite3": "^11.10.0",
     "compression": "^1.8.0",
@@ -28,6 +33,16 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@nm-catalog/shared": "file:../shared",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^25.0.3",
+    "nodemon": "^3.1.10",
+    "rimraf": "^6.1.2",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.3"
   }
 }
