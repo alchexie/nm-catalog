@@ -15,20 +15,20 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { LangCode, type LangCodeValue } from '@/types';
-import { useStore } from '@/stores';
+import { useLangStore } from '@/stores';
 import { scrollToY } from '@/utils/dom-utils';
 
-const store = useStore();
+const langStore = useLangStore();
 const langList = Object.values(LangCode);
-const mainLang = ref<LangCodeValue>(store.mainLang);
+const mainLang = ref<LangCodeValue>(langStore.mainLang);
 
 onMounted(async () => {
-  store.setLangList(langList);
+  langStore.setLangList(langList);
 });
 
 function onLangChange(event: Event) {
   const value = (event.target as HTMLSelectElement).value;
-  store.setMainLang(value as LangCodeValue);
+  langStore.setMainLang(value as LangCodeValue);
 }
 
 function scrollToTop() {

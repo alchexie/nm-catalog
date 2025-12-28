@@ -1,10 +1,4 @@
 <template>
-  <Header :observeRef="titleRef">
-    <template v-if="data">
-      {{ computedTitle }}
-      <small>({{ data.game.year }} | {{ data.game.hardware }})</small>
-    </template>
-  </Header>
   <Container :loading="loading">
     <main id="main" v-if="data">
       <section class="common-detail">
@@ -12,7 +6,7 @@
           <img
             v-fallback
             :src="imgMap.getPath('game', data.game)"
-            @click.stop="openSourceImg(data.game, store.mainLang)"
+            @click.stop="openSourceImg(data.game, langStore.mainLang)"
             loading="lazy"
           />
         </div>
@@ -57,13 +51,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, h, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useStore } from '@/stores';
+import { useLangStore } from '@/stores';
+import { useHeader } from '@/composables/useHeader';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
-import Header from '@/components/Header.vue';
 import Container from '@/components/Container.vue';
 import Track from './components/Track.vue';
 import Related from './components/Related.vue';
@@ -72,11 +66,9 @@ import { GameDataSection, type GameDetail } from '@/types';
 import { getGameDetail } from '@/api';
 import { isShowTitle, openSourceImg } from '@/utils/data-utils';
 
-defineOptions({ name: 'Game' });
-
 const route = useRoute();
 const gid = route.params.gid as string;
-const store = useStore();
+const langStore = useLangStore();
 const { loading, request } = useRequest();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
@@ -86,7 +78,7 @@ const titleRef = ref<HTMLElement>();
 
 const computedTitle = computed(() => stringMap.getString(data.value!.game, 'title'));
 const computedLangs = computed(() =>
-  store.langList.filter((x) => isShowTitle(data.value!.game, x))
+  langStore.langList.filter((x) => isShowTitle(data.value!.game, x))
 );
 const computedSections = computed(() => {
   const result = [];
@@ -100,6 +92,17 @@ const computedSections = computed(() => {
   }
   return result;
 });
+
+useHeader(() => ({
+  observeRef: titleRef.value,
+  data: data.value,
+  template:
+    data.value &&
+    h('span', [
+      computedTitle.value,
+      h('small', `${data.value.game.year} | ${data.value.game.hardware}`),
+    ]),
+}));
 
 onMounted(async () => {
   await getDetail();

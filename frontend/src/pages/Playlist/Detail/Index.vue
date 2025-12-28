@@ -1,10 +1,4 @@
 <template>
-  <Header :observeRef="titleRef">
-    <template v-if="data">
-      {{ computedTitle }}
-      <small>({{ PlaylistType[data.playlist.type] }})</small>
-    </template>
-  </Header>
   <Container :loading="loading">
     <main id="main" v-if="data">
       <section class="common-detail">
@@ -12,7 +6,7 @@
           <img
             v-fallback
             :src="imgMap.getPath('playlist', data.playlist)"
-            @click.stop="openSourceImg(data.playlist, store.mainLang)"
+            @click.stop="openSourceImg(data.playlist, langStore.mainLang)"
             loading="lazy"
           />
         </div>
@@ -52,32 +46,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, type ComputedRef } from 'vue';
+import { computed, h, onMounted, ref, type ComputedRef } from 'vue';
 import { useRoute } from 'vue-router';
-import { useStore } from '@/stores';
+import { useLangStore } from '@/stores';
+import { useHeader } from '@/composables/useHeader';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
+import Container from '@/components/Container.vue';
+import TrackItem from '@/components/TrackItem.vue';
 import {
   PlaylistType,
   type Game,
   type PlaylistDetail,
   type PlaylistTrack,
 } from '@/types';
-import Header from '@/components/Header.vue';
-import Container from '@/components/Container.vue';
-import TrackItem from '@/components/TrackItem.vue';
 import { openSourceImg, getTotalDuration } from '@/utils/data-utils';
 import { getPlaylistDetail } from '@/api';
-
-defineOptions({ name: 'Playlist' });
 
 const route = useRoute();
 const { loading, request } = useRequest();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
 const pid = route.params.pid as string;
-const store = useStore();
+const langStore = useLangStore();
 const data = ref<PlaylistDetail>();
 const titleRef = ref<HTMLElement>();
 
@@ -104,6 +96,14 @@ const computedTrackGroup: ComputedRef<{ game?: Game; tracks: PlaylistTrack[] }[]
       return [{ tracks: data.value.tracks }];
     }
   });
+
+useHeader(() => ({
+  observeRef: titleRef.value,
+  data: data.value,
+  template:
+    data.value &&
+    h('span', [computedTitle.value, h('small', PlaylistType[data.value.playlist.type])]),
+}));
 
 onMounted(async () => {
   await getDetail();

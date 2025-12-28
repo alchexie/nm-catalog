@@ -1,5 +1,4 @@
 <template>
-  <Header :static="true"></Header>
   <div id="select">
     <select name="groupby" v-model="groupBy" @change="onGroupByChange" ref="selectRef">
       <option v-for="(label, key) in GameGroupBy" :key="key" :value="key">
@@ -58,17 +57,15 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { useHeader } from '@/composables/useHeader';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
-import Header from '@/components/Header.vue';
 import Container from '@/components/Container.vue';
 import SideNav from '@/components/SideNav/Index.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
 import { CACHENAME, GameGroupBy, type GameGroup } from '@/types';
 import { getGames } from '@/api';
-
-defineOptions({ name: 'Home' });
 
 const { loading, request } = useRequest();
 const imgMap = useImgMap();
@@ -97,6 +94,8 @@ const computedGameGroups = computed(() =>
   }))
 );
 const computedGroupNames = computed(() => computedGameGroups.value.map((x) => x.name));
+
+useHeader();
 
 onMounted(async () => {
   await onGroupByChange();
