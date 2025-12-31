@@ -11,7 +11,7 @@
           />
         </div>
         <div class="detail-text">
-          <h2 class="text-main" ref="titleRef">
+          <h1 class="text-main" ref="titleRef">
             {{ computedTitle }} ({{ data.playlist.tracksnum }})<br />
             <small>
               {{ computedPlaylistTypeText }} · {{ getTotalDuration(data.tracks) }}
@@ -19,17 +19,17 @@
             <small class="text-desc">{{
               stringMap.getString(data.playlist, 'desc')
             }}</small>
-          </h2>
+          </h1>
         </div>
       </section>
       <section class="detail">
         <template v-for="group in computedTrackGroup">
-          <h3 v-if="group.game">
+          <h2 v-if="group.game">
             <router-link :to="`/game/${group.game.id}`">
               <img v-fallback :src="imgMap.getPath('game', group.game)" loading="lazy" />
               {{ stringMap.getString(group.game, 'title') }}
             </router-link>
-          </h3>
+          </h2>
           <TrackItem
             v-for="(track, index) in group.tracks"
             :key="track.id"

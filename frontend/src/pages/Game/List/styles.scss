@@ -10,6 +10,11 @@
 }
 
 .group {
+  h1 {
+    margin: 1.2em 0;
+    font-size: 1.1rem;
+  }
+
   .game {
     $gap: 16px;
 
@@ -159,7 +164,7 @@
   }
 
   .group {
-    h3 {
+    h1 {
       font-size: smaller;
     }
 
@@ -174,7 +179,7 @@
         > a {
           display: flex;
           align-items: center;
-          
+
           > img {
             display: inline-block;
             width: 50px;
