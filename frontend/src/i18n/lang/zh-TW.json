@@ -2,7 +2,9 @@
   "hello": "你好",
   "common": {
     "game": "遊戲",
-    "playlist": "播放清單"
+    "playlist": "播放清單",
+    "hour": "小時",
+    "minute": "分"
   },
   "game": {
     "groupBy": {
@@ -28,6 +30,7 @@
     }
   },
   "playlist": {
+    "trackCount": "{count}首",
     "type": {
       "SINGLE_GAME_ALL": "《{gameTitle}》所有樂曲",
       "BEST": "《{gameTitle}》推薦樂曲",

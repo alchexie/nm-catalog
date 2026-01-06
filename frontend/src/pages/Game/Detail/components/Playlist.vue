@@ -21,10 +21,7 @@ const props = defineProps<{
   hidden: boolean;
   data: Playlist[];
 }>();
-
-const { t } = useI18n();
-
-const computedPlaylistGroups = computed(() => {
+const playlistGroups = (() => {
   const groupMap = new Map<string, Playlist[]>();
   props.data.forEach((x) => {
     const type = ['SINGLE_GAME', 'MULTIPLE'].includes(x.type) ? x.type : '';
@@ -33,8 +30,13 @@ const computedPlaylistGroups = computed(() => {
     }
     groupMap.get(type)!.push(x);
   });
+  return Array.from(groupMap.entries());
+})();
 
-  return Array.from(groupMap.entries()).map(([type, playlists]) => ({
+const { t } = useI18n();
+
+const computedPlaylistGroups = computed(() => {
+  return playlistGroups.map(([type, playlists]) => ({
     label: t(`game.playlist.${type}`, { count: playlists.length }, { default: '' }),
     playlists,
   }));

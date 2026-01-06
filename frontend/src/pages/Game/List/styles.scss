@@ -35,7 +35,7 @@
           margin-bottom: 8px;
           border-radius: 8px;
           cursor: pointer;
-          @include transition(transform)
+          @include transition(transform);
         }
 
         > span {
@@ -200,9 +200,7 @@
             display: block;
             margin: 0 1rem 0.5rem;
             font-size: 0.9rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            @include textEllipsis();
           }
         }
       }

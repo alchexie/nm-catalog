@@ -66,6 +66,7 @@ header {
 }
 
 #subHeader {
+  height: 2em;
   padding: 0 1em;
   background-color: $header-bgColor-detail;
   color: $header-textColor-detail;
@@ -80,7 +81,20 @@ header {
   }
 
   > .app-width {
-    display: block;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    :deep(h1) {
+      display: inline-block;
+      margin: 0;
+      font-size: 1rem;
+      @include textEllipsis();
+    }
+
+    :deep(small) {
+      display: inline-block;
+      text-indent: 0.5em;
+    }
   }
 }
 

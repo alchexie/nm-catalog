@@ -2,7 +2,9 @@
   "hello": "Hello",
   "common": {
     "game": "Game",
-    "playlist": "Playlist"
+    "playlist": "Playlist",
+    "hour": "h",
+    "minute": "m"
   },
   "game": {
     "groupBy": {
@@ -28,6 +30,7 @@
     }
   },
   "playlist": {
+    "trackCount": "{count} track | {count} tracks",
     "type": {
       "SINGLE_GAME_ALL": "All Tracks from \"{gameTitle}\"",
       "BEST": "Top Tracks from \"{gameTitle}\"",

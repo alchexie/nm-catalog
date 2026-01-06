@@ -104,12 +104,12 @@ useHeader(() => ({
   data: data.value,
   template: () => {
     if (data.value) {
-      return h('span', [
-        computedTitle.value,
-        h('small', ` (${data.value.game.year}) | ${data.value.game.hardware}`),
-      ]);
+      return [
+        h('h1', computedTitle.value),
+        h('small', `(${data.value.game.year}) | ${data.value.game.hardware})`),
+      ];
     } else {
-      return h('span');
+      return [];
     }
   },
 }));
