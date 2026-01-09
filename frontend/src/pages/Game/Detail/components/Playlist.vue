@@ -51,7 +51,7 @@ h2 {
   padding-bottom: 0.5em;
   opacity: 0.4;
   text-align: left;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 
   &:empty {
     margin-top: 0;
@@ -77,10 +77,6 @@ ul {
 }
 
 @media (max-width: 767px) {
-  h2 {
-    font-size: 1rem;
-  }
-
   ul {
     display: block;
     text-align: left;

@@ -41,6 +41,7 @@ header {
   nav {
     margin-left: auto;
     padding: 0 1rem;
+    font-size: 0.9rem;
 
     > a {
       display: inline-block;
@@ -51,7 +52,6 @@ header {
       opacity: 0.7;
       @include transition((border-color, opacity));
       line-height: $headerHeight;
-      font-size: 0.9rem;
 
       &.active {
         border-color: rgba(white, 0.7);
@@ -87,7 +87,7 @@ header {
     :deep(h1) {
       display: inline-block;
       margin: 0;
-      font-size: 1rem;
+      font-size: 0.9rem;
       @include textEllipsis();
     }
 
@@ -117,7 +117,6 @@ header {
 
 @media (max-width: 767px) {
   #header {
-    height: $headerHeight * 0.75;
     padding: 0 1rem;
     box-shadow: none;
 
@@ -135,8 +134,8 @@ header {
       right: 0;
       display: flex;
       align-items: center;
-      width: $headerHeight * 0.75;
-      height: $headerHeight * 0.75;
+      width: $headerHeight * 0.8;
+      height: $headerHeight;
       border: none;
       background-color: transparent;
 
@@ -154,9 +153,10 @@ header {
       right: 0;
       height: 100%;
       padding: 1rem 0 0;
-      background-color: rgba($header-bgColor, 0.9);
+      background-color: $header-bgColor;
       opacity: 0;
       transform: translateX(100%);
+      font-size: 1rem;
       @include transition((opacity, transform));
 
       > a {
@@ -172,14 +172,19 @@ header {
   }
 
   #subHeader {
-    height: $headerHeight * 0.75 + 1px;
+    height: $headerHeight + 1px;
     opacity: 0;
-    line-height: $headerHeight * 0.75;
 
     &.active {
       z-index: 2;
       opacity: 1;
       transform: translateY(0);
+    }
+
+    > .app-width {
+      :deep(h1) {
+        font-size: 1rem;
+      }
     }
   }
 }

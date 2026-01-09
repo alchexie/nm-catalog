@@ -62,6 +62,7 @@ function getTrackCount(mode: TrackTag): number {
 .radio-group {
   margin-bottom: 1.5em;
   text-align: right;
+  font-size: 0.9rem;
 
   label {
     display: inline-flex;

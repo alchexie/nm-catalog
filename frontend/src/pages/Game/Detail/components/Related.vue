@@ -10,7 +10,7 @@
             loading="lazy"
           />
         </div>
-        <div class="detail-text">
+        <div class="detail-part detail-text">
           <h3 class="text-main">
             <router-link :to="`/game/${relate.id}`">
               {{ stringMap.getString(relate, 'title') }}</router-link
@@ -51,14 +51,6 @@ h3 {
 
     > span {
       display: none;
-    }
-  }
-}
-
-@media (max-width: 767px) {
-  h3 {
-    > span {
-      font-size: smaller;
     }
   }
 }

@@ -48,6 +48,7 @@ export default defineConfig({
     fs: {
       allow: [path.resolve(__dirname, '..')],
     },
+    host: '0.0.0.0',
     proxy: {
       '/api': {
         target: 'http://localhost:5002',

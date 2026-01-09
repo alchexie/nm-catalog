@@ -35,7 +35,6 @@
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 3;
           overflow: hidden;
-          font-size: 1.1rem;
           text-overflow: ellipsis;
           word-break: break-word;
           max-height: calc(1.1rem * 3 * 1.5);
@@ -52,14 +51,14 @@
       }
     }
   }
+
+  &:last-of-type {
+    padding-bottom: 2rem;
+  }
 }
 
 @media (max-width: 767px) {
   .list-group {
-    h1 {
-      font-size: smaller;
-    }
-
     .group-content {
       display: block;
 
@@ -85,7 +84,6 @@
             flex: 1;
             display: block;
             margin: 0 1rem 0.5rem;
-            font-size: 0.9rem;
             @include textEllipsis();
           }
         }

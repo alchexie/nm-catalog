@@ -91,7 +91,6 @@ function scrollToTop() {
 
 @media (max-width: 767px) {
   #footer {
-    font-size: 0.9rem;
 
     span {
       margin-left: 1rem;
