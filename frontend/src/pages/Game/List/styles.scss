@@ -1,65 +1,10 @@
 #select {
   position: relative;
   width: 97%;
-  padding-top: 2.3rem;
+  padding-top: 3rem;
   padding-right: 1em;
   text-align: right;
   visibility: hidden;
-}
-
-.group {
-  h1 {
-    margin: 1.2em 0;
-    font-size: 1.1rem;
-  }
-
-  .game {
-    $gap: 16px;
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: $gap;
-
-    .card {
-      width: 200px;
-      height: 285px;
-      margin: calc($gap / 2);
-      border-radius: 8px;
-
-      > a {
-        > img {
-          display: block;
-          width: 200px;
-          height: 200px;
-          margin-bottom: 8px;
-          border-radius: 8px;
-          cursor: pointer;
-          @include transition(transform);
-        }
-
-        > span {
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 3;
-          overflow: hidden;
-          font-size: 1.1rem;
-          text-overflow: ellipsis;
-          word-break: break-word;
-          max-height: calc(1.1rem * 3 * 1.5);
-          cursor: pointer;
-        }
-      }
-
-      &:hover {
-        > a {
-          > img {
-            transform: scale(105%);
-          }
-        }
-      }
-    }
-  }
 }
 
 #sort-select {
@@ -167,43 +112,5 @@
     padding-top: 4rem;
     padding-bottom: 0.5rem;
     visibility: visible;
-  }
-
-  .group {
-    h1 {
-      font-size: smaller;
-    }
-
-    .game {
-      display: block;
-
-      .card {
-        width: 100%;
-        height: 50px;
-        text-align: left;
-
-        > a {
-          display: flex;
-          align-items: center;
-
-          > img {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            cursor: pointer;
-          }
-
-          > span {
-            flex: 1;
-            display: block;
-            margin: 0 1rem 0.5rem;
-            font-size: 0.9rem;
-            @include textEllipsis();
-          }
-        }
-      }
-    }
   }
 }

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { GameDetail, GameGroup, PlaylistDetail } from '@/types';
+import type { PlaylistSection } from '@nm-catalog/shared';
 
 const call = async (promise: Promise<{ data: any }>): Promise<any> => {
   const result = await promise;
@@ -14,6 +15,10 @@ export const getGames = (
 
 export const getGameDetail = (gid: string): Promise<GameDetail> => {
   return call(axios.get(`/api/game/${gid}/detail`));
+};
+
+export const getPlaylistSections = (): Promise<PlaylistSection[]> => {
+  return call(axios.get(`/api/playlist`));
 };
 
 export const getPlaylistDetail = (pid: string): Promise<PlaylistDetail> => {

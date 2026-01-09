@@ -54,7 +54,7 @@ h2 {
   font-size: 1.2rem;
 
   &:empty {
-    margin: 0;
+    margin-top: 0;
     border: none;
   }
 }
@@ -66,7 +66,7 @@ ul {
   gap: 24px 16px;
 
   &:last-child {
-    margin-bottom: 1rem;
+    margin-bottom: 0;
   }
 }
 

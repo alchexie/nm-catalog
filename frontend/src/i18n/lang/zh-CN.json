@@ -38,6 +38,13 @@
       "SINGLE_GAME": "《{gameTitle}》主题播放列表",
       "MULTIPLE": "多游戏播放列表",
       "SPECIAL": "特别发布"
+    },
+    "section": {
+      "ANNUAL": "年度精选",
+      "SPECIAL": "特别发布",
+      "RECOMMEND": "精选集",
+      "MOOD": "现在的心情",
+      "SCENE": "游戏中的场景"
     }
   },
   "info": {

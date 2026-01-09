@@ -38,6 +38,13 @@
       "SINGLE_GAME": "《{gameTitle}》主題播放清單",
       "MULTIPLE": "多遊戲播放清單",
       "SPECIAL": "特別發布"
+    },
+    "section": {
+      "ANNUAL": "年度精選",
+      "SPECIAL": "特別發布",
+      "RECOMMEND": "精選集",
+      "MOOD": "目前的心情",
+      "SCENE": "遊戲中的場景"
     }
   },
   "info": {

@@ -18,7 +18,7 @@
   <Container :loading="loading">
     <main>
       <section
-        class="group"
+        class="list-group"
         v-for="(group, i) in computedGameGroups"
         :key="group.name"
         :ref="
@@ -28,8 +28,8 @@
       "
       >
         <h1>{{ group.name }}</h1>
-        <ul class="game">
-          <li class="card" v-for="game in group.games" :key="game.id">
+        <ul class="group-content">
+          <li class="content-item" v-for="game in group.games" :key="game.id">
             <router-link :to="`/game/${game.id}`" :title="game.$title">
               <img v-fallback :src="game.$imgPath" loading="lazy" />
               <span>{{ game.$title }}</span>
@@ -76,6 +76,7 @@ import SideNav from '@/components/SideNav/Index.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
 import { STORAGE_KEY, GameGroupBy, type GameGroup } from '@/types';
 import { getGames } from '@/api';
+import { useGameStore } from '@/stores';
 
 const { t } = useI18n();
 const { loading, request } = useRequest();
@@ -132,6 +133,7 @@ async function getGamesByGroup(groupBy: GameGroupBy): Promise<GameGroup[]> {
     const gameList = result.map((x) => x.games).reduce((a, b) => [...a, ...b]);
     imgMap.setData('game', gameList);
     stringMap.setData(gameList, 'title');
+    useGameStore().markAsInitialized();
   }
 
   return result;

@@ -3,13 +3,42 @@ import {
   Game,
   Playlist,
   PlaylistDetail,
+  PlaylistSection,
+  PlaylistSectionType,
   PlaylistTrack,
   PlaylistTrackGroup,
 } from '@nm-catalog/shared';
 import { stmt } from '../db/statements.js';
-import { toError } from '../utils/tools.js';
+import { readText, toError } from '../utils/tools.js';
+import { COMMON_PATHS } from '../utils/paths.js';
+import { DataRow } from '../db/schema/index.js';
 
 const router = express.Router();
+
+router.get('/', (_req: Request, res: Response) => {
+  const fileName = COMMON_PATHS['res_playlist_section.json'];
+  try {
+    const rawData: Record<string, DataRow[]> = JSON.parse(readText(fileName));
+    const rawPlaylistData = Object.values(rawData);
+    const playlists = stmt.playlist
+      .selectByIds(
+        rawPlaylistData.map((x) => x.map((y) => y.id)).reduce((a, b) => [...a, ...b])
+      )
+      .all() as Playlist[];
+
+    const result = [] as PlaylistSection[];
+    Object.entries(rawData).forEach(([_x, y], i) => {
+      result.push({
+        tag: PlaylistSectionType[i],
+        playlists: rawPlaylistData[i].map((x) => playlists.find((y) => y.id === x.id)!),
+      });
+    });
+    res.json(result);
+  } catch (error) {
+    const err = toError(error);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.get('/:id/detail', (req: Request, res: Response) => {
   const id = req.params.id;
@@ -57,10 +86,9 @@ router.get('/:id/detail', (req: Request, res: Response) => {
         });
       } else {
         if (playlist.type !== 'SPECIAL') {
-          if (playlist.tracksnum) {
-            // annual playlists: set game data to each track
-          } else {
-            // regular update playlists: to sort by game release
+          if (!playlist.tracksnum) {
+            // temp solution
+            tracks.sort(() => Math.random() - 0.5);
           }
         }
 

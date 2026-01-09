@@ -1,6 +1,6 @@
 <template>
   <Container :loading="loading">
-    <main id="main" v-if="data">
+    <main id="detial-main" v-if="data">
       <section class="common-detail main">
         <div class="detail-part detail-image">
           <img
@@ -41,7 +41,9 @@
             :data="track"
             :idx="track.pidx ?? index"
             :hideTag="true"
-          ></TrackItem>
+            :showGameInfo="computedIsChangalbePlaylist"
+          >
+          </TrackItem>
         </template>
       </section>
     </main>
@@ -52,7 +54,7 @@
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import { useLangStore } from '@/stores';
+import { useGameStore, useLangStore } from '@/stores';
 import { useHeader } from '@/composables/useHeader';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
@@ -89,6 +91,14 @@ const computedTrackCount = computed(() => {
     data.value?.trackGroups.map((x) => x.tracks.length).reduce((a, b) => a + b)
   );
 });
+const computedIsChangalbePlaylist = computed(() => {
+  const playlist = data.value?.playlist;
+  return (
+    playlist &&
+    playlist.type !== 'SPECIAL' &&
+    (!playlist.isrelatedgame || !playlist.tracksnum)
+  );
+});
 
 useHeader(() => ({
   observeRef: titleRef.value,
@@ -111,16 +121,18 @@ onMounted(async () => {
 
 async function getDetail() {
   const result = await request(getPlaylistDetail(pid));
+  const playlist = result.playlist;
   const games = result.trackGroups.filter((x) => x.game).map((x) => x.game!);
   const tracks = result.trackGroups.map((x) => x.tracks).flat(1);
-  imgMap
-    .setData('playlist', [result.playlist])
-    .setData('game', games)
-    .setData('track', tracks);
+  imgMap.setData('playlist', [playlist]).setData('game', games).setData('track', tracks);
   stringMap
     .setData([result.playlist, ...games, ...tracks], 'title')
     .setData([result.playlist], 'desc');
-  data.value = Object.assign(result, { duration: getTotalDuration(tracks) });
+  data.value = { ...result, duration: getTotalDuration(tracks) };
+
+  if (computedIsChangalbePlaylist.value) {
+    useGameStore().markAsInitialized(true);
+  }
 }
 </script>
 

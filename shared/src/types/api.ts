@@ -1,4 +1,5 @@
 import type { Game, Playlist, Track } from './common.js';
+import { PlaylistSectionType } from './enums.js';
 
 export interface GameGroup {
   name: string;
@@ -10,6 +11,11 @@ export interface GameDetail {
   tracks: Track[];
   playlists: Playlist[];
   relateds: Game[];
+}
+
+export interface PlaylistSection {
+  tag: PlaylistSectionType;
+  playlists: Playlist[];
 }
 
 export interface PlaylistTrack extends Track {

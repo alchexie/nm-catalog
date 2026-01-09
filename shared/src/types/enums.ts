@@ -24,3 +24,12 @@ export const PlaylistType = [
   'SPECIAL',
 ] as const;
 export type PlaylistType = (typeof PlaylistType)[number];
+
+export const PlaylistSectionType = [
+  'ANNUAL',
+  'SPECIAL',
+  'RECOMMEND',
+  'MOOD',
+  'SCENE',
+] as const;
+export type PlaylistSectionType = (typeof PlaylistSectionType)[number];

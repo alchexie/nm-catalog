@@ -5,14 +5,16 @@
 
   .tab {
     flex: 1;
+    display: flex;
+    justify-content: center;
     background: none;
     border: none;
     border-bottom: 1px solid rgba(128, 128, 128, 0.5);
     padding: 10px 20px;
     opacity: 0.3;
     font-size: 1rem;
-    white-space: nowrap;
     cursor: pointer;
+    @include transition(opacity, 0.2s);
 
     &.active {
       opacity: 1;

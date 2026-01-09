@@ -16,11 +16,12 @@ const api = {
     }
     return api;
   },
-  getString(data: NMData, propName: string, lang?: LangCodeValue): string {
+  getString(data: NMData | string, propName: string, lang?: LangCodeValue): string {
     if (!data) {
       return '';
     }
-    const key = `${data.id}:${propName}`;
+    const id = typeof data === 'string' ? data : data.id;
+    const key = `${id}:${propName}`;
     return stringMap.value.get(key)?.get(lang ?? useLangStore().mainLang) ?? '';
   },
 };

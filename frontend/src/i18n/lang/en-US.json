@@ -38,6 +38,13 @@
       "SINGLE_GAME": "Theme Playlist of \"{gameTitle}\"",
       "MULTIPLE": "Multi-Game Related Playlist",
       "SPECIAL": "Special Playlist"
+    },
+    "section": {
+      "ANNUAL": "Annual Selection",
+      "SPECIAL": "Special Release",
+      "RECOMMEND": "Top Recommendations",
+      "MOOD": "Match your Mood",
+      "SCENE": "Set the Scene"
     }
   },
   "info": {

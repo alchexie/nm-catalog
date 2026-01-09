@@ -33,9 +33,10 @@ const api = {
 
     return api;
   },
-  getPath(dataType: DataTypeName, data: NMData, lang?: LangCodeValue): string {
-    const key = `${dataType}:${data.id}:${lang ?? useLangStore().mainLang}`;
-    const alterKey = `${dataType}:${data.id}:${DEFAULT_LANG}`;
+  getPath(dataType: DataTypeName, data: NMData | string, lang?: LangCodeValue): string {
+    const id = typeof data === 'string' ? data : data.id;
+    const key = `${dataType}:${id}:${lang ?? useLangStore().mainLang}`;
+    const alterKey = `${dataType}:${id}:${DEFAULT_LANG}`;
     return imgMap.value.get(key) ?? imgMap.value.get(alterKey) ?? fallbackSrc;
   },
 };

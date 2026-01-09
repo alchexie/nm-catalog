@@ -1,5 +1,10 @@
-export { GameGroupBy, LangCode, PlaylistType } from '@nm-catalog/shared';
-export type { LangCodeValue } from '@nm-catalog/shared';
+export {
+  GameGroupBy,
+  LangCode,
+  PlaylistType,
+  PlaylistSectionType,
+} from '@nm-catalog/shared';
+export type { LangCodeValue, PlaylistSection } from '@nm-catalog/shared';
 
 export const GameDataSection = ['TRACK', 'PLAYLIST', 'RELATED'] as const;
 export type GameDataSection = (typeof GameDataSection)[number];

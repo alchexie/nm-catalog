@@ -1,6 +1,6 @@
 <template>
   <Container :loading="loading">
-    <main id="main" v-if="data">
+    <main id="detial-main" v-if="data">
       <section class="common-detail main">
         <div class="detail-part detail-image">
           <img

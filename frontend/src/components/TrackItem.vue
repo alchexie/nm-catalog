@@ -14,13 +14,16 @@
         <span>
           {{ stringMap.getString(data, 'title') }}
           <small>({{ data.duration }})</small>
+          <span class="track-game" v-if="showGameInfo">
+            {{ stringMap.getString(data.gid!, 'title') }}
+          </span>
         </span>
-        <div class="tag" v-show="!hideTag">
+        <div class="tag" v-if="!hideTag">
           <SvgIcon type="star" :class="{ active: data.isbest }"></SvgIcon>
           <SvgIcon type="repeat" :class="{ active: data.isloop }"></SvgIcon>
         </div>
       </h3>
-      <ul class="text-else">
+      <ul class="text-else" v-if="!showGameInfo">
         <li v-for="lang of computedLangs" :key="lang" class="prefix-text">
           <b>{{ lang }}</b> {{ stringMap.getString(data, 'title', lang) }}
         </li>
@@ -43,6 +46,7 @@ const props = defineProps<{
   idx?: number;
   hidden?: boolean;
   hideTag?: boolean;
+  showGameInfo?: boolean;
 }>();
 
 const langStore = useLangStore();
@@ -55,6 +59,10 @@ const computedLangs = computed(() =>
 </script>
 
 <style lang="scss" scoped>
+h3:has(.tag) {
+  padding-right: 3em;
+}
+
 .tag {
   position: absolute;
   top: 0.45em;
@@ -72,6 +80,13 @@ const computedLangs = computed(() =>
       opacity: 0.5;
     }
   }
+}
+
+.track-game {
+  display: block;
+  margin-top: 0.8rem;
+  opacity: 0.5;
+  font-weight: normal;
 }
 
 @media (prefers-color-scheme: light) {

@@ -20,7 +20,6 @@
 
   .detail-image {
     width: 200px;
-    height: 100px;
 
     > img {
       display: block;
@@ -40,7 +39,6 @@
 
     h3 {
       font-size: 1rem;
-      padding-right: 3em;
     }
 
     .text-main {
@@ -141,7 +139,7 @@
   }
 }
 
-#main {
+#detial-main {
   max-width: 992px;
   margin: 4rem auto 3rem;
   padding: 1.5rem;
@@ -150,13 +148,13 @@
 }
 
 @media (prefers-color-scheme: light) {
-  #main {
+  #detial-main {
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
   }
 }
 
 @media (max-width: 767px) {
-  #main {
+  #detial-main {
     margin-top: 2rem;
     margin-bottom: 0;
     padding: 1rem;
