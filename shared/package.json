@@ -8,9 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc"
-  },
-  "devDependencies": {
-    "typescript": "~5.8.3"
+    "dev": "tsc -w",
+    "build": "rimraf dist && tsc"
   }
 }

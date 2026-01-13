@@ -15,8 +15,8 @@ export const writeText = (fileName: string, data: string | object) => {
   );
 };
 
-export const info = (message: string) => {
-  console.log('\x1b[32m%s\x1b[0m', message);
+export const info = (message: string, color = '\x1b[32m%s\x1b[0m') => {
+  console.log(color, message);
 };
 
 export const getDuration = (ms: number): string => {

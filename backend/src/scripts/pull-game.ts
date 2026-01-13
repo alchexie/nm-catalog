@@ -27,6 +27,10 @@ const existedGameIds: string[] = stmt.game
   .all()
   .map((x) => <string>(x as DataRow).id);
 
+const stopInfo = () => {
+  info('STOP EXIT: stop if "update-latest" is run.\x1b[0m', '\x1b[90m');
+};
+
 (async () => {
   try {
     let flatGameWithYears: DataRow[];
@@ -50,6 +54,7 @@ const existedGameIds: string[] = stmt.game
 
     if (!gameWithYears.length) {
       info(`+++++++++ No new game found. +++++++++`);
+      stopInfo();
       return;
     } else {
       flatGameWithYears = gameWithYears.reduce((a, b) => [...a, ...b]);
@@ -80,6 +85,7 @@ const existedGameIds: string[] = stmt.game
     const games = gamesByLang[langs[0]];
     if (games.length === 1 && games[0].isGameLink) {
       info(`Can not update only one linked game.`);
+      stopInfo();
       return;
     }
 
@@ -89,6 +95,12 @@ const existedGameIds: string[] = stmt.game
       ? `${games.length} new game(s) found.`
       : `${games.length} game(s) to update.`;
     info(`+++++++++ ${msg} +++++++++`);
+
+    if (games.findIndex((x) => x.isGameLink) > -1 && !isFullUpdate) {
+      info(
+        `New games contains linked game. Please run "npm run play-game -- full no-track" after running.`
+      );
+    }
 
     let playlistInfos: { allPlaylistId?: string; bestTrackIds?: string[] }[] = [];
     if (!isNoTrack) {
