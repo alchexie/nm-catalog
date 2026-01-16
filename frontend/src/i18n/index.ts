@@ -1,7 +1,7 @@
 import { DEFAULT_LANG } from '@/types';
 import { createI18n } from 'vue-i18n';
 
-export const SUPPORT_LOCALES = ['en-US', 'zh-CN', 'zh-TW'] as const;
+export const SUPPORT_LOCALES = ['en-US', 'ja-JP', 'zh-CN', 'zh-TW'] as const;
 export type LocaleType = (typeof SUPPORT_LOCALES)[number];
 
 const loaded: LocaleType[] = [];

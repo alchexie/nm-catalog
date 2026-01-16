@@ -30,7 +30,7 @@
           class="tab"
           :class="{
             active: gameDataSection === item.key,
-            blank: /^0/.test(item.label),
+            blank: /(?<!\d)0(?!\d)/.test(item.label),
           }"
           @click.stop="gameDataSection = item.key"
         >

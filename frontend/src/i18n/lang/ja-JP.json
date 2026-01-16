@@ -1,0 +1,55 @@
+{
+  "hello": "こんにちは",
+  "common": {
+    "game": "ゲーム",
+    "playlist": "プレイリスト"
+  },
+  "game": {
+    "groupBy": {
+      "PLATFORM": "ハード別",
+      "RELEASE": "発売順",
+      "ADDED": "新着順"
+    },
+    "dataSection": {
+      "TRACK": "{count} 曲",
+      "PLAYLIST": "関連プレイリスト {count} 件",
+      "RELATED": "関連ゲーム {count} 本"
+    },
+    "playlist": {
+      "SINGLE_GAME": "ゲーム内テーマプレイリスト",
+      "MULTIPLE": "複数ゲームのテーマプレイリスト"
+    }
+  },
+  "track": {
+    "tag": {
+      "ALL": "すべて",
+      "TOP": "ピックアップ",
+      "LOOP": "ながさチェンジ対応"
+    }
+  },
+  "playlist": {
+    "trackCount": "{count}曲",
+    "type": {
+      "SINGLE_GAME_ALL": "『{gameTitle}』全楽曲",
+      "BEST": "『{gameTitle}』ピックアップ曲",
+      "LOOP": "『{gameTitle}』ながさチェンジ対応曲",
+      "SINGLE_GAME": "『{gameTitle}』テーマプレイリスト",
+      "MULTIPLE": "複数ゲームのテーマプレイリスト",
+      "SPECIAL": "特別配信"
+    },
+    "section": {
+      "ANNUAL": "年間セレクション",
+      "SPECIAL": "特別配信",
+      "RECOMMEND": "セレクション",
+      "MOOD": "いまの気分",
+      "SCENE": "ゲーム中のシーン"
+    }
+  },
+  "info": {
+    "lang": "優先言語",
+    "top": "トップへ戻る"
+  },
+  "punctuation": {
+    "colon": "："
+  }
+}

@@ -18,15 +18,15 @@
       "RELATED": "{count} Related Game | {count} Related Games "
     },
     "playlist": {
-      "SINGLE_GAME": "Self Theme Playlist | Self Theme Playlists",
-      "MULTIPLE": "Related Playlist | Related Playlists"
+      "SINGLE_GAME": "In-Game Theme Playlist | In-Game Theme Playlists",
+      "MULTIPLE": "Cross-Game Theme Playlist | Cross-Game Theme Playlists"
     }
   },
   "track": {
     "tag": {
       "ALL": "All",
       "TOP": "Top",
-      "LOOP": "Extendable"
+      "LOOP": "Extended-Playback"
     }
   },
   "playlist": {
@@ -34,9 +34,9 @@
     "type": {
       "SINGLE_GAME_ALL": "All Tracks from \"{gameTitle}\"",
       "BEST": "Top Tracks from \"{gameTitle}\"",
-      "LOOP": "Extended Tracks from \"{gameTitle}\"",
+      "LOOP": "Extended-Playback Collection of \"{gameTitle}\"",
       "SINGLE_GAME": "Theme Playlist of \"{gameTitle}\"",
-      "MULTIPLE": "Multi-Game Related Playlist",
+      "MULTIPLE": "Cross-Game Theme Playlist",
       "SPECIAL": "Special Playlist"
     },
     "section": {
