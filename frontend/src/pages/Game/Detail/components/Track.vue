@@ -12,7 +12,7 @@
       </label>
     </div>
     <TrackItem
-      v-for="track in data"
+      v-for="track in displayData"
       :key="track.id"
       :data="track"
       :hidden="
@@ -21,14 +21,17 @@
       "
     >
     </TrackItem>
+    <div ref="loadMoreRef" class="load-more"></div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useLoadMore } from '@/composables/useLoadMore';
 import TrackItem from '@/components/TrackItem.vue';
 import { TrackTag, type Track } from '@/types';
+import { ElementTracker } from '@/utils/element-tracker';
 
 const props = defineProps<{
   hidden: boolean;
@@ -36,7 +39,19 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
+const { displayData, loadMore, hasRemainedData } = useLoadMore(props.data);
 const selectedTrackTag = ref<TrackTag>('ALL');
+const loadMoreRef = ref<HTMLElement>();
+const tracker = new ElementTracker(async (entries) => {
+  const entry = entries[0];
+  if (entry.isIntersecting) {
+    await loadMore();
+    if (!hasRemainedData()) {
+      console.log(false);
+      tracker.disconnect();
+    }
+  }
+});
 
 const computedTrackTags = computed(() => {
   return TrackTag.map((x) => ({
@@ -44,6 +59,10 @@ const computedTrackTags = computed(() => {
     label: t(`track.tag.${x}`),
     count: getTrackCount(x),
   }));
+});
+
+onMounted(async () => {
+  tracker.observe(loadMoreRef.value as HTMLElement);
 });
 
 function getTrackCount(mode: TrackTag): number {
@@ -94,17 +113,14 @@ function getTrackCount(mode: TrackTag): number {
         }
       }
     }
+  }
+}
 
-    // &.disabled {
-    //   cursor: default;
-    //   pointer-events: none;
+.load-more {
+  height: 1px;
 
-    //   input[type='radio'] {
-    //     + span {
-    //       opacity: 0.25;
-    //     }
-    //   }
-    // }
+  &.disabled {
+    display: none;
   }
 }
 </style>
