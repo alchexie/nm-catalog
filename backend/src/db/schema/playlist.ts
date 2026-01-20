@@ -63,6 +63,7 @@ const tbPlaylist: DBTableConfig = {
       VALUES (?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(id) DO
       UPDATE SET
+        tracksnum=excluded.tracksnum,
         title_${sLang}=excluded.title_${sLang},
         img_${sLang}=excluded.img_${sLang},
         desc_${sLang}=excluded.desc_${sLang}

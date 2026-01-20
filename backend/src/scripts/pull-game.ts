@@ -4,10 +4,11 @@
   -- full       # full update
   -- no-track   # only update game data
   -- (gid)      # update specific games (usually to add additional tracks)
+  -- no-exec    # only fetch data and not to operate database
 */
 
 import pLimit from 'p-limit';
-import { LangCode, LangCodeValue } from '@nm-catalog/shared';
+import { Game, LangCode, LangCodeValue } from '@nm-catalog/shared';
 import { stmt } from '../db/statements.js';
 import { getTransactionByStatement } from '../db/transaction.js';
 import { DataCell, DataRow } from '../db/schema/index.js';
@@ -19,6 +20,7 @@ const args = process.argv.slice(2);
 const isUpdateSpecific = args.filter((x) => isUuid(x)).length > 0;
 const isFullUpdate = args.includes('full');
 const isNoTrack = args.includes('no-track');
+const isNoExec = args.includes('no-exec');
 
 const ms = Date.now();
 const langs = Object.values(LangCode);
@@ -46,8 +48,8 @@ const stopInfo = () => {
           isFullUpdate
             ? true
             : !isUpdateSpecific
-            ? !existedGameIds.includes(<string>y.id)
-            : args.includes(<string>y.id)
+              ? !existedGameIds.includes(<string>y.id)
+              : args.includes(<string>y.id)
         )
       )
       .filter((x: DataRow[]) => x.length > 0);
@@ -58,6 +60,25 @@ const stopInfo = () => {
       return;
     } else {
       flatGameWithYears = gameWithYears.reduce((a, b) => [...a, ...b]);
+
+      if (flatGameWithYears.length === 1 && flatGameWithYears[0].isGameLink) {
+        info(`Can not update only one linked game.`);
+        stopInfo();
+        return;
+      }
+
+      const msg = isFullUpdate
+        ? `${flatGameWithYears.length} games found.`
+        : !isUpdateSpecific
+          ? `${flatGameWithYears.length} new game(s) found.`
+          : `${flatGameWithYears.length} game(s) to update.`;
+      info(`+++++++++ ${msg} +++++++++`);
+
+      if (flatGameWithYears.findIndex((x) => x.isGameLink) > -1 && !isFullUpdate) {
+        info(
+          `New games contains linked game. Please run "npm run play-game -- full no-track" after running.`
+        );
+      }
     }
 
     const limit = pLimit(1);
@@ -73,8 +94,8 @@ const stopInfo = () => {
                   isFullUpdate
                     ? true
                     : !isUpdateSpecific
-                    ? !existedGameIds.includes(<string>y.id)
-                    : args.includes(<string>y.id)
+                      ? !existedGameIds.includes(<string>y.id)
+                      : args.includes(<string>y.id)
                 ),
             };
           })
@@ -83,25 +104,6 @@ const stopInfo = () => {
     ).reduce((a, b) => Object.assign(a, b));
 
     const games = gamesByLang[langs[0]];
-    if (games.length === 1 && games[0].isGameLink) {
-      info(`Can not update only one linked game.`);
-      stopInfo();
-      return;
-    }
-
-    const msg = isFullUpdate
-      ? `${flatGameWithYears.length} games found.`
-      : !isUpdateSpecific
-      ? `${games.length} new game(s) found.`
-      : `${games.length} game(s) to update.`;
-    info(`+++++++++ ${msg} +++++++++`);
-
-    if (games.findIndex((x) => x.isGameLink) > -1 && !isFullUpdate) {
-      info(
-        `New games contains linked game. Please run "npm run play-game -- full no-track" after running.`
-      );
-    }
-
     let playlistInfos: { allPlaylistId?: string; bestTrackIds?: string[] }[] = [];
     if (!isNoTrack) {
       playlistInfos = (
@@ -123,11 +125,15 @@ const stopInfo = () => {
     }
 
     if (isFullUpdate) {
-      stmt.game.delete().run();
+      if (!isNoExec) {
+        stmt.game.delete().run();
+      }
     }
     if (isUpdateSpecific) {
       gamesByLang[Object.keys(gamesByLang)[0]].forEach((x) => {
-        stmt.track.deleteByGid().run(x.id);
+        if (!isNoExec) {
+          stmt.track.deleteByGid().run(x.id);
+        }
       });
     }
 
@@ -167,22 +173,40 @@ const stopInfo = () => {
         }
       }
 
-      let trans = getTransactionByStatement(stmt.game.insert(lang));
-      trans(gameData);
-      trans = getTransactionByStatement(stmt.track.insert(lang));
-      trans(trackData);
+      if (!isNoExec) {
+        let trans = getTransactionByStatement(stmt.game.insert(lang));
+        trans(gameData);
+        trans = getTransactionByStatement(stmt.track.insert(lang));
+        trans(trackData);
+      }
     }
 
     const relateDataSet = new Set<string>();
     for (const game of flatGameWithYears) {
-      const relatedGames: DataRow[] = await upstreem.getRelatedsOfGame(<string>game.id);
-      relatedGames.forEach((x) => {
-        relateDataSet.add(`${game.id}+${x.id}`).add(`${x.id}+${game.id}`);
+      const rawRelatedGames: DataRow[] = await upstreem.getRelatedsOfGame(
+        <string>game.id
+      );
+      let relatedGameIds: string[] = [];
+      if (!isFullUpdate) {
+        for (const game of rawRelatedGames) {
+          relatedGameIds.push(
+            ...(stmt.game.selectLinkChainById().all(game.id) as Game[]).map((y) => y.id)
+          );
+        }
+        relatedGameIds = [...new Set(relatedGameIds)];
+      } else {
+        relatedGameIds = <string[]>rawRelatedGames.map((x) => x.id);
+      }
+
+      relatedGameIds.forEach((x) => {
+        relateDataSet.add(`${game.id}+${x}`).add(`${x}+${game.id}`);
       });
     }
-    getTransactionByStatement(stmt.game_related.insert())(
-      [...relateDataSet].map((x) => x.split('+'))
-    );
+    if (!isNoExec) {
+      getTransactionByStatement(stmt.game_related.insert())(
+        [...relateDataSet].map((x) => x.split('+'))
+      );
+    }
 
     info(`Game data successfully pulled.`);
 

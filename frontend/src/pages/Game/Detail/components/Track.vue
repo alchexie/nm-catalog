@@ -47,7 +47,6 @@ const tracker = new ElementTracker(async (entries) => {
   if (entry.isIntersecting) {
     await loadMore();
     if (!hasRemainedData()) {
-      console.log(false);
       tracker.disconnect();
     }
   }

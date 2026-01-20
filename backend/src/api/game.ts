@@ -156,7 +156,7 @@ router.get('/:id/detail', async (req: Request, res: Response) => {
       Promise<Game>,
       Promise<Track[]>,
       Promise<Playlist[]>,
-      Promise<Game[]>
+      Promise<Game[]>,
     ] = [
       new Promise((resolve, reject) => {
         try {
@@ -216,7 +216,7 @@ router.get('/:id/detail', async (req: Request, res: Response) => {
           }
 
           const set = new Set<string>([...rgids, ...linkIds, ...linkRgids]);
-          set.delete(id);
+          set.delete(<string>id);
           const result = (await getGameByYear())
             .map((x) => x.games)
             .reduce((a, b) => [...a, ...b])

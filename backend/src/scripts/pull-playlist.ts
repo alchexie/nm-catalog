@@ -4,6 +4,7 @@
   -- (gid)         # update playlists of specific games
   -- section       # from playlist_section.json
   -- (pid)         # update playlists from playlist_section.json (used with "-- section")
+  -- no-exec       # only fetch data and not to operate database
 */
 
 import { LangCode, Playlist, PlaylistType } from '@nm-catalog/shared';
@@ -17,6 +18,7 @@ import upstreem from '../utils/upstreem.js';
 const args = process.argv.slice(2);
 const specificIds = args.filter((x) => isUuid(x));
 const isFromSection = args.includes('section');
+const isNoExec = args.includes('no-exec');
 const langs = Object.values(LangCode);
 let hasError = false;
 
@@ -72,8 +74,10 @@ let hasError = false;
             x.description || '',
           ]);
 
-          trans = getTransactionByStatement(stmt.playlist.insert(lang));
-          trans(playlistData);
+          if (!isNoExec) {
+            trans = getTransactionByStatement(stmt.playlist.insert(lang));
+            trans(playlistData);
+          }
 
           if (!langs.indexOf(lang)) {
             playlistGameData.push(...playlistData.map((x) => [x[0], gameId]));
@@ -91,7 +95,10 @@ let hasError = false;
               i + 1,
               x.id,
             ]);
-            stmt.playlist_track.deleteByPid().run(playlist.id);
+
+            if (!isNoExec) {
+              stmt.playlist_track.deleteByPid().run(playlist.id);
+            }
             playlistTrackData.push(...data);
 
             if (playlist.type === <PlaylistType>'MULTIPLE') {
@@ -110,10 +117,12 @@ let hasError = false;
         );
         updateds.gameIds.push(<string>gameId);
 
-        trans = getTransactionByStatement(stmt.playlist_game.insert());
-        trans(playlistGameData);
-        trans = getTransactionByStatement(stmt.playlist_track.insert());
-        trans(playlistTrackData);
+        if (!isNoExec) {
+          trans = getTransactionByStatement(stmt.playlist_game.insert());
+          trans(playlistGameData);
+          trans = getTransactionByStatement(stmt.playlist_track.insert());
+          trans(playlistTrackData);
+        }
       }
     } else {
       const sections = JSON.parse(readText(COMMON_PATHS['res_playlist_section.json']));
@@ -161,8 +170,10 @@ let hasError = false;
             rawData.description || '',
           ]);
 
-          trans = getTransactionByStatement(stmt.playlist.insert(lang));
-          trans(playlistData);
+          if (!isNoExec) {
+            trans = getTransactionByStatement(stmt.playlist.insert(lang));
+            trans(playlistData);
+          }
 
           if (isSpecial) {
             trackData.push(
@@ -178,8 +189,10 @@ let hasError = false;
               ])
             );
 
-            trans = getTransactionByStatement(stmt.track.insert(lang));
-            trans(trackData);
+            if (!isNoExec) {
+              trans = getTransactionByStatement(stmt.track.insert(lang));
+              trans(trackData);
+            }
           }
 
           if (!langs.indexOf(lang)) {
@@ -191,9 +204,11 @@ let hasError = false;
               ])
             );
 
-            stmt.playlist_track.deleteByPid().run(playlist.id);
-            trans = getTransactionByStatement(stmt.playlist_track.insert());
-            trans(playlistTrackData);
+            if (!isNoExec) {
+              stmt.playlist_track.deleteByPid().run(playlist.id);
+              trans = getTransactionByStatement(stmt.playlist_track.insert());
+              trans(playlistTrackData);
+            }
           }
         }
 
