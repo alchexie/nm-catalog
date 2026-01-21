@@ -1,4 +1,4 @@
-import update from '../db/update/sql_251120.js';
+import update from '../db/update/sql_260121.js';
 
 update();
 

@@ -8,13 +8,18 @@ interface RetryConfig extends InternalAxiosRequestConfig {
   retry: number;
 }
 
+const sSuffixParams =
+  '&membership=BASIC&packageType=hls_cbcs&sdkVersion=ios-1.4.0_f362763-1';
+const retryCount = 3;
 const httpClient = axios.create({
   timeout: 10000,
 });
+
 httpClient.interceptors.request.use((config) => {
   const retryConfig = config as RetryConfig;
   if (!retryConfig.retry) {
-    console.log(`Fetching: ${config.url}`);
+    const displayUrl = config.url!.replace(sSuffixParams, '');
+    console.log(`Fetching: ${displayUrl}`);
   }
   return config;
 });
@@ -26,7 +31,7 @@ httpClient.interceptors.response.use(
       return Promise.reject(error);
     }
     config.retry ??= 0;
-    if (config.retry >= 3) {
+    if (config.retry >= retryCount) {
       console.error('\x1b[31m%s\x1b[0m', `Failed after retries: ${config.url}`);
       return Promise.reject(error);
     }
@@ -70,7 +75,7 @@ const upstreem = {
     lang: LangCodeValue = DEFAULT_LANG
   ): Promise<any> {
     return await request(
-      `${UPSTREAM_API_BASE_URL}games/${gameId}/relatedPlaylists?country=JP&lang=${lang}`
+      `${UPSTREAM_API_BASE_URL}games/${gameId}/relatedPlaylists?country=JP&lang=${lang}${sSuffixParams}`
     );
   },
   async getRelatedsOfGame(gameId: string): Promise<any> {
@@ -83,7 +88,7 @@ const upstreem = {
     lang: LangCodeValue = DEFAULT_LANG
   ): Promise<any> {
     return await request(
-      `${UPSTREAM_API_BASE_URL}officialPlaylists/${playlistId}?country=JP&lang=${lang}`
+      `${UPSTREAM_API_BASE_URL}officialPlaylists/${playlistId}?country=JP&lang=${lang}${sSuffixParams}`
     );
   },
 };

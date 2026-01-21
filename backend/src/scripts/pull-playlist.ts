@@ -1,9 +1,9 @@
 /*
   Pull data of playlists from Nintendo APIs (run [pull-game] first when update)
   
-  -- (gid)         # update playlists of specific games
+  -- <gid>         # update playlists of specific games
   -- section       # from playlist_section.json
-  -- (pid)         # update playlists from playlist_section.json (used with "-- section")
+  -- section <pid> # update a specific playlist from playlist_section.json
   -- no-exec       # only fetch data and not to operate database
 */
 
@@ -27,6 +27,7 @@ let hasError = false;
     gameIds?: string[];
     playlistIds?: string[];
     sectionPlaylistIds?: string[];
+    newSectionPlaylistIds?: string[];
   };
   try {
     updateds = JSON.parse(readText(COMMON_PATHS['updated_playlist.json']));
@@ -36,6 +37,7 @@ let hasError = false;
   updateds.gameIds = updateds.gameIds ?? [];
   updateds.playlistIds = updateds.playlistIds ?? [];
   updateds.sectionPlaylistIds = updateds.sectionPlaylistIds ?? [];
+  updateds.newSectionPlaylistIds = updateds.newSectionPlaylistIds ?? [];
 
   try {
     let trans;
@@ -124,6 +126,8 @@ let hasError = false;
           trans(playlistTrackData);
         }
       }
+
+      info(`Game playlist data successfully pulled.`);
     } else {
       const sections = JSON.parse(readText(COMMON_PATHS['res_playlist_section.json']));
       let playlists = (<DataRow[][]>Object.values(sections)).reduce((a, b) => [
@@ -138,7 +142,10 @@ let hasError = false;
           .all() as Playlist[];
         playlists = playlists.filter((x) => {
           const item = existedPlaylists.find((y) => y.id === x.id);
-          return !item || !item.tracksnum;
+          if (item && !item.tracksnum) {
+            x.toUpdateTrack = 1;
+          }
+          return !item || (!item.tracksnum && !item.fetchstrategy);
         });
       }
 
@@ -152,6 +159,10 @@ let hasError = false;
         const isRegularlyUpdate = !isSpecial && !isAnnual;
 
         for (const lang of langs) {
+          if (playlist.toUpdateTrack && langs.indexOf(lang)) {
+            continue;
+          }
+
           const playlistData: DataCell[][] = [];
           const trackData: DataCell[][] = [];
           const playlistTrackData: DataCell[][] = [];
@@ -185,7 +196,7 @@ let hasError = false;
                 0,
                 0,
                 x.name,
-                (<string>rawData.thumbnailURL).split('/').reverse()[0],
+                (<string>x.thumbnailURL).split('/').reverse()[0],
               ])
             );
 
@@ -212,14 +223,14 @@ let hasError = false;
           }
         }
 
-        writeText(COMMON_PATHS['new_game.json'], '[]');
-        updateds.gameIds = [];
-        updateds.playlistIds = [];
         updateds.sectionPlaylistIds.push(<string>playlist.id);
+        if (!playlist.toUpdateTrack) {
+          updateds.newSectionPlaylistIds.push(<string>playlist.id);
+        }
       }
-    }
 
-    info(`Playlist data successfully pulled.`);
+      info(`Section playlist data successfully pulled.`);
+    }
   } catch (error) {
     console.error(error);
     hasError = true;

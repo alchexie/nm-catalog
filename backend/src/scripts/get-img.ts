@@ -1,19 +1,20 @@
 /*
   Download images (run both [pull-game] and [pull-playlist] first)
   
-  -- original    # also download original images
-  -- error       # download images of previous error tasks
-  -- --dir=xxx   # set target directory for compressed images
+  -- original               # also download original images
+  -- error                  # download images of previous error tasks
+  -- game <gid>             # download images of a specific game
+  -- playlist-section <pid> # download images of a specific playlist from sections
 */
 
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
 import pLimit from 'p-limit';
-import { DEFAULT_LANG, LangCode, LangCodeValue } from '@nm-catalog/shared';
+import { DEFAULT_LANG, LangCode, LangCodeValue, Playlist } from '@nm-catalog/shared';
 import { stmt } from '../db/statements.js';
 import { COMMON_PATHS, ROOT_DIR } from '../utils/paths.js';
-import { info, readText, toError, writeText } from '../utils/tools.js';
+import { info, isUuid, readText, toError, writeText } from '../utils/tools.js';
 import { DataRow } from '../db/schema/index.js';
 import { UPSTREAM_IMG_BASE_URL } from '../utils/upstreem.js';
 
@@ -28,6 +29,8 @@ type Task = {
 const args = process.argv.slice(2);
 const isSaveOriginal = args.includes('original');
 const isDownloadError = args.includes('error');
+const specificIds = args.filter((x) => isUuid(x));
+const tasks: Task[] = [];
 
 let langs = Object.values(LangCode);
 const targetLangs = langs.filter((x) => args.includes(x));
@@ -38,37 +41,51 @@ if (!targetLangs.length) {
   langs = targetLangs;
 }
 
-let [palylistIds, sectionPalylistIds]: [string[], string[]] = [[], []];
-try {
-  const updateds = JSON.parse(readText(COMMON_PATHS['updated_playlist.json']));
-  palylistIds = updateds.playlistIds ?? [];
-  sectionPalylistIds = updateds.sectionPlaylistIds ?? [];
-} catch (error) {}
-
-const sGameIds = readText(COMMON_PATHS['new_game.json']).slice(1, -1).replace(/"/g, `'`);
-const tasks: Task[] = [];
-const sPalylistIds = palylistIds.map((x: string) => `'${x}'`).join(',');
-const sSectionPalylistIds = sectionPalylistIds.map((x: string) => `'${x}'`).join(',');
-
 for (const lang of langs) {
   let imgIds = [];
 
   if (!isDownloadError) {
     const langStr = lang.replace('-', '_');
     const diff = lang.includes('en') ? '' : `and img_${langStr} <> img_en_US`;
-    const sql = `
+    let [sql, sGameIds, sPalylistIds, sSectionPalylistIds] = ['', '', '', ''];
+    let [gameIds, playlistIds, sectionPalylistIds]: string[][] = [[], [], []];
+
+    if (!specificIds.length) {
+      gameIds = JSON.parse(readText(COMMON_PATHS['new_game.json']));
+      try {
+        const updateds = JSON.parse(readText(COMMON_PATHS['updated_playlist.json']));
+        playlistIds = updateds.playlistIds ?? [];
+        sectionPalylistIds = updateds.newSectionPlaylistIds ?? [];
+      } catch (error) {}
+    } else {
+      if (args.includes('game')) {
+        gameIds.push(...specificIds);
+        playlistIds = specificIds
+          .map((x) => (stmt.playlist.selectByGid().all(x) as Playlist[]).map((x) => x.id))
+          .reduce((a, b) => [...a, ...b]);
+      } else if (args.includes('playlist-section')) {
+        sectionPalylistIds = specificIds
+          .map((x) => (stmt.playlist.selectById().all(x) as Playlist[]).map((x) => x.id))
+          .reduce((a, b) => [...a, ...b]);
+      }
+    }
+    sGameIds = gameIds.map((x: string) => `'${x}'`).join(',');
+    sPalylistIds = playlistIds.map((x: string) => `'${x}'`).join(',');
+    sSectionPalylistIds = sectionPalylistIds.map((x: string) => `'${x}'`).join(',');
+
+    sql = `
         select img_${langStr} from game where id in (${sGameIds}) ${diff} 
-        union select img_${langStr} from track where gid in (${sGameIds}) ${
-      !sSectionPalylistIds
-        ? ''
-        : `or id in (select tid from playlist_track t1 inner join playlist t2 on t1.pid=t2.id where t2.type='SPECIAL' and t1.pid in (${sSectionPalylistIds}))`
-    } ${diff}
+        union select img_${langStr} from track where (gid in (${sGameIds}) ${
+          !sSectionPalylistIds
+            ? ''
+            : `or id in (select tid from playlist_track t1 inner join playlist t2 on t1.pid=t2.id where t2.type='SPECIAL' and t1.pid in (${sSectionPalylistIds}))`
+        }) ${diff}
         union select img_${langStr} from playlist where id in (${[
-      sPalylistIds,
-      sSectionPalylistIds,
-    ]
-      .filter((x) => x)
-      .join(',')}) ${diff}
+          sPalylistIds,
+          sSectionPalylistIds,
+        ]
+          .filter((x) => x)
+          .join(',')}) ${diff}
       `;
     imgIds = stmt
       .sql(sql)

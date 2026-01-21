@@ -1,9 +1,17 @@
 import { nextTick, ref } from 'vue';
 
 export const useLoadMore = <T>(data: T[], batchSize = 50) => {
-  const toDisplayData = [...data];
   const displayData = ref<T[]>([]);
+  let toDisplayData = [...data];
   let running = false;
+
+  const resetData = (data: T[]) => {
+    if (running) {
+      return;
+    }
+    toDisplayData = [...data];
+    displayData.value = [];
+  };
 
   const loadMore = async () => {
     if (running) {
@@ -23,5 +31,5 @@ export const useLoadMore = <T>(data: T[], batchSize = 50) => {
 
   const hasRemainedData = () => toDisplayData.length > 0;
 
-  return { displayData, loadMore, hasRemainedData };
+  return { displayData, resetData, loadMore, hasRemainedData };
 };

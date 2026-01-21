@@ -114,12 +114,4 @@ function getTrackCount(mode: TrackTag): number {
     }
   }
 }
-
-.load-more {
-  height: 1px;
-
-  &.disabled {
-    display: none;
-  }
-}
 </style>

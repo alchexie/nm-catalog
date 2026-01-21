@@ -29,6 +29,7 @@ export interface Playlist extends MultiLangVisualEntity, MultiLangField<'desc'> 
   type: PlaylistType;
   tracksnum: number;
   isrelatedgame: number;
+  fetchstrategy?: string;
 }
 
 export type NMData = MultiLangVisualEntity;

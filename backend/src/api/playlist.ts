@@ -64,9 +64,13 @@ router.get('/:id/detail', (req: Request, res: Response) => {
       );
       trackGroups.push({ game, tracks });
     } else {
-      const ptIds = (
-        stmt.playlist_track.selectTrackByPid().all(id) as PlaylistTrack[]
-      ).map((x) => x.id);
+      let ptList!: PlaylistTrack[];
+      if (!playlist.fetchstrategy) {
+        ptList = stmt.playlist_track.selectTrackByPid().all(id) as PlaylistTrack[];
+      } else {
+        ptList = stmt.sql(playlist.fetchstrategy).all() as PlaylistTrack[];
+      }
+      const ptIds = ptList.map((x) => x.id);
       const pTracks = (stmt.track.selectByIds(ptIds).all() as PlaylistTrack[]).sort(
         (a, b) => ptIds.indexOf(a.id) - ptIds.indexOf(b.id)
       );
@@ -96,6 +100,7 @@ router.get('/:id/detail', (req: Request, res: Response) => {
       }
     }
 
+    delete playlist.fetchstrategy;
     tracks.forEach((x, i) => {
       x.pidx = i + 1;
     });

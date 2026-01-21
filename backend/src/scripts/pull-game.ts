@@ -3,7 +3,7 @@
   
   -- full       # full update
   -- no-track   # only update game data
-  -- (gid)      # update specific games (usually to add additional tracks)
+  -- <gid>      # update data of a specific game (usually to add additional tracks)
   -- no-exec    # only fetch data and not to operate database
 */
 
