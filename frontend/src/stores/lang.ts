@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { STORAGE_KEY, DEFAULT_LANG, type LangCodeValue, LangCode } from '@/types';
-import { i18n, loadLocaleMessage, SUPPORT_LOCALES, type LocaleType } from '@/i18n';
+import { i18n, SUPPORT_LOCALES, type LocaleType } from '@/i18n';
 
 export const getInitialLang = (): LangCodeValue => {
   const LangCodes = Object.values(LangCode);
@@ -44,7 +44,6 @@ export const useLangStore = defineStore('lang', {
   }),
   actions: {
     async setLocale(locale: LocaleType, isManual = false) {
-      await loadLocaleMessage(locale);
       i18n.global.locale.value = locale;
       this.locale = locale;
       document.documentElement.setAttribute('lang', locale);

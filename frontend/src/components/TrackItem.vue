@@ -25,7 +25,8 @@
       </h3>
       <ul class="text-else" v-if="!showGameInfo">
         <li v-for="lang of computedLangs" :key="lang" class="prefix-text">
-          <b>{{ lang }}</b> {{ stringMap.getString(data, 'title', lang) }}
+          <SvgIcon :type="`lang-${lang}`" width="3em" height="1.5em"></SvgIcon>
+          {{ stringMap.getString(data, 'title', lang) }}
         </li>
       </ul>
     </div>

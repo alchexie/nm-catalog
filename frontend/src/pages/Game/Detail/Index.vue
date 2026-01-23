@@ -17,7 +17,7 @@
           </h1>
           <ul class="text-else">
             <li v-for="lang of computedLangs" :key="lang" class="prefix-text">
-              <b>{{ lang }}</b>
+              <SvgIcon :type="`lang-${lang}`" width="3em" height="1.5em"></SvgIcon>
               {{ stringMap.getString(data.game, 'title', lang) }}
             </li>
           </ul>
@@ -69,6 +69,7 @@ import Playlist from './components/Playlist.vue';
 import { GameDataSection, type GameDetail } from '@/types';
 import { getGameDetail } from '@/api';
 import { isShowTitle, openSourceImg } from '@/utils/data-utils';
+import SvgIcon from '@/components/SvgIcon.vue';
 
 const { t } = useI18n();
 const route = useRoute();

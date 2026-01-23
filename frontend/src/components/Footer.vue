@@ -4,13 +4,17 @@
     <label>
       {{ t('info.lang') }}{{ t('punctuation.colon') }}
       <select name="lang" v-model="mainLang" @change="onLangChange">
-        <option v-for="lang in langList" :key="lang" :value="lang">
-          {{ lang }}
+        <option
+          v-for="[key, name] in Object.entries(LangNameMap)"
+          :key="key"
+          :value="key"
+        >
+          {{ name }}
         </option>
       </select>
-      <span :class="{ dim: isScrollTop }" @click.stop="scrollToTop()"
-        >{{ t('info.top') }} ↑</span
-      >
+      <span :class="{ dim: isScrollTop }" @click.stop="scrollToTop()">
+        {{ t('info.top') }} ↑
+      </span>
     </label>
   </footer>
 </template>
@@ -18,7 +22,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { LangCode, type LangCodeValue } from '@/types';
+import { LangCode, LangNameMap, type LangCodeValue } from '@/types';
 import { getLocale, useLangStore } from '@/stores';
 import { scrollToY } from '@/utils/dom-utils';
 import { ElementTracker } from '@/utils/element-tracker';
@@ -91,7 +95,6 @@ function scrollToTop() {
 
 @media (max-width: 767px) {
   #footer {
-
     span {
       margin-left: 1rem;
     }

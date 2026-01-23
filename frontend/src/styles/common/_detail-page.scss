@@ -3,7 +3,6 @@
 
 .prefix-text {
   display: flex;
-  align-items: baseline;
 }
 
 .common-detail {
@@ -55,17 +54,13 @@
 
     .text-else {
       margin-top: 0;
-      opacity: 0.5;
+      opacity: 0.65;
       font-size: 0.8rem;
+      color: rgba($root-textColor, 0.8);
 
       > li {
         display: flex;
         margin: 0 0 0.2rem;
-
-        > b {
-          display: inline-block;
-          width: 3.5rem;
-        }
       }
     }
   }
@@ -138,6 +133,14 @@
 @media (prefers-color-scheme: light) {
   #detial-main {
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .common-detail {
+    .detail-text {
+      .text-else {
+        color: rgba($root-textColor-light, 0.9);
+      }
+    }
   }
 }
 

@@ -4,23 +4,18 @@ import { createI18n } from 'vue-i18n';
 export const SUPPORT_LOCALES = ['en-US', 'ja-JP', 'zh-CN', 'zh-TW'] as const;
 export type LocaleType = (typeof SUPPORT_LOCALES)[number];
 
-const loaded: LocaleType[] = [];
-const loaders = Object.fromEntries(
-  SUPPORT_LOCALES.map((lang) => [lang, () => import(`./lang/${lang}.json`)])
-);
+const modules = import.meta.glob('./lang/*.json', { eager: true });
+const messages: Record<LocaleType, any> = {} as any;
 
-export const loadLocaleMessage = async (locale: LocaleType) => {
-  if (loaded.includes(locale)) {
-    return;
-  }
-  const moudle = await loaders[locale]();
-  i18n.global.setLocaleMessage(locale, moudle.default || moudle);
-  loaded.push(locale);
-};
+Object.entries(modules).forEach(([path, module]) => {
+  const match = path.match(/\.\/lang\/(.*)\.json$/);
+  const locale = match![1] as LocaleType;
+  messages[locale] = (module as any).default;
+});
 
 export const i18n = createI18n({
   legacy: false,
   locale: DEFAULT_LANG,
   fallbackLocale: DEFAULT_LANG,
-  messages: {},
+  messages: messages,
 });
