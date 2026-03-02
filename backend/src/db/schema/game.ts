@@ -75,7 +75,12 @@ const tbGame: DBTableConfig = {
   selectGroupBy: (groupBy: GameGroupBy) => {
     switch (groupBy) {
       case 'PLATFORM':
-        return `SELECT * FROM game t1 INNER JOIN hardware t2 ON t1.hardware=t2.name ORDER BY t2.year desc, inserted DESC`;
+        return `SELECT *
+                  FROM game t1
+                  INNER JOIN hardware t2
+                    ON REPLACE(t1.hardware, CHAR(160), ' ')
+                    = REPLACE(t2.name, CHAR(160), ' ')
+                  ORDER BY t2.year DESC, inserted DESC`;
       case 'RELEASE':
         return `SELECT * FROM game ORDER BY year desc, inserted DESC`;
       case 'ADDED':
