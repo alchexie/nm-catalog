@@ -107,7 +107,7 @@ useHeader(() => ({
     if (data.value) {
       return [
         h('h1', computedTitle.value),
-        h('small', `(${data.value.game.year}) | ${data.value.game.hardware})`),
+        h('small', `(${data.value.game.year} | ${data.value.game.hardware})`),
       ];
     } else {
       return [];
