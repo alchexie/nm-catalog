@@ -24,7 +24,6 @@
     "get-img:prod": "node dist/scripts/get-img.js"
   },
   "dependencies": {
-    "axios": "^1.9.0",
     "better-sqlite3": "^11.10.0",
     "compression": "^1.8.0",
     "cors": "^2.8.5",

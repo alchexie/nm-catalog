@@ -3,7 +3,6 @@ import GameListComponent from '@/pages/Game/List/Index.vue';
 import GameDetailComponent from '@/pages/Game/Detail/Index.vue';
 import PlaylistListComponent from '@/pages/Playlist/List/Index.vue';
 import PlaylistDetailComponent from '@/pages/Playlist/Detail/Index.vue';
-// import UploadComponent from '@/pages/Upload.vue';
 import { STORAGE_KEY } from '@/types';
 
 const routes = [
@@ -18,7 +17,6 @@ const routes = [
   { path: '/game/:gid', component: GameDetailComponent },
   { path: '/playlist', component: PlaylistListComponent },
   { path: '/playlist/:pid', component: PlaylistDetailComponent },
-  // { path: '/upload', component: UploadComponent },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
