@@ -235,7 +235,9 @@ let hasError = false;
     console.error(error);
     hasError = true;
   } finally {
-    writeText(COMMON_PATHS['updated_playlist.json'], updateds);
+    if (!isNoExec) {
+      writeText(COMMON_PATHS['updated_playlist.json'], updateds);
+    }
     if (hasError) {
       process.exit(1);
     }

@@ -16,6 +16,12 @@ const tbPlaylistTrack: DBTableConfig = {
     WHERE pt.pid = ?
     ORDER BY pt.idx
   `,
+  selectPlaylistByTids: (tids: string[] = []) => `
+    SELECT DISTINCT p.*
+    FROM playlist_track pt
+    INNER JOIN playlist p ON pt.pid = p.id
+    WHERE pt.tid in (${tids.map((id) => `'${id}'`).join(',')})
+  `,
   insert: () => `INSERT OR IGNORE INTO playlist_track (pid, idx, tid) VALUES (?, ?, ?)`,
   deleteByPid: () => `DELETE FROM playlist_track WHERE pid = ?`,
 };

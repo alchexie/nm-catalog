@@ -27,7 +27,7 @@ router.get('/', (_req: Request, res: Response) => {
       .all() as Playlist[];
 
     const result = [] as PlaylistSection[];
-    Object.entries(rawData).forEach(([_x, y], i) => {
+    Object.entries(rawData).forEach((_, i) => {
       result.push({
         tag: PlaylistSectionType[i],
         playlists: rawPlaylistData[i].map((x) => playlists.find((y) => y.id === x.id)!),
@@ -76,8 +76,23 @@ router.get('/:id/detail', (req: Request, res: Response) => {
       );
       tracks.push(...pTracks);
 
-      if (playlist.isrelatedgame) {
-        const games = stmt.playlist_game.selectGameByPid().all(id) as Game[];
+      if (playlist.type !== 'SPECIAL') {
+        let games: Game[] = [];
+        if (playlist.isrelatedgame) {
+          games = stmt.playlist_game.selectGameByPid().all(id) as Game[];
+        } else {
+          games = (
+            stmt.game.selectByIds([...new Set(tracks.map((x) => x.gid))]).all() as Game[]
+          ).sort((a, b) => a.year - b.year);
+
+          const orderMap = new Map(games.map((g, i) => [g.id, i]));
+          tracks.sort((a, b) => {
+            const orderDiff =
+              (orderMap.get(a.gid!) ?? Infinity) - (orderMap.get(b.gid!) ?? Infinity);
+            return orderDiff !== 0 ? orderDiff : a.idx - b.idx;
+          });
+        }
+
         tracks.forEach((x, i) => {
           if (i === 0 || x.gid !== tracks[i - 1].gid) {
             trackGroups.push({
@@ -88,14 +103,29 @@ router.get('/:id/detail', (req: Request, res: Response) => {
           const group = trackGroups.at(-1);
           group!.tracks.push(x);
         });
-      } else {
-        if (playlist.type !== 'SPECIAL') {
-          if (!playlist.tracksnum) {
-            // temp solution
-            tracks.sort(() => Math.random() - 0.5);
-          }
-        }
 
+        const last = trackGroups.at(-1)!;
+        if (!last?.game) {
+          trackGroups.pop();
+
+          const specialPlaylists = (
+            stmt.playlist_track
+              .selectPlaylistByTids([...new Set(last?.tracks.map((x) => x.id))])
+              .all() as Playlist[]
+          ).filter((x) => x.type === 'SPECIAL');
+          const lastGroupTrackIds = last.tracks.map((x) => x.id);
+          const orderedTracks = specialPlaylists
+            .flatMap(
+              (x) => stmt.playlist_track.selectTrackByPid().all(x.id) as PlaylistTrack[]
+            )
+            .filter((x) => lastGroupTrackIds.includes(x.id));
+          new Array(lastGroupTrackIds.length).fill(0).forEach((_, i) => {
+            tracks[tracks.length - lastGroupTrackIds.length + i] = orderedTracks[i];
+          });
+
+          trackGroups.push({ tracks: tracks.slice(-lastGroupTrackIds.length) });
+        }
+      } else {
         trackGroups.push({ tracks });
       }
     }

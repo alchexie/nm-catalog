@@ -216,9 +216,11 @@ const stopInfo = () => {
         games.map((x) => x.id)
       );
     }
-    writeText(COMMON_PATHS['res_game_platform.json'], '');
-    writeText(COMMON_PATHS['res_game_year.json'], '');
-    writeText(COMMON_PATHS['updated_playlist.json'], '{}');
+    if (!isNoExec) {
+      writeText(COMMON_PATHS['res_game_platform.json'], '');
+      writeText(COMMON_PATHS['res_game_year.json'], '');
+      writeText(COMMON_PATHS['updated_playlist.json'], '{}');
+    }
   } catch (errof) {
     console.error(errof);
     process.exit(1);

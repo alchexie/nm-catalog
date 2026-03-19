@@ -1,21 +1,24 @@
 <template>
   <div id="top-mark" ref="topRef"></div>
   <footer id="footer">
-    <label>
-      {{ t('info.lang') }}{{ t('punctuation.colon') }}
-      <select name="lang" v-model="mainLang" @change="onLangChange">
-        <option
-          v-for="[key, name] in Object.entries(LangNameMap)"
-          :key="key"
-          :value="key"
-        >
-          {{ name }}
-        </option>
-      </select>
-      <span :class="{ dim: isScrollTop }" @click.stop="scrollToTop()">
-        {{ t('info.top') }} ↑
-      </span>
-    </label>
+    <div>
+      <span class="dim">Fan project. Not an official site.</span>
+      <label>
+        {{ t('info.lang') }}{{ t('punctuation.colon') }}
+        <select name="lang" v-model="mainLang" @change="onLangChange">
+          <option
+            v-for="[key, name] in Object.entries(LangNameMap)"
+            :key="key"
+            :value="key"
+          >
+            {{ name }}
+          </option>
+        </select>
+        <span :class="{ dim: isScrollTop }" @click.stop="scrollToTop()">
+          {{ t('info.top') }} ↑
+        </span>
+      </label>
+    </div>
   </footer>
 </template>
 
@@ -68,21 +71,35 @@ function scrollToTop() {
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 3em;
+  width: 100%;
   background-color: rgba($footer-bgColor, 0.8);
   font-size: small;
 
-  span {
-    display: inline-flex;
+  > div {
+    display: flex;
     align-items: center;
-    margin-left: 2rem;
-    cursor: pointer;
+    justify-content: center;
+    max-width: 1200px;
+    height: 3em;
+    margin: 0 auto;
+    padding: 0 3.5rem;
 
-    &.dim {
-      opacity: 0.5;
+    > label {
+      margin-left: auto;
+
+      select {
+        margin-right: 2rem;
+      }
+    }
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+
+      &.dim {
+        opacity: 0.5;
+      }
     }
   }
 }

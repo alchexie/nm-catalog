@@ -32,15 +32,20 @@
           <template
             v-if="!index || trackLoader.displayData.value.length >= group.tracks[0].pidx"
           >
-            <h2 v-if="group.game">
-              <router-link :to="`/game/${group.game.id}`">
-                <img
-                  v-fallback
-                  :src="imgMap.getPath('game', group.game)"
-                  loading="lazy"
-                />
-                {{ stringMap.getString(group.game, 'title') }}
-              </router-link>
+            <h2 v-if="data.playlist.type !== 'SPECIAL'">
+              <template v-if="group.game">
+                <router-link :to="`/game/${group.game.id}`">
+                  <img
+                    v-fallback
+                    :src="imgMap.getPath('game', group.game)"
+                    loading="lazy"
+                  />
+                  {{ group.game.year }} · {{ stringMap.getString(group.game, 'title') }}
+                </router-link>
+              </template>
+              <template v-else>
+                <a>{{ t(`playlist.type.SPECIAL`) }}</a>
+              </template>
             </h2>
             <template v-for="track in group.tracks" :key="track.id">
               <TrackItem
