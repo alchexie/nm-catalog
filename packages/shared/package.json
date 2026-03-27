@@ -9,6 +9,6 @@
   ],
   "scripts": {
     "dev": "tsc -w",
-    "build": "rimraf dist && tsc"
+    "build": "rm -rf dist && tsc"
   }
 }

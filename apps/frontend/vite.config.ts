@@ -33,7 +33,7 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use(
           '/assets',
-          serveStatic(path.resolve(__dirname, '../assets'))
+          serveStatic(path.resolve(__dirname, '../../assets'))
         );
       },
     },
