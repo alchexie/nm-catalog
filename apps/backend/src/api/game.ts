@@ -1,10 +1,14 @@
 import express, { type Request, type Response } from 'express';
 import { Game, GameGroup, GameGroupBy, Playlist, Track } from '@nm-catalog/shared';
-import { stmt } from '../db/statements.js';
-import { DataRow } from '../db/schema/index.js';
-import { COMMON_PATHS } from '../utils/paths.js';
-import { readText, toError, writeText } from '../utils/tools.js';
-import upstreem from '../utils/upstreem.js';
+import {
+  stmt,
+  DataRow,
+  COMMON_PATHS,
+  readText,
+  toError,
+  writeText,
+  upstreem,
+} from '@nm-catalog/core';
 
 const router = express.Router();
 

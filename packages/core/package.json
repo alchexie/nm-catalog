@@ -1,0 +1,38 @@
+{
+  "name": "@nm-catalog/core",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsc -w",
+    "build": "rm -rf dist && tsc",
+    "init-db": "tsx src/scripts/init-db.ts",
+    "init-data": "tsx src/scripts/init-data.ts",
+    "modify-db": "tsx src/scripts/modify-db.ts",
+    "update-latest": "tsx src/scripts/update-latest.ts",
+    "pull-game": "tsx src/scripts/pull-game.ts",
+    "pull-playlist": "tsx src/scripts/pull-playlist.ts",
+    "get-img": "tsx src/scripts/get-img.ts",
+    "modify-db:prod": "node dist/scripts/modify-db.js",
+    "pull-game:prod": "node dist/scripts/pull-game.js",
+    "pull-playlist:prod": "node dist/scripts/pull-playlist.js",
+    "get-img:prod": "node dist/scripts/get-img.js"
+  },
+  "dependencies": {
+    "@nm-catalog/shared": "workspace:*",
+    "better-sqlite3": "^12.8.0",
+    "p-limit": "^6.2.0",
+    "sharp": "^0.34.2",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.0.3",
+    "@types/xlsx": "^0.0.36",
+    "tsx": "^4.21.0"
+  }
+}

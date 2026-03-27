@@ -8,10 +8,13 @@ import {
   PlaylistTrack,
   PlaylistTrackGroup,
 } from '@nm-catalog/shared';
-import { stmt } from '../db/statements.js';
-import { readText, toError } from '../utils/tools.js';
-import { COMMON_PATHS } from '../utils/paths.js';
-import { DataRow } from '../db/schema/index.js';
+import {
+  stmt,
+  readText,
+  toError,
+  COMMON_PATHS,
+  DataRow,
+} from '@nm-catalog/core';
 
 const router = express.Router();
 

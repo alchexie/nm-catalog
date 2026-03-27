@@ -2,10 +2,21 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-export const ROOT_DIR = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '../../'
-);
+const findProjectRoot = (startUrl: string): string => {
+  let dir = path.dirname(fileURLToPath(startUrl));
+  while (true) {
+    if (fs.existsSync(path.resolve(dir, 'pnpm-workspace.yaml'))) {
+      return dir;
+    }
+    const parent = path.resolve(dir, '..');
+    if (parent === dir) {
+      throw new Error('Project root not found');
+    }
+    dir = parent;
+  }
+};
+
+export const ROOT_DIR = findProjectRoot(import.meta.url);
 export const FILES_DIR = path.join(ROOT_DIR, 'files');
 export const RES_DIR = path.join(FILES_DIR, 'response');
 

@@ -18,6 +18,16 @@ export type DBTableConfig = {
   preparedData?: DataCell[][];
 };
 
+export type TableName =
+  | 'lang'
+  | 'hardware'
+  | 'game'
+  | 'track'
+  | 'playlist'
+  | 'playlist_game'
+  | 'playlist_track'
+  | 'game_related';
+
 export {
   tbLang,
   tbHardware,

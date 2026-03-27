@@ -1,19 +1,22 @@
-const { mkdirSync, cpSync, rmSync } = require('fs');
+const { mkdirSync, cpSync, rmSync, writeFileSync } = require('fs');
 
 const serverItems = [
-  { name: 'backend', src: 'apps/backend' },
-  { name: 'shared', src: 'packages/shared' },
+  { src: 'apps/backend', dest: 'server/apps/backend' },
+  { src: 'packages/core', dest: 'server/packages/core' },
+  { src: 'packages/shared', dest: 'server/packages/shared' },
 ];
-
-for (const { name, src } of serverItems) {
-  const targetDir = `dist/server/${name}`;
+for (const { src, dest } of serverItems) {
+  const targetDir = `dist/${dest}`;
   mkdirSync(targetDir, { recursive: true });
   cpSync(`${src}/dist`, `${targetDir}/dist`, { recursive: true });
   cpSync(`${src}/package.json`, `${targetDir}/package.json`);
-  if (name !== 'shared') {
-    rmSync(`${src}/dist`, { recursive: true, force: true });
-  }
 }
+
+cpSync('pnpm-workspace.yaml', 'dist/server/pnpm-workspace.yaml');
+writeFileSync(
+  'dist/server/package.json',
+  JSON.stringify({ name: 'nm-catalog-server', private: true }, null, 2)
+);
 
 mkdirSync('dist/web', { recursive: true });
 cpSync('apps/frontend/dist', 'dist/web', { recursive: true });

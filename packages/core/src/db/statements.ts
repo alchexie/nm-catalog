@@ -1,4 +1,5 @@
 import { getDb, SqliteDb } from './index.js';
+import type { Statement as SqliteStatement } from 'better-sqlite3';
 import {
   DBTableConfig,
   DbSqlMethod,
@@ -10,9 +11,18 @@ import {
   tbPlaylist,
   tbPlaylistTrack,
   tbTrack,
+  TableName,
 } from './schema/index.js';
 
-const prepare = (db: SqliteDb, tbConfig: DBTableConfig) => {
+type PreparedTable = Record<string, (...args: any[]) => SqliteStatement>;
+
+type StatementMap = {
+  [key in TableName]: PreparedTable;
+} & {
+  sql: (sql: string) => SqliteStatement;
+};
+
+const prepare = (db: SqliteDb, tbConfig: DBTableConfig): PreparedTable => {
   return Object.fromEntries(
     (
       Object.entries(tbConfig).filter(
@@ -20,11 +30,11 @@ const prepare = (db: SqliteDb, tbConfig: DBTableConfig) => {
           key !== 'create' && key !== 'preparedData' && typeof value === 'function'
       ) as [string, DbSqlMethod][]
     ).map(([key, fn]) => [key, (...args: any[]) => db.prepare(fn(...args))])
-  );
+  ) as PreparedTable;
 };
 
 const db = getDb();
-export const stmt = {
+export const stmt: StatementMap = {
   lang: prepare(db, tbLang),
   hardware: prepare(db, tbHardware),
   game: prepare(db, tbGame),
