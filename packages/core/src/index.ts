@@ -9,5 +9,6 @@ export { COMMON_PATHS, ROOT_DIR, FILES_DIR, RES_DIR, DB_PATH } from './utils/pat
 export { readText, writeText, info, toError, isUuid, getDuration } from './utils/tools.js';
 export { importData } from './utils/excel.js';
 export { default as upstreem, UPSTREAM_API_BASE_URL, UPSTREAM_IMG_BASE_URL } from './utils/upstreem.js';
-
+export { default as updateSql260121 } from './db/update/sql_260121.js';
+export { default as updateSql251120 } from './db/update/sql_251120.js';
 

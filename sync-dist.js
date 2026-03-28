@@ -4,6 +4,7 @@ const serverItems = [
   { src: 'apps/backend', dest: 'server/apps/backend' },
   { src: 'packages/core', dest: 'server/packages/core' },
   { src: 'packages/shared', dest: 'server/packages/shared' },
+  { src: 'tools/scripts', dest: 'server/tools/scripts' },
 ];
 for (const { src, dest } of serverItems) {
   const targetDir = `dist/${dest}`;

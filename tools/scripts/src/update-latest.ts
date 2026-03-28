@@ -31,3 +31,4 @@ const runCommand = (exec: string) => {
   await runCommand('npm run pull-playlist -- section');
   await runCommand('npm run get-img -- original');
 })();
+

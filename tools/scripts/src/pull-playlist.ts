@@ -8,12 +8,11 @@
 */
 
 import { LangCode, Playlist, PlaylistType } from '@nm-catalog/shared';
-import { stmt } from '../db/statements.js';
-import { getTransactionByStatement } from '../db/transaction.js';
-import { COMMON_PATHS } from '../utils/paths.js';
-import { getDuration, info, isUuid, readText, writeText } from '../utils/tools.js';
-import { DataCell, DataRow } from '../db/schema/index.js';
-import upstreem from '../utils/upstreem.js';
+import { stmt, upstreem } from '@nm-catalog/core';
+import { getTransactionByStatement } from '@nm-catalog/core';
+import { COMMON_PATHS } from '@nm-catalog/core';
+import { getDuration, info, isUuid, readText, writeText } from '@nm-catalog/core';
+import { DataCell, DataRow } from '@nm-catalog/core';
 
 const args = process.argv.slice(2);
 const specificIds = args.filter((x) => isUuid(x));

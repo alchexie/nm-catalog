@@ -9,12 +9,11 @@
 
 import pLimit from 'p-limit';
 import { Game, LangCode, LangCodeValue } from '@nm-catalog/shared';
-import { stmt } from '../db/statements.js';
-import { getTransactionByStatement } from '../db/transaction.js';
-import { DataCell, DataRow } from '../db/schema/index.js';
-import { getDuration, info, isUuid, writeText } from '../utils/tools.js';
-import { COMMON_PATHS } from '../utils/paths.js';
-import upstreem from '../utils/upstreem.js';
+import { stmt, upstreem } from '@nm-catalog/core';
+import { getTransactionByStatement } from '@nm-catalog/core';
+import { DataCell, DataRow } from '@nm-catalog/core';
+import { getDuration, info, isUuid, writeText } from '@nm-catalog/core';
+import { COMMON_PATHS } from '@nm-catalog/core';
 
 const args = process.argv.slice(2);
 const isUpdateSpecific = args.filter((x) => isUuid(x)).length > 0;

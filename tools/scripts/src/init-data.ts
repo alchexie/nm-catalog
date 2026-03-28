@@ -7,9 +7,9 @@
 
 import fs from 'fs';
 import path from 'path';
-import { closeDb } from '../db/index.js';
-import { FILES_DIR } from '../utils/paths.js';
-import { importData } from '../utils/excel.js';
+import { closeDb } from '@nm-catalog/core';
+import { FILES_DIR } from '@nm-catalog/core';
+import { importData } from '@nm-catalog/core';
 
 const args = process.argv.slice(2);
 const isDesc = args.includes('desc');
@@ -31,3 +31,4 @@ try {
 } finally {
   closeDb();
 }
+

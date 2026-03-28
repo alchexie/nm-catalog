@@ -6,9 +6,9 @@
 
 import fs from 'fs';
 import Database from 'better-sqlite3';
-import { tbGame, tbGameRelated, tbHardware, tbLang, tbTrack } from '../db/schema/index.js';
-import { getTransactionBySql } from '../db/transaction.js';
-import { DB_PATH } from '../utils/paths.js';
+import { tbGame, tbGameRelated, tbHardware, tbLang, tbTrack } from '@nm-catalog/core';
+import { getTransactionBySql } from '@nm-catalog/core';
+import { DB_PATH } from '@nm-catalog/core';
 
 const args = process.argv.slice(2);
 const isForced = args.includes('force');
@@ -42,3 +42,4 @@ if (!fs.existsSync(DB_PATH)) {
 } else {
   console.log('Database existed.');
 }
+

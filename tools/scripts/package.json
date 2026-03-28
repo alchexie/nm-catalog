@@ -1,0 +1,31 @@
+{
+  "name": "@nm-catalog/scripts",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "init-db": "tsx src/init-db.ts",
+    "init-data": "tsx src/init-data.ts",
+    "modify-db": "tsx src/modify-db.ts",
+    "update-latest": "tsx src/update-latest.ts",
+    "pull-game": "tsx src/pull-game.ts",
+    "pull-playlist": "tsx src/pull-playlist.ts",
+    "get-img": "tsx src/get-img.ts",
+    "modify-db:prod": "node dist/modify-db.js",
+    "pull-game:prod": "node dist/pull-game.js",
+    "pull-playlist:prod": "node dist/pull-playlist.js",
+    "get-img:prod": "node dist/get-img.js"
+  },
+  "dependencies": {
+    "@nm-catalog/core": "workspace:*",
+    "@nm-catalog/shared": "workspace:*",
+    "p-limit": "^6.2.0",
+    "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.0.3",
+    "tsx": "^4.21.0"
+  }
+}
