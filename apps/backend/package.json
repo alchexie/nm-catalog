@@ -1,0 +1,31 @@
+{
+  "name": "@nm-catalog/backend",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "nodemon",
+    "build": "rimraf dist && tsc"
+  },
+  "dependencies": {
+    "@nm-catalog/shared": "workspace:*",
+    "@nm-catalog/core": "workspace:*",
+    "compression": "^1.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.3",
+    "nodemon": "^3.1.10",
+    "tsx": "^4.21.0"
+  }
+}

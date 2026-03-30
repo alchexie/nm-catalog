@@ -1,0 +1,24 @@
+{
+  "name": "@nm-catalog/core",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsc -w",
+    "build": "rimraf dist && tsc"
+  },
+  "dependencies": {
+    "@nm-catalog/shared": "workspace:*",
+    "better-sqlite3": "^12.8.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.0.3",
+    "@types/xlsx": "^0.0.36"
+  }
+}
