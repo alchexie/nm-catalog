@@ -7,9 +7,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { closeDb } from '@nm-catalog/core';
-import { FILES_DIR } from '@nm-catalog/core';
-import { importData } from '@nm-catalog/core';
+import { closeDb, FILES_DIR, importData } from '@nm-catalog/core';
 
 const args = process.argv.slice(2);
 const isDesc = args.includes('desc');
@@ -31,4 +29,3 @@ try {
 } finally {
   closeDb();
 }
-

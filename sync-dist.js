@@ -11,6 +11,9 @@ for (const { src, dest } of serverItems) {
   mkdirSync(targetDir, { recursive: true });
   cpSync(`${src}/dist`, `${targetDir}/dist`, { recursive: true });
   cpSync(`${src}/package.json`, `${targetDir}/package.json`);
+  if (!src.includes('packages')) {
+    rmSync(`${src}/dist`, { recursive: true, force: true });
+  }
 }
 
 cpSync('pnpm-workspace.yaml', 'dist/server/pnpm-workspace.yaml');

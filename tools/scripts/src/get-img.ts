@@ -12,11 +12,18 @@ import path from 'path';
 import sharp from 'sharp';
 import pLimit from 'p-limit';
 import { DEFAULT_LANG, LangCode, LangCodeValue, Playlist } from '@nm-catalog/shared';
-import { stmt } from '@nm-catalog/core';
-import { COMMON_PATHS, ROOT_DIR } from '@nm-catalog/core';
-import { info, isUuid, readText, toError, writeText } from '@nm-catalog/core';
-import { DataRow } from '@nm-catalog/core';
-import { UPSTREAM_IMG_BASE_URL } from '@nm-catalog/core';
+import {
+  COMMON_PATHS,
+  DataRow,
+  info,
+  isUuid,
+  readText,
+  ROOT_DIR,
+  stmt,
+  toError,
+  UPSTREAM_IMG_BASE_URL,
+  writeText,
+} from '@nm-catalog/core';
 
 type Task = {
   lang: LangCodeValue;
@@ -137,10 +144,10 @@ const processImage = async (imgId: string, index: number, task: Task) => {
       .resize(Math.round(metadata.width / 4), Math.round(metadata.height / 4))
       .toFile(compressedPath);
 
-    console.log(`âœ?${task.lang}-${index + 1}: ${filename}`);
+    console.log(`ï¿½?${task.lang}-${index + 1}: ${filename}`);
   } catch (error) {
     const err = toError(error);
-    console.error(`â?${task.lang}-${index + 1} (${imgId}): ${err.message}`);
+    console.error(`ï¿½?${task.lang}-${index + 1} (${imgId}): ${err.message}`);
     task.errors.push(imgId);
   }
 };
@@ -168,4 +175,3 @@ const runAll = async () => {
 };
 
 runAll();
-

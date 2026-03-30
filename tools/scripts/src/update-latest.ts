@@ -26,9 +26,8 @@ const runCommand = (exec: string) => {
 };
 
 (async () => {
-  await runCommand('npm run pull-game');
-  await runCommand('npm run pull-playlist');
-  await runCommand('npm run pull-playlist -- section');
-  await runCommand('npm run get-img -- original');
+  await runCommand('pnpm pull-game');
+  await runCommand('pnpm pull-playlist');
+  await runCommand('pnpm pull-playlist -- section');
+  await runCommand('pnpm get-img -- original');
 })();
-

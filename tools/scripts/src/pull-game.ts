@@ -9,11 +9,18 @@
 
 import pLimit from 'p-limit';
 import { Game, LangCode, LangCodeValue } from '@nm-catalog/shared';
-import { stmt, upstreem } from '@nm-catalog/core';
-import { getTransactionByStatement } from '@nm-catalog/core';
-import { DataCell, DataRow } from '@nm-catalog/core';
-import { getDuration, info, isUuid, writeText } from '@nm-catalog/core';
-import { COMMON_PATHS } from '@nm-catalog/core';
+import {
+  COMMON_PATHS,
+  DataCell,
+  DataRow,
+  getDuration,
+  getTransactionByStatement,
+  info,
+  isUuid,
+  stmt,
+  upstreem,
+  writeText,
+} from '@nm-catalog/core';
 
 const args = process.argv.slice(2);
 const isUpdateSpecific = args.filter((x) => isUuid(x)).length > 0;
@@ -75,7 +82,7 @@ const stopInfo = () => {
 
       if (flatGameWithYears.findIndex((x) => x.isGameLink) > -1 && !isFullUpdate) {
         info(
-          `New games contains linked game. Please run "npm run play-game -- full no-track" after running.`
+          `New games contains linked game. Please run "pnpm pull-game -- full no-track" after running.`
         );
       }
     }

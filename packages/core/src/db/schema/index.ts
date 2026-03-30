@@ -18,23 +18,13 @@ export type DBTableConfig = {
   preparedData?: DataCell[][];
 };
 
-export type TableName =
-  | 'lang'
-  | 'hardware'
-  | 'game'
-  | 'track'
-  | 'playlist'
-  | 'playlist_game'
-  | 'playlist_track'
-  | 'game_related';
-
-export {
-  tbLang,
-  tbHardware,
-  tbGame,
-  tbTrack,
-  tbPlaylist,
-  tbPlaylistGame,
-  tbPlaylistTrack,
-  tbGameRelated,
-};
+export const DB_TABLES = {
+  lang: tbLang,
+  hardware: tbHardware,
+  game: tbGame,
+  track: tbTrack,
+  playlist: tbPlaylist,
+  playlist_game: tbPlaylistGame,
+  playlist_track: tbPlaylistTrack,
+  game_related: tbGameRelated,
+} as const;

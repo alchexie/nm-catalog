@@ -1,5 +1,5 @@
 import express, { type Request, type Response } from 'express';
-import { Game, GameGroup, GameGroupBy, Playlist, Track } from '@nm-catalog/shared';
+import type { Game, GameGroup, GameGroupBy, Playlist, Track } from '@nm-catalog/shared';
 import {
   stmt,
   DataRow,

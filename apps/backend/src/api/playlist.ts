@@ -1,20 +1,14 @@
 import express, { type Request, type Response } from 'express';
 import {
-  Game,
-  Playlist,
-  PlaylistDetail,
-  PlaylistSection,
   PlaylistSectionType,
-  PlaylistTrack,
-  PlaylistTrackGroup,
+  type Game,
+  type Playlist,
+  type PlaylistDetail,
+  type PlaylistSection,
+  type PlaylistTrack,
+  type PlaylistTrackGroup,
 } from '@nm-catalog/shared';
-import {
-  stmt,
-  readText,
-  toError,
-  COMMON_PATHS,
-  DataRow,
-} from '@nm-catalog/core';
+import { stmt, readText, toError, COMMON_PATHS, DataRow } from '@nm-catalog/core';
 
 const router = express.Router();
 

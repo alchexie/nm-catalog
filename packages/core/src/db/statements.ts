@@ -1,19 +1,8 @@
-import { getDb, SqliteDb } from './index.js';
 import type { Statement as SqliteStatement } from 'better-sqlite3';
-import {
-  DBTableConfig,
-  DbSqlMethod,
-  tbGameRelated,
-  tbGame,
-  tbHardware,
-  tbLang,
-  tbPlaylistGame,
-  tbPlaylist,
-  tbPlaylistTrack,
-  tbTrack,
-  TableName,
-} from './schema/index.js';
+import { getDb, SqliteDb } from './index.js';
+import { DBTableConfig, DB_TABLES, DbSqlMethod } from './schema/index.js';
 
+type TableName = keyof typeof DB_TABLES;
 type PreparedTable = Record<string, (...args: any[]) => SqliteStatement>;
 
 type StatementMap = {
@@ -33,15 +22,31 @@ const prepare = (db: SqliteDb, tbConfig: DBTableConfig): PreparedTable => {
   ) as PreparedTable;
 };
 
-const db = getDb();
-export const stmt: StatementMap = {
-  lang: prepare(db, tbLang),
-  hardware: prepare(db, tbHardware),
-  game: prepare(db, tbGame),
-  track: prepare(db, tbTrack),
-  playlist: prepare(db, tbPlaylist),
-  playlist_game: prepare(db, tbPlaylistGame),
-  playlist_track: prepare(db, tbPlaylistTrack),
-  game_related: prepare(db, tbGameRelated),
-  sql: (sql: string) => db.prepare(sql),
+const createStatementMap = (): StatementMap => {
+  const db = getDb();
+  return {
+    ...Object.fromEntries(
+      Object.entries(DB_TABLES).map(([tbName, tbConfig]) => [
+        tbName,
+        prepare(db, tbConfig),
+      ])
+    ),
+    sql: (sql: string) => db.prepare(sql),
+  } as StatementMap;
 };
+
+let cachedStmt: StatementMap | undefined;
+const getStatementMap = (): StatementMap => cachedStmt ?? createStatementMap();
+
+export const stmt: StatementMap = new Proxy({} as StatementMap, {
+  get(_target, prop, receiver) {
+    const map = getStatementMap();
+    return Reflect.get(map, prop, receiver);
+  },
+  ownKeys() {
+    return Reflect.ownKeys(getStatementMap());
+  },
+  getOwnPropertyDescriptor(_target, prop) {
+    return Object.getOwnPropertyDescriptor(getStatementMap(), prop);
+  },
+});

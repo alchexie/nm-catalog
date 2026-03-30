@@ -7,12 +7,20 @@
   -- no-exec       # only fetch data and not to operate database
 */
 
+import {
+  COMMON_PATHS,
+  DataCell,
+  DataRow,
+  getDuration,
+  getTransactionByStatement,
+  info,
+  isUuid,
+  readText,
+  stmt,
+  upstreem,
+  writeText,
+} from '@nm-catalog/core';
 import { LangCode, Playlist, PlaylistType } from '@nm-catalog/shared';
-import { stmt, upstreem } from '@nm-catalog/core';
-import { getTransactionByStatement } from '@nm-catalog/core';
-import { COMMON_PATHS } from '@nm-catalog/core';
-import { getDuration, info, isUuid, readText, writeText } from '@nm-catalog/core';
-import { DataCell, DataRow } from '@nm-catalog/core';
 
 const args = process.argv.slice(2);
 const specificIds = args.filter((x) => isUuid(x));

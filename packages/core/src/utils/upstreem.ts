@@ -43,7 +43,7 @@ async function request(url: string, lang?: LangCodeValue): Promise<any> {
   }
 }
 
-const upstreem = {
+export const upstreem = {
   async getGamesByRecent(lang: LangCodeValue = DEFAULT_LANG): Promise<any> {
     return await request(
       `${UPSTREAM_API_BASE_URL}games:all?country=JP&lang=${lang}&sortRule=RECENT`,
@@ -96,5 +96,3 @@ const upstreem = {
     );
   },
 };
-
-export default upstreem;

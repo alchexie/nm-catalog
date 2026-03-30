@@ -1,13 +1,13 @@
 import Database from 'better-sqlite3';
 import { DB_PATH } from '../../utils/paths.js';
-import { tbPlaylist, tbPlaylistGame, tbPlaylistTrack } from '../schema/index.js';
+import { DB_TABLES } from '../schema/index.js';
 
 const update = () => {
   const db = new Database(DB_PATH);
   const sqlList = [
-    tbPlaylist.create(),
-    tbPlaylistGame.create(),
-    tbPlaylistTrack.create(),
+    DB_TABLES.playlist.create(),
+    DB_TABLES.playlist_game.create(),
+    DB_TABLES.playlist_track.create(),
     `CREATE INDEX idx_game_hardware ON game(hardware)`,
     `CREATE INDEX idx_track_gid ON track(gid)`,
     `CREATE INDEX idx_track_gid_idx ON track(gid, idx)`,

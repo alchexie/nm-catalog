@@ -1,26 +1,18 @@
 {
   "name": "nm-catalog",
   "private": true,
+  "packageManager": "pnpm@10.20.0",
   "scripts": {
-    "dev": "concurrently -k -n backend,frontend -c cyan,magenta  \"pnpm dev:backend\" \"pnpm dev:frontend\"",
-    "dev:backend": "pnpm --filter @nm-catalog/backend dev",
-    "dev:frontend": "pnpm --filter @nm-catalog/frontend dev",
-    "build": "pnpm run clean:dist && pnpm run build:shared && pnpm run build:core && pnpm run build:backend && pnpm run build:frontend && pnpm run build:scripts && pnpm run sync-dist",
-    "build:core": "pnpm --filter @nm-catalog/core build",
-    "build:shared": "pnpm --filter @nm-catalog/shared build",
-    "build:backend": "pnpm --filter @nm-catalog/backend build",
-    "build:frontend": "pnpm --filter @nm-catalog/frontend build",
-    "build:scripts": "pnpm --filter @nm-catalog/scripts build",
+    "dev": "pnpm run build:packages && pnpm -r --parallel --filter @nm-catalog/shared --filter @nm-catalog/core --filter @nm-catalog/backend --filter @nm-catalog/frontend dev",
+    "build": "pnpm run clean:dist && pnpm build:packages && pnpm -r --filter ./apps/** build && pnpm --filter ./tools/** build && pnpm run sync-dist",
+    "build:packages": "pnpm --filter ./packages/** build",
     "sync-dist": "node sync-dist.js",
+    "clean": "pnpm run clean:dist && pnpm run clean:deps",
     "clean:dist": "rimraf --glob \"**/dist\"",
     "clean:deps": "rimraf --glob \"**/node_modules\" pnpm-lock.yaml || true",
-    "pull-game": "pnpm --filter @nm-catalog/scripts pull-game",
-    "pull-playlist": "pnpm --filter @nm-catalog/scripts pull-playlist",
-    "get-img": "pnpm --filter @nm-catalog/scripts get-img",
-    "update-latest": "pnpm --filter @nm-catalog/scripts update-latest"
+    "scripts": "pnpm --filter @nm-catalog/scripts"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1",
     "rimraf": "^6.1.2",
     "typescript": "~5.8.3"
   }
