@@ -103,18 +103,20 @@ for (const lang of langs) {
     imgIds = errors[lang];
   }
 
-  const originalDir = path.join(ROOT_DIR, '../assets/original_images', `${lang}`);
-  const compressedDir = path.join(ROOT_DIR, '../assets/new', `img_${lang}`);
-  fs.mkdirSync(originalDir, { recursive: true });
-  fs.mkdirSync(compressedDir, { recursive: true });
+  if (imgIds.length > 0) {
+    const originalDir = path.join(ROOT_DIR, 'assets/original_images', `${lang}`);
+    const compressedDir = path.join(ROOT_DIR, 'assets/new', `img_${lang}`);
+    fs.mkdirSync(originalDir, { recursive: true });
+    fs.mkdirSync(compressedDir, { recursive: true });
 
-  tasks.push({
-    lang: lang,
-    imgIds: imgIds,
-    originalDir: originalDir,
-    compressedDir: compressedDir,
-    errors: [],
-  });
+    tasks.push({
+      lang: lang,
+      imgIds: imgIds,
+      originalDir: originalDir,
+      compressedDir: compressedDir,
+      errors: [],
+    });
+  }
 }
 
 const sum = tasks.map((x) => x.imgIds.length).reduce((a, b) => a + b, 0);
@@ -122,18 +124,25 @@ info(`To download ${sum} image(s).`);
 
 const processImage = async (imgId: string, index: number, task: Task) => {
   try {
+    const ext = '.jpg';
+    const filename = `${imgId}${ext}`;
+    const compressedPath = path.join(task.compressedDir, filename);
+    const originalPath = path.join(task.originalDir, filename);
+
+    const checkPath = isSaveOriginal ? originalPath : compressedPath;
+    if (fs.existsSync(checkPath)) {
+      console.log(`Skip: ${task.lang}-${index + 1}: ${filename}`);
+      return;
+    }
+
     const res = await fetch(`${UPSTREAM_IMG_BASE_URL}${imgId}`);
     if (!res.ok) {
       throw new Error(`HTTP ${res.status} ${res.statusText}`);
     }
     const arrayBuffer = await res.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const ext = '.jpg';
-    const filename = `${imgId}${ext}`;
-    const compressedPath = path.join(task.compressedDir, filename);
 
     if (isSaveOriginal) {
-      const originalPath = path.join(task.originalDir, filename);
       fs.writeFileSync(originalPath, buffer);
     }
 
@@ -144,10 +153,10 @@ const processImage = async (imgId: string, index: number, task: Task) => {
       .resize(Math.round(metadata.width / 4), Math.round(metadata.height / 4))
       .toFile(compressedPath);
 
-    console.log(`�?${task.lang}-${index + 1}: ${filename}`);
+    console.log(`Done: ${task.lang}-${index + 1}: ${filename}`);
   } catch (error) {
     const err = toError(error);
-    console.error(`�?${task.lang}-${index + 1} (${imgId}): ${err.message}`);
+    console.error(`Error: ${task.lang}-${index + 1} (${imgId}): ${err.message}`);
     task.errors.push(imgId);
   }
 };
@@ -156,7 +165,7 @@ const run = async (task: Task) => {
   const limit = pLimit(5);
   const tasks = task.imgIds.map((id, idx) => limit(() => processImage(id, idx, task)));
   await Promise.all(tasks);
-  let msg = `${task.lang}: All tasks proccessed`;
+  let msg = `${task.lang}: ${tasks.length} task(s) proccessed`;
   if (task.errors.length > 0) {
     msg += `, with ${task.errors.length} errors`;
   }

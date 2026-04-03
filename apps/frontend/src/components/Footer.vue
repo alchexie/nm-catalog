@@ -2,7 +2,7 @@
   <div id="top-mark" ref="topRef"></div>
   <footer id="footer">
     <div>
-      <span class="dim">Fan project. Not an official site.</span>
+      <span class="dim">Fan project. Not an official site. Data only, no music included.</span>
       <label>
         {{ t('info.lang') }}{{ t('punctuation.colon') }}
         <select name="lang" v-model="mainLang" @change="onLangChange">
