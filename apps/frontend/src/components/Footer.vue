@@ -2,7 +2,10 @@
   <div id="top-mark" ref="topRef"></div>
   <footer id="footer">
     <div>
-      <span class="dim">Fan project. Not an official site. Data only, no music included.</span>
+      <span class="dim">
+        Fan project. Not an official site.
+        <span class="hidden-sm">Data only, no music included.</span>
+      </span>
       <label>
         {{ t('info.lang') }}{{ t('punctuation.colon') }}
         <select name="lang" v-model="mainLang" @change="onLangChange">
@@ -112,8 +115,18 @@ function scrollToTop() {
 
 @media (max-width: 767px) {
   #footer {
-    span {
-      margin-left: 1rem;
+    > div {
+      flex-direction: column-reverse;
+      height: 4.5em;
+      line-height: 2em;
+
+      > label {
+        margin-left: initial;
+      }
+
+      .hidden-sm {
+        display: none;
+      }
     }
   }
 }
