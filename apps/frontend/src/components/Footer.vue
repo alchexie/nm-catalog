@@ -4,7 +4,7 @@
     <div>
       <span class="dim">
         Fan project. Not an official site.
-        <span class="hidden-sm">Data only, no music included.</span>
+        <span class="hidden-sm">&nbsp;Data only, no music included.</span>
       </span>
       <label>
         {{ t('info.lang') }}{{ t('punctuation.colon') }}

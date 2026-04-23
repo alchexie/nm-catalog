@@ -31,6 +31,8 @@ type Task = {
   originalDir: string;
   compressedDir: string;
   errors: string[];
+  skippedCount: number;
+  downloadedCount: number;
 };
 
 const args = process.argv.slice(2);
@@ -38,6 +40,8 @@ const isSaveOriginal = args.includes('original');
 const isDownloadError = args.includes('error');
 const specificIds = args.filter((x) => isUuid(x));
 const tasks: Task[] = [];
+let totalSkipped = 0;
+let totalDownloaded = 0;
 
 let langs = Object.values(LangCode);
 const targetLangs = langs.filter((x) => args.includes(x));
@@ -115,6 +119,8 @@ for (const lang of langs) {
       originalDir: originalDir,
       compressedDir: compressedDir,
       errors: [],
+      skippedCount: 0,
+      downloadedCount: 0,
     });
   }
 }
@@ -131,7 +137,8 @@ const processImage = async (imgId: string, index: number, task: Task) => {
 
     const checkPath = isSaveOriginal ? originalPath : compressedPath;
     if (fs.existsSync(checkPath)) {
-      console.log(`Skip: ${task.lang}-${index + 1}: ${filename}`);
+      task.skippedCount += 1;
+      totalSkipped += 1;
       return;
     }
 
@@ -153,6 +160,8 @@ const processImage = async (imgId: string, index: number, task: Task) => {
       .resize(Math.round(metadata.width / 4), Math.round(metadata.height / 4))
       .toFile(compressedPath);
 
+    task.downloadedCount += 1;
+    totalDownloaded += 1;
     console.log(`Done: ${task.lang}-${index + 1}: ${filename}`);
   } catch (error) {
     const err = toError(error);
@@ -165,11 +174,10 @@ const run = async (task: Task) => {
   const limit = pLimit(5);
   const tasks = task.imgIds.map((id, idx) => limit(() => processImage(id, idx, task)));
   await Promise.all(tasks);
-  let msg = `${task.lang}: ${tasks.length} task(s) proccessed`;
-  if (task.errors.length > 0) {
-    msg += `, with ${task.errors.length} errors`;
-  }
-  msg += '.';
+  let msg =
+    `${task.lang}: total ${task.imgIds.length} image(s), skipped ${task.skippedCount}, downloaded ${task.downloadedCount}` +
+    (task.errors.length > 0 ? `, errors ${task.errors.length}` : ``) +
+    '.';
   info(msg);
 };
 
@@ -179,6 +187,12 @@ const runAll = async () => {
   for (const task of tasks) {
     errors[task.lang] = task.errors;
   }
+  const totalErrors = tasks.map((t) => t.errors.length).reduce((a, b) => a + b, 0);
+  info(
+    `Summary: total ${sum} image(s), skipped ${totalSkipped}, downloaded ${totalDownloaded}` +
+      (totalErrors > 0 ? `, errors ${totalErrors}` : ``) +
+      '.'
+  );
   writeText(COMMON_PATHS['error_img.json'], errors);
   console.log(`All tasks completed`);
 };

@@ -137,4 +137,7 @@ dist
 
 # custom
 /assets/
-/files/
+/files/*
+!/files/response/
+/files/response/*
+!/files/response/playlist_section.json

@@ -1,0 +1,187 @@
+{
+  "年度精选": [
+    {
+      "id": "09163a35-7b78-47b9-a59b-ae0f62427051",
+      "name": "2024精选",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "e9ac5940-dffb-465b-95fb-5d72bafb19b9",
+      "name": "2025精选",
+      "type": "MULTIPLE"
+    }
+  ],
+  "特别发布": [
+    {
+      "id": "7d43bfb1-a227-479c-bb66-d8bf0764d95e",
+      "name": "特别发布《Tomodachi Life 朋友收集 梦想生活》",
+      "type": "SPECIAL"
+    },
+    {
+      "id": "9a8634d9-5a82-4e48-a41c-13125b5263d0",
+      "name": "特别发布《密特罗德 究极4 穿越未知》",
+      "type": "SPECIAL"
+    },
+    {
+      "id": "240a1c69-d321-4d65-9c55-f48eb9b7ad03",
+      "name": "特别发布《卡比的驭天飞行者》之二",
+      "type": "SPECIAL"
+    },
+    {
+      "id": "93f8c963-9a73-410a-a701-669f81ffd578",
+      "name": "特别发布《卡比的驭天飞行者》之一",
+      "type": "SPECIAL"
+    },
+    {
+      "id": "b229dafd-e11c-4713-8e28-2e2cab80703a",
+      "name": "特别发布《咚奇刚 蕉力全开》",
+      "type": "SPECIAL"
+    }
+  ],
+  "听听看吧": [
+    {
+      "id": "7cf93e33-67eb-4be9-a850-971335f68c67",
+      "name": "Nintendo Switch精选",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "e31b2abb-32c8-4d01-9e8c-83629ff792e3",
+      "name": "Nintendo Music精选",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "eaf7f1b1-0f3e-4de2-8035-fb23d08791a1",
+      "name": "Super NES精选",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "5db39d9d-9633-4f8f-8c49-c9356777eeb0",
+      "name": "NES精选",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "4fa20eb9-cdea-4848-9044-cdc9a237d7a8",
+      "name": "马力欧精选",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "808bcbe6-9e6b-4449-9f01-66ae65d3f81b",
+      "name": "塞尔达传说精选",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "46445c4a-7fba-403c-90b9-5f1d39be404f",
+      "name": "Nintendo Music精选集",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "784581a7-ebb9-44c7-8f0d-cf9b07fb1718",
+      "name": "推荐“更改时长”",
+      "type": "MULTIPLE"
+    }
+  ],
+  "从现在的心情开始": [
+    {
+      "id": "fd918c30-cde7-4297-8f0a-1fafdea84a0b",
+      "name": "打起精神来",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "63c0d96f-8447-43f9-9159-0946aba5a780",
+      "name": "放松一下",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "39d56342-6c1e-4d8d-a1fc-7977bce36b30",
+      "name": "步行",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "14117541-00c7-4e3e-b96f-cfd2d744c20b",
+      "name": "跑步",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "36bf2ce2-3f3e-4664-bbff-92165dfa42b6",
+      "name": "与歌声同行",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "6d2d0bad-90bb-4970-a9f3-28ce0d051f85",
+      "name": "大家一起来",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "0eea14bf-c4eb-4675-8721-4eaa57a505d4",
+      "name": "聆听春日",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "128ce722-0654-408f-af90-77f61a917c41",
+      "name": "聆听夏日",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "e5898934-cb1e-4ea0-bc6e-2ddce1c416fa",
+      "name": "聆听秋日",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "e601687a-8259-4799-b8d2-c026202fee67",
+      "name": "聆听冬日",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "8716006a-48cb-4218-971a-f0971549f8ab",
+      "name": "或许存在鬼怪",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "56694128-6164-4700-8098-996e6edf421f",
+      "name": "夜晚时光",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "12acf89a-3064-4fbd-904b-26db3a270c0b",
+      "name": "晚安",
+      "type": "MULTIPLE"
+    }
+  ],
+  "从游戏中的场景开始": [
+    {
+      "id": "00bf5df6-d1bb-4201-ae38-03d06cd7c183",
+      "name": "标题画面",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "d97df2ef-5fba-4df0-8671-0f7928aa9ef2",
+      "name": "冒险的开始",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "d49dacd0-93f8-44df-b39f-166cebf66d30",
+      "name": "强敌",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "84ee8365-7ea7-4cef-8702-1c9cfcd43838",
+      "name": "Win!",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "06762d62-e64f-4381-a376-d0159bc6ef96",
+      "name": "最终决战",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "5a302615-885e-4f4a-8c44-9cf454d58381",
+      "name": "制作人员名单",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "4f3cdaff-c0ba-4381-bd24-d85e1783a26f",
+      "name": "占地对战/祭典比赛",
+      "type": "MULTIPLE"
+    }
+  ]
+}
