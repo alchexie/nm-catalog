@@ -137,7 +137,7 @@ const stopInfo = () => {
     }
     if (isUpdateSpecific) {
       gamesByLang[Object.keys(gamesByLang)[0]].forEach((x) => {
-        if (!isNoExec) {
+        if (!isNoExec && !isNoTrack) {
           stmt.track.deleteByGid().run(x.id);
         }
       });

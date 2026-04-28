@@ -81,6 +81,7 @@ let hasError = false;
             x.name,
             x.thumbnailURL.split('/').reverse()[0],
             x.description || '',
+            0,
           ]);
 
           if (!isNoExec) {
@@ -186,6 +187,7 @@ let hasError = false;
             rawData.name,
             (<string>rawData.thumbnailURL).split('/').reverse()[0],
             rawData.description || '',
+            0,
           ]);
 
           if (!isNoExec) {

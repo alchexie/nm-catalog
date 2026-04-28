@@ -45,7 +45,8 @@
       "RECOMMEND": "Top Recommendations",
       "MOOD": "Match your Mood",
       "SCENE": "Set the Scene"
-    }
+    },
+    "expired": "Expired Playlist"
   },
   "info": {
     "lang": "Preferred Language",

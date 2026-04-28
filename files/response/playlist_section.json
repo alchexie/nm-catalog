@@ -1,14 +1,16 @@
 {
   "年度精选": [
     {
-      "id": "09163a35-7b78-47b9-a59b-ae0f62427051",
-      "name": "2024精选",
-      "type": "MULTIPLE"
-    },
-    {
       "id": "e9ac5940-dffb-465b-95fb-5d72bafb19b9",
       "name": "2025精选",
-      "type": "MULTIPLE"
+      "type": "MULTIPLE",
+      "expired": true
+    },
+    {
+      "id": "09163a35-7b78-47b9-a59b-ae0f62427051",
+      "name": "2024精选",
+      "type": "MULTIPLE",
+      "expired": true
     }
   ],
   "特别发布": [
@@ -25,12 +27,14 @@
     {
       "id": "240a1c69-d321-4d65-9c55-f48eb9b7ad03",
       "name": "特别发布《卡比的驭天飞行者》之二",
-      "type": "SPECIAL"
+      "type": "SPECIAL",
+      "expired": true
     },
     {
       "id": "93f8c963-9a73-410a-a701-669f81ffd578",
       "name": "特别发布《卡比的驭天飞行者》之一",
-      "type": "SPECIAL"
+      "type": "SPECIAL",
+      "expired": true
     },
     {
       "id": "b229dafd-e11c-4713-8e28-2e2cab80703a",

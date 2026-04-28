@@ -16,8 +16,8 @@ pnpm update-latest
 
 该命令会依次执行以下4个操作：
 
-| -   | 命令                             | 作用                                     |
-| --- | -------------------------------- | ---------------------------------------- |
+| -   | 命令                          | 作用                                     |
+| --- | ----------------------------- | ---------------------------------------- |
 | 1   | pnpm pull-game                | 拉取 Game 与 Track 数据                  |
 | 2   | pnpm pull-playlist            | 拉取游戏相关的 Playlist 数据             |
 | 3   | pnpm pull-playlist -- section | 更新 Playlist Section 中的 Playlist 数据 |
@@ -93,3 +93,15 @@ pnpm get-img
 
 - `-- playlist-section <pid>`
   下载 Playlist Section 中指定歌单的相关图片资源
+
+- `-- all`
+  下载所有图片（查漏补缺），默认下载 assets 目录下缺的图片，若加上参数 `original` 则下载 assets/original_images 目录下缺的图片
+
+- `-- no-exec`
+  仅查看下载任务数，不下载，结合参数 `all` 可查漏补缺
+
+## 4. 设置过期播放列表
+
+```bash
+pnpm expire-playlist
+```

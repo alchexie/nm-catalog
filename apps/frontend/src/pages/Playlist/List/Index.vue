@@ -10,12 +10,21 @@
         <ul class="group-content">
           <li
             class="content-item"
+            :class="{ expired: playlist.isexpired }"
             v-for="playlist in section.playlists"
             :key="playlist.id"
           >
-            <router-link :to="`/playlist/${playlist.id}`" :title="playlist.$title">
+            <router-link
+              :to="`/playlist/${playlist.id}`"
+              :title="
+                playlist.$title + (playlist.isexpired ? ` - ${t('playlist.expired')}` : '')
+              "
+            >
               <img v-fallback :src="playlist.$imgPath" loading="lazy" />
-              <span>{{ playlist.$title }}</span>
+              <span>
+                {{ playlist.$title }}
+                <SvgIcon type="expired" width="1em" fill="#00ACC1"></SvgIcon>
+              </span>
             </router-link>
           </li>
         </ul>
@@ -32,6 +41,7 @@ import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
 import Container from '@/components/Container.vue';
+import SvgIcon from '@/components/SvgIcon.vue';
 import { getPlaylistSections } from '@/api';
 import type { PlaylistSection } from '@/types';
 

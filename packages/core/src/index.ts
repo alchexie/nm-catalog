@@ -10,3 +10,4 @@ export * from './utils/upstreem.js';
 
 export { default as updateSql251120 } from './db/update/sql_251120.js';
 export { default as updateSql260121 } from './db/update/sql_260121.js';
+export { default as updateSql260424 } from './db/update/sql_260424.js';

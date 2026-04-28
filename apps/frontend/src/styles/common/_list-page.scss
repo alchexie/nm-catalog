@@ -15,6 +15,7 @@
     padding: $gap;
 
     .content-item {
+      position: relative;
       width: 200px;
       margin: calc($gap / 2);
       border-radius: 8px;
@@ -33,12 +34,17 @@
         > span {
           display: -webkit-box;
           -webkit-box-orient: vertical;
+          line-clamp: 3;
           -webkit-line-clamp: 3;
           overflow: hidden;
           text-overflow: ellipsis;
           word-break: break-word;
           max-height: calc(1.1rem * 3 * 1.5);
           cursor: pointer;
+
+          > svg {
+            display: none;
+          }
         }
       }
 
@@ -46,6 +52,22 @@
         > a {
           > img {
             transform: scale(105%);
+          }
+        }
+      }
+
+      &.expired {
+        > a {
+          > img {
+            opacity: 0.5;
+          }
+
+          > span {
+            > svg {
+              display: inline;
+              margin-left: 0.2em;
+              transform: translateY(0.1em);
+            }
           }
         }
       }

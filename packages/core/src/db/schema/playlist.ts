@@ -58,9 +58,9 @@ const tbPlaylist: DBTableConfig = {
     const sLang = lang.replace('-', '_');
     return `
       INSERT INTO playlist (
-        id, type, isrelatedgame, tracksnum, title_${sLang}, img_${sLang}, desc_${sLang}
+        id, type, isrelatedgame, tracksnum, title_${sLang}, img_${sLang}, desc_${sLang}, isexpired
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(id) DO
       UPDATE SET
         tracksnum=excluded.tracksnum,

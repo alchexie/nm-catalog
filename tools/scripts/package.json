@@ -11,6 +11,7 @@
     "update-latest": "tsx src/update-latest.ts",
     "pull-game": "tsx src/pull-game.ts",
     "pull-playlist": "tsx src/pull-playlist.ts",
+    "expire-playlist": "tsx src/expire-playlist.ts",
     "get-img": "tsx src/get-img.ts",
     "modify-db:prod": "node dist/modify-db.js",
     "pull-game:prod": "node dist/pull-game.js",

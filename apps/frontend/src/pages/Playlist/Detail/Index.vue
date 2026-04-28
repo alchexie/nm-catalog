@@ -12,7 +12,16 @@
         </div>
         <div class="detail-part detail-text">
           <h1 class="text-main" ref="titleRef">
-            {{ computedTitle }}<br />
+            {{ computedTitle }}
+            <span :title="t('playlist.expired')">
+              <SvgIcon
+                type="expired"
+                width="1em"
+                fill="#00ACC1"
+                v-if="data.playlist.isexpired"
+              ></SvgIcon
+            ></span>
+            <br />
             <small> {{ computedPlaylistTypeText }}</small>
           </h1>
           <ul class="text-else">
@@ -76,6 +85,7 @@ import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
 import Container from '@/components/Container.vue';
 import TrackItem from '@/components/TrackItem.vue';
+import SvgIcon from '@/components/SvgIcon.vue';
 import { type PlaylistTrack, type DurationInfo, type PlaylistDetail } from '@/types';
 import { openSourceImg, getTotalDuration } from '@/utils/data-utils';
 import { getPlaylistDetail } from '@/api';

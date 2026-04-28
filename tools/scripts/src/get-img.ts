@@ -5,6 +5,8 @@
   -- error                  # download images of previous error tasks
   -- game <gid>             # download images of a specific game
   -- playlist-section <pid> # download images of a specific playlist from sections
+  -- all                    # download all images
+  -- no-exec                # only fetch data and not to download
 */
 
 import fs from 'fs';
@@ -37,7 +39,10 @@ type Task = {
 
 const args = process.argv.slice(2);
 const isSaveOriginal = args.includes('original');
+const isDownloadAll = args.includes('all');
 const isDownloadError = args.includes('error');
+const isNoExec = args.includes('no-exec');
+
 const specificIds = args.filter((x) => isUuid(x));
 const tasks: Task[] = [];
 let totalSkipped = 0;
@@ -58,33 +63,40 @@ for (const lang of langs) {
   if (!isDownloadError) {
     const langStr = lang.replace('-', '_');
     const diff = lang.includes('en') ? '' : `and img_${langStr} <> img_en_US`;
-    let [sql, sGameIds, sPalylistIds, sSectionPalylistIds] = ['', '', '', ''];
-    let [gameIds, playlistIds, sectionPalylistIds]: string[][] = [[], [], []];
+    let sql = '';
 
-    if (!specificIds.length) {
-      gameIds = JSON.parse(readText(COMMON_PATHS['new_game.json']));
-      try {
-        const updateds = JSON.parse(readText(COMMON_PATHS['updated_playlist.json']));
-        playlistIds = updateds.playlistIds ?? [];
-        sectionPalylistIds = updateds.newSectionPlaylistIds ?? [];
-      } catch (error) {}
-    } else {
-      if (args.includes('game')) {
-        gameIds.push(...specificIds);
-        playlistIds = specificIds
-          .map((x) => (stmt.playlist.selectByGid().all(x) as Playlist[]).map((x) => x.id))
-          .reduce((a, b) => [...a, ...b]);
-      } else if (args.includes('playlist-section')) {
-        sectionPalylistIds = specificIds
-          .map((x) => (stmt.playlist.selectById().all(x) as Playlist[]).map((x) => x.id))
-          .reduce((a, b) => [...a, ...b]);
+    if (!isDownloadAll) {
+      let [sGameIds, sPalylistIds, sSectionPalylistIds] = ['', '', ''];
+      let [gameIds, playlistIds, sectionPalylistIds]: string[][] = [[], [], []];
+
+      if (!specificIds.length) {
+        gameIds = JSON.parse(readText(COMMON_PATHS['new_game.json']));
+        try {
+          const updateds = JSON.parse(readText(COMMON_PATHS['updated_playlist.json']));
+          playlistIds = updateds.playlistIds ?? [];
+          sectionPalylistIds = updateds.newSectionPlaylistIds ?? [];
+        } catch (error) {}
+      } else {
+        if (args.includes('game')) {
+          gameIds.push(...specificIds);
+          playlistIds = specificIds
+            .map((x) =>
+              (stmt.playlist.selectByGid().all(x) as Playlist[]).map((x) => x.id)
+            )
+            .reduce((a, b) => [...a, ...b]);
+        } else if (args.includes('playlist-section')) {
+          sectionPalylistIds = specificIds
+            .map((x) =>
+              (stmt.playlist.selectById().all(x) as Playlist[]).map((x) => x.id)
+            )
+            .reduce((a, b) => [...a, ...b]);
+        }
       }
-    }
-    sGameIds = gameIds.map((x: string) => `'${x}'`).join(',');
-    sPalylistIds = playlistIds.map((x: string) => `'${x}'`).join(',');
-    sSectionPalylistIds = sectionPalylistIds.map((x: string) => `'${x}'`).join(',');
+      sGameIds = gameIds.map((x: string) => `'${x}'`).join(',');
+      sPalylistIds = playlistIds.map((x: string) => `'${x}'`).join(',');
+      sSectionPalylistIds = sectionPalylistIds.map((x: string) => `'${x}'`).join(',');
 
-    sql = `
+      sql = `
         select img_${langStr} from game where id in (${sGameIds}) ${diff} 
         union select img_${langStr} from track where (gid in (${sGameIds}) ${
           !sSectionPalylistIds
@@ -98,6 +110,14 @@ for (const lang of langs) {
           .filter((x) => x)
           .join(',')}) ${diff}
       `;
+    } else {
+      sql = `
+        select img_${langStr} from game where 1=1 ${diff} 
+        union select img_${langStr} from track where 1=1 ${diff} 
+        union select img_${langStr} from playlist where 1=1 ${diff}
+      `;
+    }
+
     imgIds = stmt
       .sql(sql)
       .all()
@@ -139,6 +159,13 @@ const processImage = async (imgId: string, index: number, task: Task) => {
     if (fs.existsSync(checkPath)) {
       task.skippedCount += 1;
       totalSkipped += 1;
+      return;
+    }
+
+    if (isNoExec) {
+      task.downloadedCount += 1;
+      totalDownloaded += 1;
+      console.log(`Done (no-exec): ${task.lang}-${index + 1}: ${filename}`);
       return;
     }
 
