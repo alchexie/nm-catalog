@@ -8,7 +8,7 @@
         v-for="(option, i) in options"
         :key="option"
         :data-name="getLabel(i, step)"
-        :class="{ active: option === title, hidden: !!step && i % step > 0 }"
+        :class="{ active: i === activeIndex, hidden: !!step && i % step > 0 }"
         :style="{
           transform: `translateY(${
             navheight * (percentages[i] + (1 - percentages[options.length - 1]) / 2)
@@ -37,16 +37,15 @@ const emit = defineEmits(['update:title']);
 const percentages = ref<number[]>([]);
 const navRef = ref<HTMLElement>();
 const navheight = ref<number>(0);
+const activeIndex = ref<number>(0);
 const tracker = new ElementTracker((entries) => {
   const entry = entries.find((x) => x.isIntersecting);
   if (entry) {
     const step = props.step ?? 1;
-    if (step === 1) {
-      emit('update:title', entry!.target.firstElementChild?.innerHTML);
-    } else {
-      const idx = Math.floor(props.target.indexOf(entry!.target as HTMLElement));
-      emit('update:title', props.target[idx - (idx % step)].firstElementChild?.innerHTML);
-    }
+    const idx = Math.floor(props.target.indexOf(entry!.target as HTMLElement));
+    const normalizedIdx = idx - (idx % step);
+    activeIndex.value = normalizedIdx;
+    emit('update:title', props.options[normalizedIdx]);
   }
 });
 let scrollHandler!: (() => void) | null;
@@ -55,6 +54,7 @@ watch(
   () => props.target,
   async (elRef) => {
     tracker.disconnect();
+    activeIndex.value = 0;
     if (elRef.length) {
       const nums: number[] = [0];
       const sum = elRef
@@ -83,7 +83,10 @@ async function navigateTo(idx: number) {
     window.removeEventListener('scroll', scrollHandler);
     scrollHandler = null;
   }
-  emit('update:title', props.options[idx]);
+  const step = props.step ?? 1;
+  const normalizedIdx = idx - (idx % step);
+  activeIndex.value = normalizedIdx;
+  emit('update:title', props.options[normalizedIdx]);
   tracker.disconnect();
 
   const el = props.target[idx];
