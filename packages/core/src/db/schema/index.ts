@@ -6,6 +6,7 @@ import tbPlaylist from './playlist.js';
 import tbPlaylistGame from './playlist_game.js';
 import tbPlaylistTrack from './playlist_track.js';
 import tbGameRelated from './game_related.js';
+import tbSeries from './series.js';
 
 export type DataCell = string | number;
 export type DataRow = Record<string, DataCell>;
@@ -27,4 +28,5 @@ export const DB_TABLES = {
   playlist_game: tbPlaylistGame,
   playlist_track: tbPlaylistTrack,
   game_related: tbGameRelated,
+  series: tbSeries,
 } as const;

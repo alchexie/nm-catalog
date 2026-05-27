@@ -141,3 +141,6 @@ dist
 !/files/response/
 /files/response/*
 !/files/response/playlist_section.json
+
+.github
+.claude

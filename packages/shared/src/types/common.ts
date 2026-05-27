@@ -15,6 +15,7 @@ export interface Game extends MultiLangVisualEntity {
   hardware: string;
   link: string;
   inserted?: number;
+  sid: string | null;
 }
 
 export interface Track extends MultiLangVisualEntity {
@@ -34,3 +35,12 @@ export interface Playlist extends MultiLangVisualEntity, MultiLangField<'desc'> 
 }
 
 export type NMData = MultiLangVisualEntity;
+
+export interface Series extends MultiLangField<'title'> {
+  id: string;
+}
+
+export interface GameRelation {
+  gid: string;
+  rgid: string;
+}

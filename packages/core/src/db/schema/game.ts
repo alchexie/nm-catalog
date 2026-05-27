@@ -72,6 +72,7 @@ const tbGame: DBTableConfig = {
     )
     SELECT DISTINCT id, link
     FROM chain`,
+  selectNoSeries: () => `SELECT * FROM game WHERE sid IS NULL ORDER BY inserted`,
   selectGroupBy: (groupBy: GameGroupBy) => {
     switch (groupBy) {
       case 'PLATFORM':
@@ -101,6 +102,8 @@ const tbGame: DBTableConfig = {
         link=excluded.link
     `;
   },
+  updateSeriesByIds: (ids: string[] = []) =>
+    `UPDATE game SET sid = ? WHERE id in (${ids.map((id) => `'${id}'`)})`,
   delete: () => `DELETE FROM game`,
 };
 

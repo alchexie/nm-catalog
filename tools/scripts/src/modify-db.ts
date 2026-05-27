@@ -1,5 +1,5 @@
-import { info, updateSql260424 } from '@nm-catalog/core';
+import { info, updateSql260527 } from '@nm-catalog/core';
 
-updateSql260424();
+updateSql260527();
 
 info('Database modified!');
