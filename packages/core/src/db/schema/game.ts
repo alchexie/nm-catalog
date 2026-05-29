@@ -86,6 +86,8 @@ const tbGame: DBTableConfig = {
         return `SELECT * FROM game ORDER BY year desc, inserted DESC`;
       case 'ADDED':
         return `SELECT * FROM game ORDER BY inserted DESC`;
+      case 'SERIES':
+        return `SELECT * FROM game ORDER BY sid DESC`;
     }
   },
   insert: (lang: LangCodeValue) => {

@@ -23,11 +23,12 @@ router.get('/', (_req: Request, res: Response) => {
       )
       .all() as Playlist[];
 
+    const playlistsMap = new Map(playlists.map(p => [<string>(p.id), p]));
     const result = [] as PlaylistSection[];
     Object.entries(rawData).forEach((_, i) => {
       result.push({
         tag: PlaylistSectionType[i],
-        playlists: rawPlaylistData[i].map((x) => playlists.find((y) => y.id === x.id)!),
+        playlists: rawPlaylistData[i].map((x) => playlistsMap.get(<string>(x.id))!),
       });
     });
     res.json(result);
@@ -40,12 +41,12 @@ router.get('/', (_req: Request, res: Response) => {
 router.get('/:id/detail', (req: Request, res: Response) => {
   const id = req.params.id;
   try {
-    const playlist = stmt.playlist.selectById().all(id)[0] as Playlist;
+    const playlist = stmt.playlist.selectById().get(id) as Playlist;
     const tracks: PlaylistTrack[] = [];
     const trackGroups: PlaylistTrackGroup[] = [];
 
     if (['SINGLE_GAME_ALL', 'BEST', 'LOOP'].includes(playlist.type)) {
-      const game = <Game>stmt.playlist_game.selectGameByPid().all(id)[0];
+      const game = <Game>stmt.playlist_game.selectGameByPid().get(id);
       const allTracks = stmt.track.selectByGid().all(game.id) as PlaylistTrack[];
       tracks.push(
         ...allTracks.filter((x) => {
@@ -68,8 +69,9 @@ router.get('/:id/detail', (req: Request, res: Response) => {
         ptList = stmt.sql(playlist.fetchstrategy).all() as PlaylistTrack[];
       }
       const ptIds = ptList.map((x) => x.id);
+      const idIndexMap = new Map(ptIds.map((id, i) => [id, i]));
       const pTracks = (stmt.track.selectByIds(ptIds).all() as PlaylistTrack[]).sort(
-        (a, b) => ptIds.indexOf(a.id) - ptIds.indexOf(b.id)
+        (a, b) => (idIndexMap.get(a.id) ?? Infinity) - (idIndexMap.get(b.id) ?? Infinity)
       );
       tracks.push(...pTracks);
 
@@ -90,10 +92,11 @@ router.get('/:id/detail', (req: Request, res: Response) => {
           });
         }
 
+        const gamesMap = new Map(games.map(g => [g.id, g]));
         tracks.forEach((x, i) => {
           if (i === 0 || x.gid !== tracks[i - 1].gid) {
             trackGroups.push({
-              game: games.find((y) => y.id === x.gid),
+              game: gamesMap.get(x.gid!),
               tracks: [],
             });
           }
@@ -111,11 +114,12 @@ router.get('/:id/detail', (req: Request, res: Response) => {
               .all() as Playlist[]
           ).filter((x) => x.type === 'SPECIAL');
           const lastGroupTrackIds = last.tracks.map((x) => x.id);
+          const lastGroupTrackIdSet = new Set(lastGroupTrackIds);
           const orderedTracks = specialPlaylists
             .flatMap(
               (x) => stmt.playlist_track.selectTrackByPid().all(x.id) as PlaylistTrack[]
             )
-            .filter((x) => lastGroupTrackIds.includes(x.id));
+            .filter((x) => lastGroupTrackIdSet.has(x.id));
           new Array(lastGroupTrackIds.length).fill(0).forEach((_, i) => {
             tracks[tracks.length - lastGroupTrackIds.length + i] = orderedTracks[i];
           });

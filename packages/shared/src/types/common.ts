@@ -15,7 +15,7 @@ export interface Game extends MultiLangVisualEntity {
   hardware: string;
   link: string;
   inserted?: number;
-  sid: string | null;
+  sid: string;
 }
 
 export interface Track extends MultiLangVisualEntity {

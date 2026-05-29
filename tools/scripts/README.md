@@ -22,6 +22,7 @@ pnpm update-latest
 | 2   | pnpm pull-playlist            | 拉取游戏相关的 Playlist 数据             |
 | 3   | pnpm pull-playlist -- section | 更新 Playlist Section 中的 Playlist 数据 |
 | 4   | pnpm get-img -- original      | 下载本次更新相关的所有图片（包括原图）   |
+| 4   | pnpm set-series               | 检查最新游戏是否能进行系列归类           |
 
 ## 1. 拉取 Game 与 Track 数据
 
@@ -105,3 +106,14 @@ pnpm get-img
 ```bash
 pnpm expire-playlist
 ```
+
+## 5. 设置游戏系列
+
+```bash
+pnpm set-series
+```
+
+- 为游戏进行系列分类，根据命令提示互动输入即可
+
+- `-- no-exec`
+  仅执行解析逻辑，不写入数据库

@@ -8,7 +8,8 @@
     "groupBy": {
       "PLATFORM": "ハード別",
       "RELEASE": "発売順",
-      "ADDED": "新着順"
+      "ADDED": "新着順",
+      "SERIES": "シリーズ別"
     },
     "dataSection": {
       "TRACK": "{count} 曲",
@@ -18,7 +19,8 @@
     "playlist": {
       "SINGLE_GAME": "ゲーム内テーマプレイリスト",
       "MULTIPLE": "複数ゲームのテーマプレイリスト"
-    }
+    },
+    "uncategorized": "〈未分類〉"
   },
   "track": {
     "tag": {

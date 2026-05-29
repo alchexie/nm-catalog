@@ -28,6 +28,7 @@ export const COMMON_PATHS = {
   'res_playlist_section.json': path.join(RES_DIR, 'playlist_section.json'),
   'res_game_platform.json': path.join(RES_DIR, 'game_platform.json'),
   'res_game_year.json': path.join(RES_DIR, 'game_year.json'),
+  'res_game_series.json': path.join(RES_DIR, 'game_series.json'),
 };
 
 if (!fs.existsSync(FILES_DIR)) {

@@ -10,7 +10,8 @@
     "groupBy": {
       "PLATFORM": "按平台分组",
       "RELEASE": "按发售年份分组",
-      "ADDED": "按最新添加排序"
+      "ADDED": "按最新添加排序",
+      "SERIES": "按系列分组"
     },
     "dataSection": {
       "TRACK": "{count} 首乐曲",
@@ -20,7 +21,8 @@
     "playlist": {
       "SINGLE_GAME": "游戏内主题播放列表",
       "MULTIPLE": "跨游戏主题播放列表"
-    }
+    },
+    "uncategorized": "（未分类）"
   },
   "track": {
     "tag": {

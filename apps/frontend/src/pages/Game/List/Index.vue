@@ -22,12 +22,20 @@
         v-for="(group, i) in computedGameGroups"
         :key="group.name"
         :ref="
-        (el) => {
-          if (el) {groupRefs[i] = el as HTMLElement};
-        }
-      "
+          (el) => {
+            if (el) {
+              groupRefs[i] = el as HTMLElement;
+            }
+          }
+        "
       >
-        <h1>{{ group.name }}</h1>
+        <h1>
+          {{
+            group.name ??
+            (group.localeNameTag && t(group.localeNameTag)) ??
+            group.localeNames[computedMainLang]
+          }}
+        </h1>
         <ul class="group-content">
           <li class="content-item" v-for="game in group.games" :key="game.id">
             <router-link :to="`/game/${game.id}`" :title="game.$title">
@@ -76,7 +84,7 @@ import SideNav from '@/components/SideNav/Index.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
 import { STORAGE_KEY, GameGroupBy, type GameGroup } from '@/types';
 import { getGames } from '@/api';
-import { useGameStore } from '@/stores';
+import { useGameStore, useLangStore } from '@/stores';
 
 const { t } = useI18n();
 const { loading, request } = useRequest();
@@ -84,11 +92,12 @@ const imgMap = useImgMap();
 const stringMap = useLocalizationString();
 const gameDict: Record<
   GameGroupBy,
-  { key: 'hardware' | 'release' | 'recent'; content: GameGroup[] }
+  { key: 'hardware' | 'release' | 'recent' | 'series'; content: GameGroup[] }
 > = {
   PLATFORM: { key: 'hardware', content: [] },
   RELEASE: { key: 'release', content: [] },
   ADDED: { key: 'recent', content: [] },
+  SERIES: { key: 'series', content: [] },
 };
 const selectedGroupBy = ref<GameGroupBy>('PLATFORM');
 const gameGroups = ref<GameGroup[]>([]);
@@ -112,7 +121,13 @@ const computedGameGroups = computed(() =>
     })),
   }))
 );
-const computedGroupNames = computed(() => computedGameGroups.value.map((x) => x.name));
+const computedGroupNames = computed(() =>
+  computedGameGroups.value.map(
+    (x) =>
+      x.name ?? (x.localeNameTag && t(x.localeNameTag)) ?? x.localeNames[computedMainLang.value]
+  )
+);
+const computedMainLang = computed(() => useLangStore().mainLang);
 
 useHeader();
 

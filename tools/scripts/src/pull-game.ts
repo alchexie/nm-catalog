@@ -225,6 +225,7 @@ const stopInfo = () => {
     if (!isNoExec) {
       writeText(COMMON_PATHS['res_game_platform.json'], '');
       writeText(COMMON_PATHS['res_game_year.json'], '');
+      writeText(COMMON_PATHS['res_game_series.json'], '');
       writeText(COMMON_PATHS['updated_playlist.json'], '{}');
     }
   } catch (errof) {

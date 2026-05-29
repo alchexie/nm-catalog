@@ -10,7 +10,7 @@ const call = async (url: string): Promise<any> => {
 };
 
 export const getGames = (
-  groupby: 'hardware' | 'release' | 'recent'
+  groupby: 'hardware' | 'release' | 'recent' | 'series'
 ): Promise<GameGroup[]> => {
   return call(`/api/game/${groupby}`);
 };

@@ -12,7 +12,7 @@ export const LangCode = {
 export type LangCode = keyof typeof LangCode;
 export type LangCodeValue = (typeof LangCode)[keyof typeof LangCode];
 
-export const GameGroupBy = ['PLATFORM', 'RELEASE', 'ADDED'] as const;
+export const GameGroupBy = ['PLATFORM', 'RELEASE', 'ADDED', 'SERIES'] as const;
 export type GameGroupBy = (typeof GameGroupBy)[number];
 
 export const PlaylistType = [

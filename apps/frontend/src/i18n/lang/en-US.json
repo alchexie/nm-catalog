@@ -10,7 +10,8 @@
     "groupBy": {
       "PLATFORM": "Group by Platform",
       "RELEASE": "Group by Release Year",
-      "ADDED": "Sort by Latest"
+      "ADDED": "Sort by Latest",
+      "SERIES": "Group by Series"
     },
     "dataSection": {
       "TRACK": "{count} Track | {count} Tracks",
@@ -20,7 +21,8 @@
     "playlist": {
       "SINGLE_GAME": "In-Game Theme Playlist | In-Game Theme Playlists",
       "MULTIPLE": "Cross-Game Theme Playlist | Cross-Game Theme Playlists"
-    }
+    },
+    "uncategorized": "(uncategorized)"
   },
   "track": {
     "tag": {

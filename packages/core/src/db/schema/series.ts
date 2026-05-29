@@ -15,6 +15,9 @@ const tbSeries: DBTableConfig = {
       title_zh_TW TEXT
     );
   `,
+  selectById: () => `SELECT * FROM series WHERE id = ?`,
+  selectByIds: (ids: string[] = []) =>
+    `SELECT * FROM series WHERE id in (${ids.map((id) => `'${id}'`).join(',')})`,
   insert: () => {
     return `
         INSERT INTO series (
