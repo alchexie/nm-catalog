@@ -82,31 +82,6 @@
   }
 }
 
-@media (prefers-color-scheme: light) {
-  #sort-select {
-    background-color: $sideNav-bgColor-light;
-
-    > span {
-      .svg-icon {
-        color: $root-bgColor-light;
-      }
-    }
-
-    > div {
-      > ul {
-        border-color: $sideNav-bgColor-light;
-        box-shadow: 0 0 5px 2px rgba($root-bgColor-light, 0.3);
-        background-color: $root-bgColor-light;
-        color: $sideNav-bgColor-light;
-      }
-    }
-
-    &:hover {
-      box-shadow: 0 0 5px 0 $sideNav-bgColor-light;
-    }
-  }
-}
-
 @media (max-width: 767px) {
   #select {
     width: 100%;

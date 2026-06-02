@@ -107,12 +107,6 @@ function scrollToTop() {
   }
 }
 
-@media (prefers-color-scheme: light) {
-  #footer {
-    color: rgba($root-textColor, 0.87);
-  }
-}
-
 @media (max-width: 767px) {
   #footer {
     > div {

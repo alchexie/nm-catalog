@@ -7,7 +7,7 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
+  color-scheme: dark;
   color: $root-textColor;
   background-color: $root-bgColor;
 
@@ -48,17 +48,6 @@ ol {
   margin: 0 auto;
   padding-bottom: 2rem;
   text-align: center;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: $root-textColor-light;
-    background-color: $root-bgColor-light;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
 }
 
 @media (min-width: 1200px) {

@@ -135,20 +135,6 @@
   transform: translateY(0.5rem);
 }
 
-@media (prefers-color-scheme: light) {
-  #detial-main {
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
-  }
-
-  .common-detail {
-    .detail-text {
-      .text-else {
-        color: rgba($root-textColor-light, 0.9);
-      }
-    }
-  }
-}
-
 @media (max-width: 767px) {
   #detial-main {
     padding: 1rem;

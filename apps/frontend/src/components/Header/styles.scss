@@ -19,12 +19,21 @@ header {
   background-color: $header-bgColor;
   color: $header-textColor;
   opacity: 1;
-  font: bold 1rem 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font:
+    bold 1rem 'Open Sans',
+    'Helvetica Neue',
+    Helvetica,
+    Arial,
+    sans-serif;
 
   .brand {
     display: inline-flex;
     background-color: $header-bgColor;
-    font-family: Inter, system-ui, -apple-system, sans-serif;
+    font-family:
+      Inter,
+      system-ui,
+      -apple-system,
+      sans-serif;
     font-size: 1.05rem;
     line-height: 2em;
     cursor: pointer;
@@ -105,14 +114,6 @@ header {
   height: 100%;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-@media (prefers-color-scheme: light) {
-  header {
-    &:last-of-type {
-      box-shadow: 0 0 1.5rem 1rem rgba($root-bgColor-light, 0.7);
-    }
-  }
 }
 
 @media (max-width: 767px) {

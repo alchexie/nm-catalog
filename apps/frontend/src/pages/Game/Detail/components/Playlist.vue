@@ -47,7 +47,7 @@ const computedPlaylistGroups = computed(() => {
 h2 {
   width: 60%;
   margin-top: 2rem;
-  border-bottom: 1px solid $root-bgColor-light;
+  border-bottom: 1px solid white;
   padding-bottom: 0.5em;
   opacity: 0.4;
   text-align: left;
@@ -67,12 +67,6 @@ ul {
 
   &:last-child {
     margin-bottom: 0;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  h2 {
-    border-color: $root-textColor-light;
   }
 }
 

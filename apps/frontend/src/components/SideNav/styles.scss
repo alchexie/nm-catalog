@@ -74,30 +74,6 @@ $width: 8px;
   }
 }
 
-@media (prefers-color-scheme: light) {
-  #nav {
-    border-color: $sideNav-bgColor-light;
-
-    > ul {
-      > li {
-        background-color: $sideNav-bgColor-light;
-
-        &:after {
-          border-color: $sideNav-bgColor-light;
-          box-shadow: 0 0 5px 2px rgba($root-bgColor-light, 0.3);
-          background-color: $root-bgColor-light;
-          color: $sideNav-bgColor-light;
-        }
-
-        &:hover,
-        &.active {
-          box-shadow: 0 0 1px 3px $sideNav-bgColor-light;
-        }
-      }
-    }
-  }
-}
-
 @media (max-width: 767px) {
   #nav {
     display: none;

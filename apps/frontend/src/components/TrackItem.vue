@@ -90,19 +90,6 @@ h3:has(.tag) {
   font-weight: normal;
 }
 
-@media (prefers-color-scheme: light) {
-  .tag {
-    .svg-icon {
-      color: $root-linkColor;
-      opacity: 0.4;
-
-      &.active {
-        opacity: 1;
-      }
-    }
-  }
-}
-
 @media (max-width: 767px) {
   .tag {
     .svg-icon {
