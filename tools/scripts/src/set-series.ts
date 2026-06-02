@@ -274,9 +274,9 @@ const getLongestCommonSubstring = (arrStr: string[]): string => {
     }
 
     if (updatedGameIds.size > 0) {
-      info(`Classified ${updatedGameIds.size} game(s) in total.`);
+      info(`√ Classified ${updatedGameIds.size} game(s) in total.`);
     } else {
-      info(`All games processed.`);
+      info(`√ All games already have series assigned.`);
     }
 
     readline.close();

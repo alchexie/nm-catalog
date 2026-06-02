@@ -135,7 +135,7 @@ let hasError = false;
         }
       }
 
-      info(`Game playlist data successfully pulled.`);
+      info(`√ Game playlist data successfully pulled.`);
     } else {
       const sections = JSON.parse(readText(COMMON_PATHS['res_playlist_section.json']));
       let playlists = (<DataRow[][]>Object.values(sections)).reduce((a, b) => [
@@ -238,7 +238,7 @@ let hasError = false;
         }
       }
 
-      info(`Section playlist data successfully pulled.`);
+      info(`√ Section playlist data successfully pulled.`);
     }
   } catch (error) {
     console.error(error);

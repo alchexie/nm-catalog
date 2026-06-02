@@ -82,7 +82,7 @@ const stopInfo = () => {
 
       if (flatGameWithYears.findIndex((x) => x.isGameLink) > -1 && !isFullUpdate) {
         info(
-          `New games contains linked game. Please run "pnpm pull-game -- full no-track" after running.`
+          `New games contains linked game. Please run "pnpm pull-game -- full no-track" after running if necessary.`
         );
       }
     }
@@ -130,8 +130,22 @@ const stopInfo = () => {
       );
     }
 
+    let restoreSid: (() => void) | undefined;
     if (isFullUpdate) {
       if (!isNoExec) {
+        const games = stmt.game.select().all() as Game[];
+        restoreSid = () => {
+          const sidGroupMap = new Map<string, string[]>();
+          for (const g of games) {
+            const sid = g.sid;
+            const gids = sidGroupMap.get(sid) || [];
+            gids.push(g.id);
+            sidGroupMap.set(sid, gids);
+          }
+          for (const [sid, gids] of sidGroupMap) {
+            stmt.game.updateSeriesByIds(gids).run(sid);
+          }
+        };
         stmt.game.delete().run();
       }
     }
@@ -187,6 +201,10 @@ const stopInfo = () => {
       }
     }
 
+    if (isFullUpdate && restoreSid) {
+      restoreSid();
+    }
+
     const relateDataSet = new Set<string>();
     for (const game of flatGameWithYears) {
       const rawRelatedGames: DataRow[] = await upstreem.getRelatedsOfGame(
@@ -214,7 +232,7 @@ const stopInfo = () => {
       );
     }
 
-    info(`Game data successfully pulled.`);
+    info(`√ Game data successfully pulled.`);
 
     if (!isFullUpdate) {
       writeText(

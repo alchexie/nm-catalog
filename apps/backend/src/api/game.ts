@@ -231,6 +231,7 @@ router.get('/series', async (_req: Request, res: Response) => {
         );
       });
 
+      writeText(fileName, result);
       res.json(result);
     } catch (error) {
       const err = toError(error);

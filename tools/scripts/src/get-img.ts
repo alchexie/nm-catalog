@@ -221,7 +221,7 @@ const runAll = async () => {
       '.'
   );
   writeText(COMMON_PATHS['error_img.json'], errors);
-  console.log(`All tasks completed`);
+  console.log(`√ All tasks completed`);
 };
 
 runAll();

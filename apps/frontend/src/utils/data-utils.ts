@@ -11,7 +11,7 @@ export const isShowTitle = (target: NMData, lang: string): boolean => {
     return false;
   }
   lang = LocalizationString.convertLangCode(lang);
-  return (target as any)[`title_${lang}`] !== target['title_en_US'];
+  return (target as any)[`title_${lang}`].trim() !== target['title_en_US'].trim();
 };
 
 export const openSourceImg = (target: NMData, lang: string) => {
