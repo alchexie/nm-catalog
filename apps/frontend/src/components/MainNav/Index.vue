@@ -1,29 +1,38 @@
 <template>
-  <header id="header">
-    <div class="app-width">
-      <div class="brand" @click.stop="router.push(`/`)">
-        <img src="/favicon.svg" />
-        {{ title }}
+  <nav id="main-nav">
+    <div class="brand" @click.stop="router.push(`/`)">
+      <img src="/favicon.svg" />
+      <span>{{ title }}</span>
+    </div>
+    <button class="display-sm">
+      <SvgIcon type="menu" width="24px" color="white"></SvgIcon>
+    </button>
+    <nav class="menu">
+      <router-link
+        v-for="(item, index) in computedMenu"
+        :key="index"
+        :to="item.path"
+        :class="{ active: route.path.startsWith(item.path) }"
+      >
+        <SvgIcon :type="item.path.slice(1)" width="28px" color="currentColor"></SvgIcon>
+        {{ item.name }}
+      </router-link>
+    </nav>
+    <div class="slot hidden-sm">
+      <hr />
+      <div>
+        <slot></slot>
       </div>
-      <button>
-        <SvgIcon type="menu" width="24px" color="white"></SvgIcon>
-      </button>
-      <nav>
-        <router-link
-          v-for="(item, index) in computedMenu"
-          :key="index"
-          :to="item.path"
-          :class="{ active: route.path.startsWith(item.path) }"
-        >
-          {{ item.name }}
-        </router-link>
-      </nav>
     </div>
-  </header>
-  <header id="subHeader" v-if="observeRef" :class="{ active: !refVisible }">
-    <div class="app-width">
-      <slot></slot>
-    </div>
+  </nav>
+  <header id="main-header" class="hidden-sm">
+    <a
+      href="https://music.nintendo.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      referrerpolicy="no-referrer"
+      >Go to <b>Nintendo Music</b> Official Website</a
+    >
   </header>
 </template>
 

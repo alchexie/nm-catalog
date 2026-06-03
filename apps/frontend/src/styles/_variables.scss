@@ -1,17 +1,10 @@
-$root-bgColor: #242424;
+$root-bgColor: #111111;
+// $root-blockColor: #1d1d1d;
 $root-textColor: #e3e3e3;
 $root-linkColor: #646cff;
 
-/* --------- header --------- */
-
-$header-bgColor: #e60012;
-$header-textColor: white;
-$header-bgColor-detail: #dcdbdb;
-$header-textColor-detail: #958889;
-
-/* --------- footer --------- */
-
-$footer-bgColor: black;
+$breakpoint-md: 768px;
+$breakpoint-xl: 1440px;
 
 /* --------- side-nav --------- */
 

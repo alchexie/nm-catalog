@@ -19,6 +19,8 @@ const stringMap = useLocalizationString();
 </script>
 
 <style lang="scss" scoped>
+@use '@/styles/variables' as *;
+
 .playlist {
   > img {
     width: 100%;
@@ -27,7 +29,7 @@ const stringMap = useLocalizationString();
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md) {
   .playlist {
     > img {
       display: none;

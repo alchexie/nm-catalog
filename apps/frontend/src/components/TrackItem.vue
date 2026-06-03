@@ -60,6 +60,8 @@ const computedLangs = computed(() =>
 </script>
 
 <style lang="scss" scoped>
+@use '@/styles/variables' as *;
+
 h3:has(.tag) {
   padding-right: 3em;
 }
@@ -90,7 +92,7 @@ h3:has(.tag) {
   font-weight: normal;
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md) {
   .tag {
     .svg-icon {
       display: none;

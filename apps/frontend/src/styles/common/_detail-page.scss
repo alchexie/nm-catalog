@@ -97,7 +97,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md) {
   .common-detail {
     .detail-image {
       display: none;
@@ -124,21 +124,6 @@
         padding-left: 1rem;
       }
     }
-  }
-}
-
-#detial-main {
-  max-width: 992px;
-  margin: 4rem auto 3rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
-  transform: translateY(0.5rem);
-}
-
-@media (max-width: 767px) {
-  #detial-main {
-    padding: 1rem;
-    box-shadow: none;
   }
 }
 

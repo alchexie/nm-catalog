@@ -2,7 +2,7 @@
   <div id="top-mark" ref="topRef"></div>
   <footer id="footer">
     <div>
-      <span class="dim">
+      <span>
         Fan project. Not an official site.
         <span class="hidden-sm">&nbsp;Data only, no music included.</span>
       </span>
@@ -17,7 +17,7 @@
             {{ name }}
           </option>
         </select>
-        <span :class="{ dim: isScrollTop }" @click.stop="scrollToTop()">
+        <span :style="{ opacity: isScrollTop ? 0.5 : 1 }" @click.stop="scrollToTop()">
           {{ t('info.top') }} ↑
         </span>
       </label>
@@ -62,6 +62,8 @@ function scrollToTop() {
 </script>
 
 <style lang="scss" scoped>
+@use '@/styles/variables' as *;
+
 #top-mark {
   position: absolute;
   top: 0;
@@ -75,17 +77,18 @@ function scrollToTop() {
   right: 0;
   bottom: 0;
   width: 100%;
-  background-color: rgba($footer-bgColor, 0.8);
+  padding-left: var(--main-nav-width);
+  background-color: rgba(black, 0.9);
   font-size: small;
 
   > div {
     display: flex;
     align-items: center;
     justify-content: center;
-    max-width: 1200px;
     height: 3em;
     margin: 0 auto;
     padding: 0 3.5rem;
+    color: var(--root-text-color-light);
 
     > label {
       margin-left: auto;
@@ -99,16 +102,14 @@ function scrollToTop() {
       display: inline-flex;
       align-items: center;
       cursor: pointer;
-
-      &.dim {
-        opacity: 0.5;
-      }
     }
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md) {
   #footer {
+    padding-left: 0;
+
     > div {
       flex-direction: column-reverse;
       height: 4.5em;
@@ -116,10 +117,6 @@ function scrollToTop() {
 
       > label {
         margin-left: initial;
-      }
-
-      .hidden-sm {
-        display: none;
       }
     }
   }

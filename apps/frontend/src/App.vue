@@ -1,19 +1,35 @@
 <template>
-  <Header :observeRef="headerStore.observeRef">
+  <MainNav :observeRef="headerStore.observeRef">
     <component :is="headerStore.template" :data="headerStore.data" />
-  </Header>
-  <RouterView v-slot="{ Component, route }">
-    <keep-alive>
-      <component :is="Component" :key="route.fullPath" />
-    </keep-alive>
-  </RouterView>
+  </MainNav>
+  <main id="main-container">
+    <RouterView v-slot="{ Component, route }">
+      <keep-alive>
+        <component :is="Component" :key="route.fullPath" />
+      </keep-alive>
+    </RouterView>
+  </main>
   <Footer></Footer>
 </template>
 
 <script setup lang="ts">
-import Header from '@/components/Header/Index.vue';
+import MainNav from '@/components/MainNav/Index.vue';
 import Footer from '@/components/Footer.vue';
 import { useHeaderStore } from './stores';
 
 const headerStore = useHeaderStore();
 </script>
+
+<style lang="scss" scoped>
+#main-container {
+  padding: 60px 24px;
+}
+
+@media (min-width:#{$breakpoint-md + 1px}) {
+  #main-container {
+    margin-top: var(--main-header-height);
+    margin-left: var(--main-nav-width);
+    padding: 8px 32px 64px;
+  }
+}
+</style>

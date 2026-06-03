@@ -44,6 +44,8 @@ const computedPlaylistGroups = computed(() => {
 </script>
 
 <style lang="scss" scoped>
+@use '@/styles/variables' as *;
+
 h2 {
   width: 60%;
   margin-top: 2rem;
@@ -70,7 +72,7 @@ ul {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md) {
   ul {
     display: block;
     text-align: left;

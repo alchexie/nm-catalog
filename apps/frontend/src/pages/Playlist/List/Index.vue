@@ -1,35 +1,33 @@
 <template>
   <Container :loading="loading">
-    <main id="list-main">
-      <section
-        class="list-group"
-        v-for="section in computedPlaylistSections"
-        :key="section.tag"
-      >
-        <h1>{{ section.name }}</h1>
-        <ul class="group-content">
-          <li
-            class="content-item"
-            :class="{ expired: playlist.isexpired }"
-            v-for="playlist in section.playlists"
-            :key="playlist.id"
+    <section
+      class="list-group"
+      v-for="section in computedPlaylistSections"
+      :key="section.tag"
+    >
+      <h1>{{ section.name }}</h1>
+      <ul class="group-content">
+        <li
+          class="content-item"
+          :class="{ expired: playlist.isexpired }"
+          v-for="playlist in section.playlists"
+          :key="playlist.id"
+        >
+          <router-link
+            :to="`/playlist/${playlist.id}`"
+            :title="
+              playlist.$title + (playlist.isexpired ? ` - ${t('playlist.expired')}` : '')
+            "
           >
-            <router-link
-              :to="`/playlist/${playlist.id}`"
-              :title="
-                playlist.$title + (playlist.isexpired ? ` - ${t('playlist.expired')}` : '')
-              "
-            >
-              <img v-fallback :src="playlist.$imgPath" loading="lazy" />
-              <span>
-                {{ playlist.$title }}
-                <SvgIcon type="expired" width="1em" fill="#00ACC1"></SvgIcon>
-              </span>
-            </router-link>
-          </li>
-        </ul>
-      </section>
-    </main>
+            <img v-fallback :src="playlist.$imgPath" loading="lazy" />
+            <span>
+              {{ playlist.$title }}
+              <SvgIcon type="expired" width="1em" fill="#00ACC1"></SvgIcon>
+            </span>
+          </router-link>
+        </li>
+      </ul>
+    </section>
   </Container>
 </template>
 
@@ -73,9 +71,3 @@ onMounted(async () => {
   playlistSections.value = result;
 });
 </script>
-
-<style lang="scss" scoped>
-#list-main {
-  padding-top: 60px;
-}
-</style>

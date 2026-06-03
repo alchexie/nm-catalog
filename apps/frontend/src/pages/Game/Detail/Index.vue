@@ -1,6 +1,6 @@
 <template>
   <Container :loading="loading">
-    <main id="detial-main" v-if="data">
+    <template v-if="data">
       <section class="common-detail main">
         <div class="detail-part detail-image">
           <img
@@ -49,7 +49,7 @@
           :data="data.playlists"
         ></Playlist>
       </section>
-    </main>
+    </template>
   </Container>
 </template>
 

@@ -1,12 +1,3 @@
-#select {
-  position: relative;
-  width: 97%;
-  padding-top: 3rem;
-  padding-right: 1em;
-  text-align: right;
-  visibility: hidden;
-}
-
 #sort-select {
   $width: 36px;
 
@@ -82,11 +73,10 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md) {
   #select {
     width: 100%;
-    padding-top: 5rem;
-    padding-bottom: 0.5rem;
-    visibility: visible;
+    padding: 1rem 0 2rem;
+    text-align: right;
   }
 }

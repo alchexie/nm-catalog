@@ -1,45 +1,41 @@
+@use '@/styles/variables' as *;
 @use '@/styles/mixins.scss' as *;
 
 .list-group {
+  margin-bottom: calc(var(--root-gap-width) * 2);
+
   h1 {
-    margin: 1em 0;
-    font-size: 1.1rem;
+    margin: 0;
+    margin-bottom: var(--root-gap-width);
+    font-size: 1.125rem;
   }
 
   .group-content {
-    $gap: 16px;
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: $gap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(175px, 100%), 1fr));
+    gap: 32px 24px;
 
     .content-item {
-      position: relative;
-      width: 200px;
-      margin: calc($gap / 2);
-      border-radius: 8px;
-
       > a {
         > img {
           display: block;
-          width: 200px;
-          height: 200px;
+          width: 100%;
+          aspect-ratio: 1;
           margin-bottom: 8px;
-          border-radius: 8px;
+          border-radius: 4px;
           cursor: pointer;
           @include transition(transform, 0.1s);
         }
 
         > span {
+          $maxLine: 3;
+
           display: -webkit-box;
           -webkit-box-orient: vertical;
-          line-clamp: 3;
-          -webkit-line-clamp: 3;
+          line-clamp: $maxLine;
+          -webkit-line-clamp: $maxLine;
           overflow: hidden;
-          text-overflow: ellipsis;
-          word-break: break-word;
-          max-height: calc(1.1rem * 3 * 1.5);
+          max-height: calc(1.1rem * $maxLine * 1.5);
           cursor: pointer;
 
           > svg {
@@ -57,11 +53,9 @@
       }
 
       &.expired {
+        opacity: 0.5;
+        
         > a {
-          > img {
-            opacity: 0.5;
-          }
-
           > span {
             > svg {
               display: inline;
@@ -73,22 +67,14 @@
       }
     }
   }
-
-  &:last-of-type {
-    padding-bottom: 2rem;
-  }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md) {
   .list-group {
     .group-content {
       display: block;
 
       .content-item {
-        width: 100%;
-        height: 50px;
-        text-align: left;
-
         > a {
           display: flex;
           align-items: center;
@@ -96,17 +82,12 @@
           > img {
             display: inline-block;
             width: 50px;
-            height: 50px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            cursor: pointer;
           }
 
           > span {
             flex: 1;
             display: block;
             margin: 0 1rem 0.5rem;
-            @include textEllipsis();
           }
         }
       }

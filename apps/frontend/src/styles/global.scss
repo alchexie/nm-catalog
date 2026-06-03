@@ -3,18 +3,36 @@
 @use '@/styles/common' as *;
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: dark;
-  color: $root-textColor;
-  background-color: $root-bgColor;
+  color: var(--root-text-color);
+  background-color: var(--root-bg-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --root-bg-color: #111111;
+  --root-brand-color: #e60012;
+  --root-block-color: #1d1d1d;
+
+  --root-text-color: #f4f4f4;
+  --root-text-color-light: #f4f4f499;
+
+  --root-gap-width: 24px;
+
+  /* --------- main --------- */
+  --main-nav-width: 240px;
+  --main-header-height: 80px;
 }
 
 *,
@@ -24,12 +42,8 @@
 }
 
 a {
-  color: #646cff;
+  color: var(--root-text-color);
   text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
 }
 
 body {
@@ -46,18 +60,53 @@ ol {
 #app {
   width: 100%;
   margin: 0 auto;
-  padding-bottom: 2rem;
-  text-align: center;
 }
 
-@media (min-width: 1200px) {
-  #app {
-    width: 1200px;
+.display-sm {
+  display: none;
+}
+
+.hidden-sm {
+  display: block;
+}
+
+@media (max-width: $breakpoint-md) {
+  html {
+    font-size: 80%;
+  }
+
+  .display-sm {
+    display: block;
+  }
+
+  .hidden-sm {
+    display: none !important;
   }
 }
 
-@media (max-width: 767px) {
-  html {
-    font-size: 80%;
+@media (min-width: $breakpoint-xl) {
+  :root {
+    /* --------- main-nav --------- */
+    --main-nav-width: 280px;
+  }
+}
+
+* {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: rgb(from var(--root-text-color) r g b / 10%);
+
+    &:hover {
+      background-color: rgb(from var(--root-text-color) r g b / 30%);
+    }
   }
 }

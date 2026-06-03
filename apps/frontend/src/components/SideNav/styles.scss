@@ -1,3 +1,5 @@
+@use '@/styles/variables' as *;
+
 $width: 8px;
 
 #nav {
@@ -74,7 +76,7 @@ $width: 8px;
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md) {
   #nav {
     display: none;
   }
