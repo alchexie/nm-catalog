@@ -3,8 +3,11 @@
   <footer id="footer">
     <div>
       <span>
-        Fan project. Not an official site.
-        <span class="hidden-sm">&nbsp;Data only, no music included.</span>
+        Fan project since 2025. Not an official site.
+        <span class="hidden-sm">
+          Data only, no music included.
+          <b>All data belongs to Nintendo.</b>
+        </span>
       </span>
       <label>
         {{ t('info.lang') }}{{ t('punctuation.colon') }}
@@ -76,8 +79,9 @@ function scrollToTop() {
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 1;
   width: 100%;
-  padding-left: var(--main-nav-width);
+  height: var(--main-footer-height);
   background-color: rgba(black, 0.9);
   font-size: small;
 
@@ -85,9 +89,9 @@ function scrollToTop() {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 3em;
+    height: 100%;
     margin: 0 auto;
-    padding: 0 3.5rem;
+    padding: 0 var(--root-gap-width-0);
     color: var(--root-text-color-light);
 
     > label {
@@ -101,6 +105,7 @@ function scrollToTop() {
     span {
       display: inline-flex;
       align-items: center;
+      gap: 0.5em;
       cursor: pointer;
     }
   }
@@ -108,11 +113,10 @@ function scrollToTop() {
 
 @media (max-width: $breakpoint-md) {
   #footer {
-    padding-left: 0;
+    height: 4.5em;
 
     > div {
       flex-direction: column-reverse;
-      height: 4.5em;
       line-height: 2em;
 
       > label {

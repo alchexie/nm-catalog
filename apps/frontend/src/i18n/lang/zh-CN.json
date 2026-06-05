@@ -7,11 +7,12 @@
     "minute": "分钟"
   },
   "game": {
+    "all": "所有",
     "groupBy": {
-      "PLATFORM": "按平台分组",
-      "RELEASE": "按发售年份分组",
-      "ADDED": "按最新添加排序",
-      "SERIES": "按系列分组"
+      "PLATFORM": "按平台",
+      "ADDED": "最新排序",
+      "RELEASE": "发售顺序",
+      "SERIES": "按系列"
     },
     "dataSection": {
       "TRACK": "{count} 首乐曲",
@@ -46,9 +47,10 @@
       "SPECIAL": "特别发布",
       "RECOMMEND": "精选集",
       "MOOD": "现在的心情",
-      "SCENE": "游戏中的场景"
+      "SCENE": "游戏中的场景",
+      "CHARACTER": "角色"
     },
-    "expired": "过期播放列表"
+    "expired": "（已下架）"
   },
   "info": {
     "lang": "首选语言",
@@ -56,5 +58,11 @@
   },
   "punctuation": {
     "colon": "："
+  },
+  "official": {
+    "site": "官方网站",
+    "page": "官方页面",
+    "goPrefix": "前往",
+    "goSuffix": ""
   }
 }

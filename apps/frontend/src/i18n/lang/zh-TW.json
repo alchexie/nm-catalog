@@ -7,11 +7,12 @@
     "minute": "分"
   },
   "game": {
+    "all": "所有",
     "groupBy": {
-      "PLATFORM": "依硬體分組",
-      "RELEASE": "依發售年份分組",
-      "ADDED": "依加入順序排序",
-      "SERIES": "依系列分組"
+      "PLATFORM": "依硬體",
+      "ADDED": "依加入順序",
+      "RELEASE": "依發售順序",
+      "SERIES": "依系列"
     },
     "dataSection": {
       "TRACK": "{count} 首樂曲",
@@ -46,9 +47,10 @@
       "SPECIAL": "特別發布",
       "RECOMMEND": "精選集",
       "MOOD": "目前的心情",
-      "SCENE": "遊戲中的場景"
+      "SCENE": "遊戲中的場景",
+      "CHARACTER": "角色"
     },
-    "expired": "過期播放清單"
+    "expired": "（已移除）"
   },
   "info": {
     "lang": "首選語言",
@@ -56,5 +58,11 @@
   },
   "punctuation": {
     "colon": "："
+  },
+  "official": {
+    "site": "官方網站",
+    "page": "官方頁面",
+    "goPrefix": "前往",
+    "goSuffix": ""
   }
 }

@@ -44,42 +44,18 @@
         </li>
       </ul>
     </section>
-    <SideNav
-      :target="groupRefs"
-      :options="computedGroupNames"
-      :step="selectedGroupBy === 'RELEASE' ? 5 : 1"
-      v-model:title="currentGroup"
-      v-if="computedGameGroups.length"
-    >
-      <div id="sort-select">
-        <span> <SvgIcon type="category" width="24px"></SvgIcon> </span>
-        <div>
-          <ul>
-            <li
-              v-for="groupBy in computedGameGroupBy"
-              :key="groupBy.value"
-              :class="{ active: selectedGroupBy === groupBy.value }"
-              @click.stop="changeGroupBy(groupBy.value)"
-            >
-              <span>{{ groupBy.label }}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </SideNav>
   </Container>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useHeader } from '@/composables/useHeader';
+import { useNavigationr } from '@/composables/useNavigationr';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
 import Container from '@/components/Container.vue';
 import SideNav from '@/components/SideNav/Index.vue';
-import SvgIcon from '@/components/SvgIcon.vue';
 import { STORAGE_KEY, GameGroupBy, type GameGroup } from '@/types';
 import { getGames } from '@/api';
 import { useGameStore, useLangStore } from '@/stores';
@@ -99,7 +75,6 @@ const gameDict: Record<
 };
 const selectedGroupBy = ref<GameGroupBy>('PLATFORM');
 const gameGroups = ref<GameGroup[]>([]);
-const currentGroup = ref<string>();
 const selectRef = ref<HTMLElement>();
 const groupRefs = ref<HTMLElement[]>([]);
 
@@ -119,17 +94,39 @@ const computedGameGroups = computed(() =>
     })),
   }))
 );
-const computedGroupNames = computed(() =>
-  computedGameGroups.value.map(
-    (x) =>
+const computedGroupList = computed(() =>
+  computedGameGroups.value.map((x) => ({
+    label:
       x.name ??
       (x.localeNameTag && t(x.localeNameTag)) ??
-      x.localeNames[computedMainLang.value]
-  )
+      x.localeNames[computedMainLang.value],
+    count: x.games.length,
+  }))
 );
 const computedMainLang = computed(() => useLangStore().mainLang);
 
-useHeader();
+useNavigationr({
+  template: {
+    setup() {
+      return () => {
+        if (!computedGameGroups.value.length) return null;
+        return h(SideNav, {
+          title: t('common.game'),
+          sortConfig: {
+            options: computedGameGroupBy.value,
+            current: selectedGroupBy.value,
+          },
+          target: groupRefs.value,
+          options: computedGroupList.value,
+          'onUpdate:sort'(val: GameGroupBy) {
+            selectedGroupBy.value = val;
+            changeGroupBy(val);
+          },
+        });
+      };
+    },
+  },
+});
 
 onMounted(async () => {
   await onGroupByChange();
@@ -165,7 +162,6 @@ async function onGroupByChange(event?: Event) {
   }
   gameGroups.value = await getGamesByGroup(value as GameGroupBy);
   localStorage.setItem(STORAGE_KEY.GAME_GROUPBY, value);
-  currentGroup.value = gameGroups.value[0].name;
 
   groupRefs.value = [];
   window.scrollTo(0, 0);
@@ -180,4 +176,10 @@ function changeGroupBy(value: GameGroupBy) {
 }
 </script>
 
-<style lang="scss" scoped src="./styles.scss"></style>
+<style lang="scss" scoped>
+#select {
+  width: 100%;
+  padding: 1rem 0 2rem;
+  text-align: right;
+}
+</style>

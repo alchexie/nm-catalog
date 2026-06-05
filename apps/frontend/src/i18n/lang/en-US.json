@@ -7,11 +7,12 @@
     "minute": "m"
   },
   "game": {
+    "all": "All",
     "groupBy": {
-      "PLATFORM": "Group by Platform",
-      "RELEASE": "Group by Release Year",
-      "ADDED": "Sort by Latest",
-      "SERIES": "Group by Series"
+      "PLATFORM": "Platform",
+      "ADDED": "Added",
+      "RELEASE": "Release",
+      "SERIES": "Series"
     },
     "dataSection": {
       "TRACK": "{count} Track | {count} Tracks",
@@ -46,9 +47,10 @@
       "SPECIAL": "Special Release",
       "RECOMMEND": "Top Recommendations",
       "MOOD": "Match your Mood",
-      "SCENE": "Set the Scene"
+      "SCENE": "Set the Scene",
+      "CHARACTER": "Characters"
     },
-    "expired": "Expired Playlist"
+    "expired": "(Unavailable)"
   },
   "info": {
     "lang": "Preferred Language",
@@ -56,5 +58,11 @@
   },
   "punctuation": {
     "colon": ":"
+  },
+  "official": {
+    "site": "Official Website",
+    "page": "Official Page",
+    "goPrefix": "Go to ",
+    "goSuffix": ""
   }
 }

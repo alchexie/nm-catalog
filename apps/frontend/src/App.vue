@@ -1,6 +1,6 @@
 <template>
-  <MainNav :observeRef="headerStore.observeRef">
-    <component :is="headerStore.template" :data="headerStore.data" />
+  <MainNav>
+    <component :is="navigationStore.template" />
   </MainNav>
   <main id="main-container">
     <RouterView v-slot="{ Component, route }">
@@ -15,9 +15,9 @@
 <script setup lang="ts">
 import MainNav from '@/components/MainNav/Index.vue';
 import Footer from '@/components/Footer.vue';
-import { useHeaderStore } from './stores';
+import { useNavigationStore } from './stores';
 
-const headerStore = useHeaderStore();
+const navigationStore = useNavigationStore();
 </script>
 
 <style lang="scss" scoped>

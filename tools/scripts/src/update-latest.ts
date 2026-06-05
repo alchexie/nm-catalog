@@ -29,6 +29,7 @@ const runCommand = (exec: string) => {
   await runCommand('pnpm pull-game');
   await runCommand('pnpm pull-playlist');
   await runCommand('pnpm pull-playlist -- section');
+  await runCommand('pnpm pull-playlist -- character');
   await runCommand('pnpm get-img -- original');
   await runCommand('pnpm set-series');
 })();

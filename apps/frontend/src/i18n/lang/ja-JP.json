@@ -5,10 +5,11 @@
     "playlist": "プレイリスト"
   },
   "game": {
+    "all": "すべて",
     "groupBy": {
       "PLATFORM": "ハード別",
-      "RELEASE": "発売順",
       "ADDED": "新着順",
+      "RELEASE": "発売順",
       "SERIES": "シリーズ別"
     },
     "dataSection": {
@@ -44,9 +45,10 @@
       "SPECIAL": "特別配信",
       "RECOMMEND": "セレクション",
       "MOOD": "いまの気分",
-      "SCENE": "ゲーム中のシーン"
+      "SCENE": "ゲーム中のシーン",
+      "CHARACTER": "キャラクター"
     },
-    "expired": "期限切れのプレイリスト"
+    "expired": "（公開終了）"
   },
   "info": {
     "lang": "優先言語",
@@ -54,5 +56,11 @@
   },
   "punctuation": {
     "colon": "："
+  },
+  "official": {
+    "site": "公式サイト",
+    "page": "公式ページ",
+    "goPrefix": "",
+    "goSuffix": "を開く"
   }
 }

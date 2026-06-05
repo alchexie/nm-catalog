@@ -8,10 +8,11 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--root-gap-width);
+  gap: var(--root-gap-width-0);
   width: var(--main-nav-width);
   height: 100%;
-  background-color: var(--root-block-color);
+  padding-bottom: var(--main-footer-height);
+  background-color: var(--root-bg-color-1);
 
   .brand {
     display: flex;
@@ -35,7 +36,7 @@
   }
 
   .menu {
-    margin: 0 16px;
+    margin: 0 var(--root-gap-width-1);
 
     > a {
       display: flex;
@@ -43,8 +44,8 @@
       gap: 0.5em;
       height: 48px;
       margin-bottom: 2px;
-      padding: 0 8px;
-      border-radius: 4px;
+      padding: 0 var(--root-gap-width-2);
+      border-radius: var(--root-gap-width-3);
       color: var(--root-text-color-light);
       font-weight: bold;
       @include transition(background-color, 0.1s);
@@ -64,11 +65,11 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--root-gap-width);
+    gap: var(--root-gap-width-0);
 
     hr {
       height: 1px;
-      margin: 0 var(--root-gap-width);
+      margin: 0 var(--root-gap-width-0);
       border: none;
       background-color: rgb(from var(--root-text-color) r g b / 85%);
       opacity: 0.15;
@@ -77,8 +78,6 @@
     > div {
       flex: 1;
       min-height: 0;
-      padding: 0 var(--root-gap-width);
-      overflow: auto;
     }
   }
 }
@@ -93,15 +92,19 @@
   width: calc(100% - var(--main-nav-width));
   height: var(--main-header-height);
   padding: 0 20px;
-  background-color: rgb(from var(--root-bg-color) r g b / 90%);
+  background-color: rgb(from var(--root-bg-color-0) r g b / 90%);
 
   a {
     display: block;
     margin-left: auto;
-    padding: 0 var(--root-gap-width);
+    padding: 0 var(--root-gap-width-0);
     border-radius: 9999px;
-    background-color: #282828;
+    background-color: var(--root-bg-color-2);
     line-height: 48px;
+
+    &:hover {
+      background-color: var(--root-bg-color-3);
+    }
   }
 }
 
@@ -113,6 +116,7 @@
     height: $headerHeight;
     flex-direction: row;
     align-items: center;
+    padding-bottom: 0;
     background-color: var(--root-brand-color);
 
     .brand {

@@ -11,7 +11,7 @@
           />
         </div>
         <div class="detail-part detail-text">
-          <h1 class="text-main" ref="titleRef">
+          <h1 class="text-main">
             {{ computedTitle }}
             <span :title="t('playlist.expired')">
               <SvgIcon
@@ -79,7 +79,7 @@ import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useGameStore, useLangStore } from '@/stores';
-import { useHeader } from '@/composables/useHeader';
+import { useNavigationr } from '@/composables/useNavigationr';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
@@ -101,7 +101,6 @@ const trackLoader = useLoadMore<PlaylistTrack>([]);
 const pid = route.params.pid as string;
 const langStore = useLangStore();
 const data = ref<PlaylistDetail & { duration: DurationInfo }>();
-const titleRef = ref<HTMLElement>();
 const loadMoreRef = ref<HTMLElement>();
 const tracker = new ElementTracker(async (entries) => {
   const entry = entries[0];
@@ -138,19 +137,20 @@ const computedIsChangalbePlaylist = computed(() => {
   );
 });
 
-useHeader(() => ({
-  observeRef: titleRef.value,
-  data: data.value,
-  template: () => {
-    if (data.value) {
-      return [
+const headerTemplate = {
+  setup() {
+    return () => {
+      if (!data.value) return null;
+      return h('div', null, [
         h('h1', computedTitle.value),
         h('small', ` (${computedPlaylistTypeText.value})`),
-      ];
-    } else {
-      return [];
-    }
+      ]);
+    };
   },
+};
+
+useNavigationr(() => ({
+  template: headerTemplate,
 }));
 
 onMounted(async () => {

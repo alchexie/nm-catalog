@@ -11,7 +11,7 @@
           />
         </div>
         <div class="detail-part detail-text">
-          <h1 class="text-main" ref="titleRef">
+          <h1 class="text-main">
             {{ computedTitle }}<br />
             <small>{{ data.game.year }} | {{ data.game.hardware }}</small>
           </h1>
@@ -58,7 +58,7 @@ import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useLangStore } from '@/stores';
-import { useHeader } from '@/composables/useHeader';
+import { useNavigationr } from '@/composables/useNavigationr.ts';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
@@ -80,7 +80,6 @@ const stringMap = useLocalizationString();
 const gid = route.params.gid as string;
 const data = ref<GameDetail>();
 const gameDataSection = ref<GameDataSection>('TRACK');
-const titleRef = ref<HTMLElement>();
 
 const computedTitle = computed(() => stringMap.getString(data.value!.game, 'title'));
 const computedLangs = computed(() =>
@@ -100,19 +99,20 @@ const computedSections = computed(() => {
   return result;
 });
 
-useHeader(() => ({
-  observeRef: titleRef.value,
-  data: data.value,
-  template: () => {
-    if (data.value) {
-      return [
+const headerTemplate = {
+  setup() {
+    return () => {
+      if (!data.value) return null;
+      return h('div', null, [
         h('h1', computedTitle.value),
         h('small', `(${data.value.game.year} | ${data.value.game.hardware})`),
-      ];
-    } else {
-      return [];
-    }
+      ]);
+    };
   },
+};
+
+useNavigationr(() => ({
+  template: headerTemplate,
 }));
 
 onMounted(async () => {

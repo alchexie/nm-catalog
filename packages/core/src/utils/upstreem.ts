@@ -95,4 +95,8 @@ export const upstreem = {
       lang
     );
   },
+
+  async getCharacterPlaylistInfo():Promise<any>{
+    return await request(`${UPSTREAM_API_BASE_URL}sections/home/f8d54567-6275-43d6-8fab-549343b688a3?country=JP&lang=zh-CN`)
+  }
 };

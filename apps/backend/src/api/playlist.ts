@@ -8,29 +8,63 @@ import {
   type PlaylistTrack,
   type PlaylistTrackGroup,
 } from '@nm-catalog/shared';
-import { stmt, readText, toError, COMMON_PATHS, DataRow } from '@nm-catalog/core';
+import {
+  stmt,
+  readText,
+  toError,
+  COMMON_PATHS,
+  DataRow,
+  writeText,
+} from '@nm-catalog/core';
 
 const router = express.Router();
 
 router.get('/', (_req: Request, res: Response) => {
-  const fileName = COMMON_PATHS['res_playlist_section.json'];
   try {
-    const rawData: Record<string, DataRow[]> = JSON.parse(readText(fileName));
-    const rawPlaylistData = Object.values(rawData);
+    let fileName = COMMON_PATHS['res_playlist_section.json'];
+    const rawSectionData: Record<string, DataRow[]> = JSON.parse(readText(fileName));
+    const rawPlaylistData = Object.values(rawSectionData);
     const playlists = stmt.playlist
       .selectByIds(
         rawPlaylistData.map((x) => x.map((y) => y.id)).reduce((a, b) => [...a, ...b])
       )
       .all() as Playlist[];
 
-    const playlistsMap = new Map(playlists.map(p => [<string>(p.id), p]));
+    const playlistsMap = new Map(playlists.map((p) => [<string>p.id, p]));
     const result = [] as PlaylistSection[];
-    Object.entries(rawData).forEach((_, i) => {
+    Object.entries(rawSectionData).forEach((_, i) => {
       result.push({
         tag: PlaylistSectionType[i],
-        playlists: rawPlaylistData[i].map((x) => playlistsMap.get(<string>(x.id))!),
+        playlists: rawPlaylistData[i].map((x) => playlistsMap.get(<string>x.id)!),
       });
     });
+
+    fileName = COMMON_PATHS['res_playlist_character.json'];
+    let rawCharacterData: any[];
+    try {
+      rawCharacterData = JSON.parse(readText(fileName));
+    } catch (error) {
+      rawCharacterData = [];
+    }
+
+    if (rawCharacterData.length > 0) {
+      let characterPlaylistData: Playlist[];
+      if (typeof rawCharacterData[0] === 'string') {
+        const playlistIdMap = new Map(rawCharacterData.map((id, i) => [id, i]));
+        characterPlaylistData = (
+          stmt.playlist.selectByIds(rawCharacterData).all() as Playlist[]
+        ).sort((a, b) => playlistIdMap.get(a.id)! - playlistIdMap.get(b.id)!);
+
+        writeText(fileName, characterPlaylistData);
+      } else {
+        characterPlaylistData = rawCharacterData;
+      }
+      result.push({
+        tag: 'CHARACTER',
+        playlists: characterPlaylistData,
+      });
+    }
+
     res.json(result);
   } catch (error) {
     const err = toError(error);
@@ -92,7 +126,7 @@ router.get('/:id/detail', (req: Request, res: Response) => {
           });
         }
 
-        const gamesMap = new Map(games.map(g => [g.id, g]));
+        const gamesMap = new Map(games.map((g) => [g.id, g]));
         tracks.forEach((x, i) => {
           if (i === 0 || x.gid !== tracks[i - 1].gid) {
             trackGroups.push({
