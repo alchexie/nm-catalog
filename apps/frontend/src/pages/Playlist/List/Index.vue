@@ -13,9 +13,9 @@
       "
     >
       <h1>{{ section.name }}</h1>
-      <ul class="group-content">
+      <ul class="commom-grid">
         <li
-          class="content-item"
+          class="commom-grid-item"
           :class="{ expired: playlist.isexpired }"
           v-for="playlist in section.playlists"
           :key="playlist.id"
@@ -31,7 +31,6 @@
               {{ playlist.$title }}
               <SvgIcon
                 type="expired"
-                width="1em"
                 fill="#00ACC1"
                 v-if="playlist.isexpired"
               ></SvgIcon>
@@ -88,9 +87,11 @@ useNavigationr({
       return () => {
         if (!computedPlaylistSections.value.length) return null;
         return h(SideNav, {
-          title: t('common.playlist'),
-          target: groupRefs.value,
+          data: {
+            title: t('common.playlist'),
+          },
           options: computedPlaylistGroups.value,
+          targetNodes: groupRefs.value,
         });
       };
     },
@@ -103,12 +104,20 @@ onMounted(async () => {
   imgMap.setData('game', playlistList);
   stringMap.setData(playlistList, 'title');
   playlistSections.value = result;
-
-  console.log(computedPlaylistSections.value);
 });
 </script>
 
 <style lang="scss" scoped>
+section {
+  margin-bottom: calc(var(--root-gap-width-0) * 2);
+
+  h1 {
+    margin: 0;
+    margin-bottom: var(--root-gap-width-0);
+    font-size: 1.125rem;
+  }
+}
+
 .expired {
   opacity: 0.5;
 
@@ -116,7 +125,6 @@ onMounted(async () => {
     > span {
       > svg {
         display: inline;
-        margin-left: 0.2em;
         transform: translateY(0.15em);
       }
     }

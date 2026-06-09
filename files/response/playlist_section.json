@@ -96,11 +96,6 @@
       "type": "MULTIPLE"
     },
     {
-      "id": "63c0d96f-8447-43f9-9159-0946aba5a780",
-      "name": "放松一下",
-      "type": "MULTIPLE"
-    },
-    {
       "id": "39d56342-6c1e-4d8d-a1fc-7977bce36b30",
       "name": "步行",
       "type": "MULTIPLE"
@@ -108,11 +103,6 @@
     {
       "id": "14117541-00c7-4e3e-b96f-cfd2d744c20b",
       "name": "跑步",
-      "type": "MULTIPLE"
-    },
-    {
-      "id": "36bf2ce2-3f3e-4664-bbff-92165dfa42b6",
-      "name": "与歌声同行",
       "type": "MULTIPLE"
     },
     {
@@ -146,13 +136,28 @@
       "type": "MULTIPLE"
     },
     {
-      "id": "56694128-6164-4700-8098-996e6edf421f",
-      "name": "夜晚时光",
+      "id": "36bf2ce2-3f3e-4664-bbff-92165dfa42b6",
+      "name": "与歌声同行",
       "type": "MULTIPLE"
     },
     {
       "id": "12acf89a-3064-4fbd-904b-26db3a270c0b",
       "name": "晚安",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "56694128-6164-4700-8098-996e6edf421f",
+      "name": "夜晚时光",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "3ee02587-d037-4437-9974-888e4244613d",
+      "name": "感受自然",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "63c0d96f-8447-43f9-9159-0946aba5a780",
+      "name": "放松一下",
       "type": "MULTIPLE"
     }
   ],

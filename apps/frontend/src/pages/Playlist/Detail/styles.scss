@@ -1,24 +1,90 @@
-.detail {
-  border-top: 1px solid rgba(128, 128, 128, 0.5);
+.detail-container {
+  @include verticalFlex(var(--root-gap-width-0));
 
-  h2 {
-    font-size: 1.1rem;
-    text-align: left;
+  > .title {
+    display: flex;
+    gap: var(--root-gap-width-0);
 
-    > a {
-      display: flex;
-      align-items: center;
-      background: linear-gradient(to right, rgba(#929292, 0.3) 0%, rgba(#929292, 0) 100%);
+    > img {
+      max-width: 200px;
+      aspect-ratio: 1;
+      border-radius: var(--root-gap-width-3);
+      cursor: pointer;
+    }
+
+    > div {
+      @include verticalFlex(var(--root-gap-width-1));
+
+      h1 {
+        @include flexContentCenter();
+        gap: var(--root-gap-width-2);
+
+        span {
+          display: flex;
+        }
+      }
+    }
+  }
+
+  > .detail {
+    @include verticalFlex(var(--root-gap-width-1));
+
+    > .switch {
+      @include flexContentCenter();
+      > div {
+        @include flexContentCenter();
+        gap: var(--root-gap-width-1);
+        margin-left: auto;
+
+        .toggle {
+          display: flex;
+          padding: var(--root-gap-width-3) var(--root-gap-width-1);
+          border-radius: 9999px;
+          background-color: var(--root-bg-color-2);
+          color: var(--root-text-color-light);
+          font-size: 0.875rem;
+          cursor: pointer;
+
+          &.active {
+            color: var(--root-text-color);
+            background-color: var(--root-bg-color-4);
+          }
+
+          &:hover {
+            background-color: var(--root-bg-color-5);
+          }
+        }
+      }
+    }
+
+    hr {
+      margin-top: calc(var(--root-gap-width-0) * 2);
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .detail-container {
+    > .title {
+      @include verticalFlex(var(--root-gap-width-2));
 
       > img {
-        width: 50px;
-        height: 50px;
-        margin-right: 1em;
+        width: 200px;
+        margin: 0 auto;
       }
 
-      &:not(&:has(img)) {
-        height: 50px;
-        text-indent: 2em;
+      > div {
+        @include verticalFlex(var(--root-gap-width-2));
+
+        h1 {
+          justify-content: center;
+          text-align: center;
+          font-size: 1.5rem;
+        }
+
+        p {
+          text-align: center;
+        }
       }
     }
   }

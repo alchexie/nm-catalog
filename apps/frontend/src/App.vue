@@ -22,7 +22,8 @@ const navigationStore = useNavigationStore();
 
 <style lang="scss" scoped>
 #main-container {
-  padding: 60px 24px;
+  position: relative;
+  padding: 72px 24px;
 }
 
 @media (min-width:#{$breakpoint-md + 1px}) {

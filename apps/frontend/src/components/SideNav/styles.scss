@@ -1,74 +1,94 @@
 #side-nav {
-  display: flex;
-  flex-direction: column;
-  gap: var(--root-gap-width-1);
+  @include verticalFlex(var(--root-gap-width-1));
   height: 100%;
 
-  > h1 {
-    display: flex;
-    align-items: center;
-    margin: 0;
+  > section {
+    @include verticalFlex(var(--root-gap-width-2));
     padding: var(--root-gap-width-3) var(--root-gap-width-0);
-    font-size: 1rem;
 
-    > .sorter {
-      position: relative;
-      margin-left: auto;
-      padding: var(--root-gap-width-3) var(--root-gap-width-1);
-      border-radius: 9999px;
-      background-color: var(--root-bg-color-4);
-      font-weight: normal;
-      font-size: 0.9em;
-      cursor: pointer;
+    > h1 {
+      @include flexContentCenter();
+      font-size: 1rem;
 
-      &:after {
-        content: '▾';
-      }
+      > .sorter {
+        position: relative;
+        margin-left: auto;
+        padding: var(--root-gap-width-3) var(--root-gap-width-1);
+        border-radius: 9999px;
+        background-color: var(--root-bg-color-4);
+        font-weight: normal;
+        font-size: 0.9em;
+        cursor: pointer;
 
-      &:hover,
-      &.active {
-        background-color: var(--root-bg-color-5);
-      }
-
-      ul {
-        display: none;
-
-        &.active {
-          display: block;
+        &:after {
+          content: '▾';
         }
 
-        position: absolute;
-        right: 0;
-        z-index: 1;
-        border: 1px solid var(--root-bg-color-4);
-        padding: 0;
-        border-radius: var(--root-gap-width-3);
-        background-color: var(--root-bg-color-2);
-        transform: translateY(var(--root-gap-width-2));
+        &.active {
+          background-color: var(--root-bg-color-5);
+        }
 
-        li {
-          display: flex;
-          gap: var(--root-gap-width-2);
-          padding: 0 20px;
-          line-height: 40px;
-
-          > span {
-            display: inline-block;
-            width: 4em;
-            white-space: nowrap;
-          }
-
-          &:hover {
-            background-color: var(--root-bg-color-3);
-          }
+        ul {
+          display: none;
 
           &.active {
-            &:after {
-              content: '√';
-              font-weight: bold;
+            display: block;
+          }
+
+          position: absolute;
+          right: 0;
+          z-index: 1;
+          border: 1px solid var(--root-bg-color-4);
+          padding: 0;
+          border-radius: var(--root-gap-width-3);
+          background-color: var(--root-bg-color-2);
+          transform: translateY(var(--root-gap-width-2));
+
+          li {
+            @include flexContentCenter();
+            gap: var(--root-gap-width-2);
+            padding: 0 20px;
+            line-height: 40px;
+
+            > span {
+              display: inline-block;
+              width: 4em;
+              white-space: nowrap;
+            }
+
+            &:hover {
+              background-color: var(--root-bg-color-3);
+            }
+
+            &.active {
+              &:after {
+                content: '√';
+                font-weight: bold;
+              }
             }
           }
         }
+      }
+    }
+
+    > h2 {
+      color: var(--root-text-color-light);
+      font-size: 0.875rem;
+    }
+
+    > img {
+      margin: 0 var(--root-gap-width-0);
+      border-radius: var(--root-gap-width-3);
+    }
+
+    &:has(h2) {
+      > h1 {
+        justify-content: center;
+        text-align: center;
+      }
+
+      > h2 {
+        text-align: center;
       }
     }
   }
@@ -97,19 +117,11 @@
     }
 
     > li {
-      display: flex;
+      @include flexContentCenter();
+      gap: var(--root-gap-width-3);
       padding: var(--root-gap-width-2);
       cursor: pointer;
       @include textEllipsis();
-
-      &:hover,
-      &.active {
-        background-color: var(--root-bg-color-2);
-      }
-
-      &.hidden {
-        display: none;
-      }
 
       > span {
         &:first-child {
@@ -117,17 +129,28 @@
           @include textEllipsis();
         }
 
-        &:last-child {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        &.badge {
           width: 2rem;
-          padding: 0 var(--root-gap-width-3);
-          border-radius: 9999px;
-          background-color: var(--root-bg-color-3);
-          font-weight: bold;
           font-size: smaller;
         }
+      }
+
+      &.active {
+        background-color: var(--root-bg-color-2);
+      }
+
+      &:hover {
+        background-color: var(--root-bg-color-4);
+
+        > span {
+          &:last-child {
+            background-color: var(--root-bg-color-5);
+          }
+        }
+      }
+
+      &.hidden {
+        display: none;
       }
     }
   }

@@ -13,21 +13,26 @@
       "SERIES": "シリーズ別"
     },
     "dataSection": {
-      "TRACK": "{count} 曲",
-      "PLAYLIST": "関連プレイリスト {count} 件",
-      "RELATED": "関連ゲーム {count} 本"
+      "TRACK": "曲",
+      "PLAYLIST": "プレイリスト",
+      "RELATED": "関連ゲーム"
     },
     "playlist": {
-      "SINGLE_GAME": "ゲーム内テーマプレイリスト",
-      "MULTIPLE": "複数ゲームのテーマプレイリスト"
+      "SINGLE_GAME": "",
+      "MULTIPLE": "関連プレイリスト"
     },
     "uncategorized": "〈未分類〉"
   },
   "track": {
     "tag": {
       "ALL": "すべて",
-      "TOP": "ピックアップ",
-      "LOOP": "ながさチェンジ対応"
+      "STAR": "ピックアップ",
+      "EXTEND": "ながさチェンジ対応"
+    },
+    "display": {
+      "GRID": "ギャラリー表示",
+      "LIST": "リスト表示",
+      "DETAIL": "詳細表示"
     }
   },
   "playlist": {
@@ -48,7 +53,8 @@
       "SCENE": "ゲーム中のシーン",
       "CHARACTER": "キャラクター"
     },
-    "expired": "（公開終了）"
+    "expired": "（公開終了）",
+    "setting": "ゲームを表示 / 非表示"
   },
   "info": {
     "lang": "優先言語",
@@ -59,7 +65,7 @@
   },
   "official": {
     "site": "公式サイト",
-    "page": "公式ページ",
+    "link": "公式リンク",
     "goPrefix": "",
     "goSuffix": "を開く"
   }

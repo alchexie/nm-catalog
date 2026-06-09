@@ -26,12 +26,7 @@
     </div>
   </nav>
   <header id="main-header" class="hidden-sm">
-    <a
-      href="https://music.nintendo.com"
-      target="_blank"
-      rel="noopener noreferrer"
-      referrerpolicy="no-referrer"
-    >
+    <a v-external-link :href="OFFICIAL_URL">
       {{ t('official.goPrefix') }} <b>Nintendo Music</b> {{ t('official.site')
       }}{{ t('official.goSuffix') }}
     </a>
@@ -42,7 +37,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-import { MAIN_TITLE } from '@/types';
+import { MAIN_TITLE, OFFICIAL_URL } from '@/types';
 import SvgIcon from '@/components/SvgIcon.vue';
 
 const { t } = useI18n();

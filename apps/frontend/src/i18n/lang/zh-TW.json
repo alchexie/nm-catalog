@@ -15,21 +15,26 @@
       "SERIES": "依系列"
     },
     "dataSection": {
-      "TRACK": "{count} 首樂曲",
-      "PLAYLIST": "{count} 個相關播放清單",
-      "RELATED": "{count} 個相關遊戲"
+      "TRACK": "樂曲",
+      "PLAYLIST": "播放清單",
+      "RELATED": "相關遊戲"
     },
     "playlist": {
-      "SINGLE_GAME": "遊戲內主題播放清單",
-      "MULTIPLE": "跨遊戲主題播放清單"
+      "SINGLE_GAME": "",
+      "MULTIPLE": "相關播放清單"
     },
     "uncategorized": "（未分類）"
   },
   "track": {
     "tag": {
       "ALL": "所有",
-      "TOP": "推薦",
-      "LOOP": "可更改長度"
+      "STAR": "推薦",
+      "EXTEND": "可更改長度"
+    },
+    "display": {
+      "GRID": "畫廊顯示",
+      "LIST": "清單顯示",
+      "DETAIL": "詳情顯示"
     }
   },
   "playlist": {
@@ -50,7 +55,8 @@
       "SCENE": "遊戲中的場景",
       "CHARACTER": "角色"
     },
-    "expired": "（已移除）"
+    "expired": "（已移除）",
+    "setting": "顯示 / 隱藏遊戲"
   },
   "info": {
     "lang": "首選語言",
@@ -61,7 +67,7 @@
   },
   "official": {
     "site": "官方網站",
-    "page": "官方頁面",
+    "link": "官方連結",
     "goPrefix": "前往",
     "goSuffix": ""
   }

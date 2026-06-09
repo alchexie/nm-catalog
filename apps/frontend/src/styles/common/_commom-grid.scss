@@ -1,0 +1,78 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins.scss' as *;
+
+.commom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(175px, 100%), 1fr));
+  gap: calc(var(--root-gap-width-1) * 2) var(--root-gap-width-0);
+
+  .commom-grid-item {
+    > a {
+      > img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        margin-bottom: var(--root-gap-width-2);
+        border-radius: var(--root-gap-width-3);
+        cursor: pointer;
+        @include transition(transform, 0.1s);
+      }
+
+      > span {
+        $maxLine: 3;
+
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        line-clamp: $maxLine;
+        -webkit-line-clamp: $maxLine;
+        overflow: hidden;
+        max-height: calc(1.1rem * $maxLine * 1.5);
+        cursor: pointer;
+      }
+    }
+
+    &:hover {
+      > a {
+        > img {
+          transform: scale(105%);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .commom-grid {
+    display: block;
+
+    .commom-grid-item {
+      > a {
+        display: flex;
+        align-items: center;
+
+        > img {
+          display: inline-block;
+          width: 50px;
+        }
+
+        > span {
+          flex: 1;
+          display: block;
+          margin: 0 1rem 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: #{$breakpoint-md + 1px}) {
+  .commom-grid {
+    &.flex-mode {
+      display: flex;
+
+      .commom-grid-item {
+        flex-shrink: 0;
+      }
+    }
+  }
+}

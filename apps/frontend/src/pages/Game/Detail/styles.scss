@@ -1,32 +1,119 @@
-.tabs {
-  display: flex;
-  margin: 0.5rem 0;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+.detail-container {
+  @include verticalFlex(var(--root-gap-width-1));
 
-  .tab {
-    flex: 1;
+  > .title {
+    @include verticalFlex(var(--root-gap-width-3));
+  }
+
+  > .brand {
     display: flex;
-    justify-content: center;
-    background: none;
-    border: none;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.5);
-    padding: 10px 20px;
-    opacity: 0.3;
-    font-size: 1rem;
-    cursor: pointer;
-    @include transition(opacity, 0.2s);
+    gap: calc(var(--root-gap-width-0) * 3);
 
-    &.active {
-      opacity: 1;
-      font-weight: bold;
+    $imgMinWidth: 200px;
+    > ul {
+      flex: 0 0 auto;
+      @include verticalFlex(var(--root-gap-width-3));
+      max-width: calc(100% - $imgMinWidth - calc(var(--root-gap-width-0) * 2));
+      padding-top: var(--root-gap-width-1);
+      font-size: 0.8rem;
+      opacity: 0.75;
+
+      li {
+        display: flex;
+
+        > span {
+          flex: 1;
+        }
+      }
     }
 
-    &.blank {
-      visibility: hidden;
+    > div {
+      flex: 1;
+      position: relative;
+      height: 250px;
+      min-width: $imgMinWidth;
+      border-radius: var(--root-gap-width-1);
+      overflow: hidden;
+
+      > div {
+        position: absolute;
+        inset: 0;
+
+        &.base {
+          background-size: 100% 100%;
+        }
+
+        &.blur {
+          backdrop-filter: blur(25px);
+          background-color: #1a1a1ab8;
+        }
+
+        &.front {
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
+        }
+      }
+    }
+  }
+
+  > .detail {
+    @include verticalFlex(calc(var(--root-gap-width-0) * 2));
+
+    > div {
+      @include verticalFlex(var(--root-gap-width-0));
     }
   }
 }
 
-.detail {
-  padding-top: 0.8rem;
+@media (max-width: $breakpoint-md) {
+  .detail-container {
+    > .title {
+      text-align: center;
+
+      > img {
+        display: block;
+        width: 200px;
+        margin: 0 auto var(--root-gap-width-3) !important;
+      }
+
+      > h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    > .tabs {
+      @include flexContentCenter();
+      margin: 0.5rem 0;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+
+      .tab {
+        flex: 1;
+        background: none;
+        border: none;
+        border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+        padding: 10px 20px;
+        opacity: 0.3;
+        font-size: 1rem;
+        white-space: nowrap;
+        cursor: pointer;
+        @include transition(opacity, 0.2s);
+
+        &.active {
+          opacity: 1;
+          font-weight: bold;
+        }
+
+        &.blank {
+          visibility: hidden;
+        }
+      }
+    }
+
+    > .detail {
+      > div[hidden] {
+        display: none;
+      }
+    }
+  }
 }

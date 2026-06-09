@@ -39,7 +39,6 @@ import type { LocaleType } from '@/i18n';
 
 const { t } = useI18n();
 const langStore = useLangStore();
-const langList = Object.values(LangCode);
 const mainLang = ref<LangCodeValue>(langStore.mainLang);
 const topRef = ref<HTMLElement>();
 const isScrollTop = ref<boolean>(false);
@@ -49,7 +48,7 @@ const tracker = new ElementTracker((entries) => {
 });
 
 onMounted(async () => {
-  langStore.setLangList(langList);
+  langStore.setLangList(Object.values(LangCode));
   tracker.observe(topRef.value as unknown as HTMLElement);
 });
 
@@ -65,8 +64,6 @@ function scrollToTop() {
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/variables' as *;
-
 #top-mark {
   position: absolute;
   top: 0;
@@ -82,31 +79,31 @@ function scrollToTop() {
   z-index: 1;
   width: 100%;
   height: var(--main-footer-height);
-  background-color: rgba(black, 0.9);
+  background-color: rgba(black, 0.85);
   font-size: small;
 
   > div {
     display: flex;
     align-items: center;
-    justify-content: center;
     height: 100%;
-    margin: 0 auto;
     padding: 0 var(--root-gap-width-0);
     color: var(--root-text-color-light);
 
+    span {
+      display: inline-block;
+    }
+
     > label {
       margin-left: auto;
+      white-space: nowrap;
 
       select {
         margin-right: 2rem;
       }
-    }
 
-    span {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5em;
-      cursor: pointer;
+      span {
+        cursor: pointer;
+      }
     }
   }
 }

@@ -1,2 +1,89 @@
-@forward './list-page';
-@forward './detail-page';
+@forward './commom-grid';
+@forward './switch-view';
+@use '@/styles/mixins.scss' as *;
+
+.text-light {
+  color: var(--root-text-color-light);
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.jump-link {
+  @include flexContentCenter();
+  gap: calc(var(--root-gap-width-3) * 3);
+  padding: calc(var(--root-gap-width-3) * 5) var(--root-gap-width-0);
+  border-radius: var(--root-gap-width-2);
+  background-color: var(--root-bg-color-2);
+  @include transition(background-color, 0.1s);
+
+  > img {
+    width: 48px;
+    aspect-ratio: 1;
+  }
+
+  > div {
+    @include verticalFlex(calc(var(--root-gap-width-3) * 0.5));
+
+    .text-light {
+      font-size: 0.875rem;
+    }
+  }
+
+  > svg {
+    &:last-child {
+      display: block;
+      margin-left: auto;
+      color: var(--root-text-color-light);
+    }
+  }
+
+  &:has(> img) {
+    padding: var(--root-gap-width-2) var(--root-gap-width-0) var(--root-gap-width-2)
+      var(--root-gap-width-1);
+  }
+
+  &:hover {
+    background-color: var(--root-bg-color-4);
+  }
+}
+
+.outer-link {
+  display: inline-flex;
+  gap: var(--root-gap-width-2);
+  margin: 0 auto;
+  padding: var(--root-gap-width-3) var(--root-gap-width-1);
+  border-radius: 9999px;
+  background-color: transparent;
+  color: var(--root-text-color-light);
+  font-size: 0.875rem;
+  @include transition(background-color color, 0.1s);
+
+  &:hover {
+    background-color: var(--root-bg-color-2);
+    color: var(--root-text-color);
+  }
+}
+
+.badge {
+  @include flexContentCenter();
+  justify-content: center;
+  height: 1.5em;
+  padding: 0 var(--root-gap-width-2);
+  border-radius: 9999px;
+  background-color: var(--root-bg-color-3);
+  font-weight: bold;
+}
+
+.load-more {
+  height: 1px;
+}
+
+hr {
+  width: 100%;
+  height: 1px;
+  border: none;
+  background-color: rgb(from var(--root-text-color) r g b / 85%);
+  opacity: 0.15;
+}

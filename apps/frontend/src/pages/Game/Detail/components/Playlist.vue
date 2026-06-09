@@ -1,86 +1,111 @@
 <template>
-  <section :hidden="hidden">
-    <template v-for="group in computedPlaylistGroups" :key="group.label">
-      <h2>{{ group.label }}</h2>
-      <ul>
-        <li v-for="playlist in group.playlists" :key="playlist.id">
-          <PlaylistCard :playlist="playlist" />
-        </li>
-      </ul>
+  <section>
+    <router-link :to="`/playlist/${allPlaylist.id}`" class="jump-link">
+      <span>
+        {{ stringMap.getString(allPlaylist, 'title') }}
+        <span class="text-light">({{ allPlaylist.tracksnum }})</span>
+      </span>
+      <SvgIcon type="right"></SvgIcon>
+    </router-link>
+    <template v-for="(group, i) in playlistGroups" :key="group.label">
+      <div v-if="group.playlists.length">
+        <h3>{{ t(`game.playlist.${group.label}`) }}</h3>
+        <ul class="commom-grid">
+          <template v-for="(playlist, j) in group.playlists" :key="playlist.id">
+            <li
+              class="commom-grid-item"
+              v-if="i + j"
+              :ref="
+                (el) => {
+                  if (i === 0 && j === 1) {
+                    gridItemRef = el as HTMLElement;
+                  }
+                }
+              "
+            >
+              <router-link :to="`/playlist/${playlist.id}`">
+                <img
+                  v-fallback
+                  :src="imgMap.getPath('playlist', playlist)"
+                  loading="lazy"
+                />
+                <span>
+                  {{ stringMap.getString(playlist, 'title') }}
+                  <span class="text-light">({{ playlist.tracksnum }})</span>
+                </span>
+              </router-link>
+            </li>
+          </template>
+        </ul>
+      </div>
     </template>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useImgMap } from '@/composables/useImgMap';
+import { useLocalizationString } from '@/composables/useLocalizationString';
+import { useElementWidth } from '@/composables/useElementWidth';
+import SvgIcon from '@/components/SvgIcon.vue';
 import type { Playlist } from '@/types';
-import PlaylistCard from '@/components/PlaylistCard.vue';
 
 const props = defineProps<{
-  hidden: boolean;
   data: Playlist[];
 }>();
-const playlistGroups = (() => {
+const imgMap = useImgMap();
+const stringMap = useLocalizationString();
+const playlistGroups: { label: string; playlists: Playlist[] }[] = (() => {
   const groupMap = new Map<string, Playlist[]>();
-  props.data.forEach((x) => {
-    const type = ['SINGLE_GAME', 'MULTIPLE'].includes(x.type) ? x.type : '';
-    if (!groupMap.has(type)) {
-      groupMap.set(type, []);
-    }
-    groupMap.get(type)!.push(x);
+  ['SINGLE_GAME', 'MULTIPLE'].forEach((x) => {
+    groupMap.set(x, []);
   });
-  return Array.from(groupMap.entries());
+
+  props.data.forEach((x) => {
+    switch (x.type) {
+      case 'SINGLE_GAME_ALL':
+        groupMap.get('SINGLE_GAME')?.unshift(x);
+        break;
+      case 'MULTIPLE':
+        groupMap.get('MULTIPLE')?.push(x);
+        break;
+      default:
+        groupMap.get('SINGLE_GAME')?.push(x);
+        break;
+    }
+    const selfList = groupMap.get('SINGLE_GAME')!;
+    const [star, extend, other] = [
+      selfList.filter((x) => x.type === 'BEST'),
+      selfList.filter((x) => x.type === 'LOOP'),
+      selfList.filter((x) => !['BEST', 'LOOP'].includes(x.type)),
+    ];
+    groupMap.set('SINGLE_GAME', [...other, ...extend, ...star]);
+  });
+
+  return Array.from(groupMap, ([label, playlists]) => ({ label, playlists }));
 })();
+const allPlaylist = playlistGroups[0].playlists[0];
 
 const { t } = useI18n();
-
-const computedPlaylistGroups = computed(() => {
-  return playlistGroups.map(([type, playlists]) => ({
-    label: t(`game.playlist.${type}`, { count: playlists.length }, { default: '' }),
-    playlists,
-  }));
+const gridItemRef = ref<HTMLElement | null>(null);
+const elementWidth = useElementWidth(gridItemRef);
+defineExpose({
+  elementWidth,
 });
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/variables' as *;
+section {
+  @include verticalFlex(var(--root-gap-width-0));
 
-h2 {
-  width: 60%;
-  margin-top: 2rem;
-  border-bottom: 1px solid white;
-  padding-bottom: 0.5em;
-  opacity: 0.4;
-  text-align: left;
-  font-size: 1.1rem;
+  > div {
+    h3 {
+      font-size: 1.25rem;
 
-  &:empty {
-    margin-top: 0;
-    border: none;
-  }
-}
-
-ul {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 180px);
-  justify-content: space-evenly;
-  gap: 24px 16px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  ul {
-    display: block;
-    text-align: left;
-
-    > li {
-      display: inline-block;
-      margin: 0.5em 1em 1em;
-      font-weight: bold;
+      &:empty {
+        display: none;
+      }
     }
   }
 }

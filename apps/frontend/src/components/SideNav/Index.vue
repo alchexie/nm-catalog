@@ -1,27 +1,37 @@
 <template>
   <nav id="side-nav" :class="{ hidden: options.length === 1 }">
-    <h1>
-      {{ title }}
-      <template v-if="props.sortConfig">
-        <a
-          class="sorter"
-          :class="{ active: showSortMenu }"
-          @click.stop="showSortMenu = !showSortMenu"
-        >
-          {{ computedSortLabel }}
-          <ul :class="{ active: showSortMenu }">
-            <li
-              v-for="option in props.sortConfig?.options"
-              :key="option.value"
-              :class="{ active: option.value === sortConfig?.current }"
-              @click.stop="onSelectSort(option.value)"
-            >
-              <span>{{ option.label }}</span>
-            </li>
-          </ul>
+    <section>
+      <h1>
+        {{ data.title }}
+        <template v-if="props.sortConfig">
+          <a
+            class="sorter"
+            :class="{ active: showSortMenu }"
+            @click.stop="showSortMenu = !showSortMenu"
+          >
+            {{ computedSortLabel }}
+            <ul :class="{ active: showSortMenu }">
+              <li
+                v-for="option in props.sortConfig?.options"
+                :key="option.value"
+                :class="{ active: option.value === sortConfig?.current }"
+                @click.stop="onSelectSort(option.value)"
+              >
+                <span>{{ option.label }}</span>
+              </li>
+            </ul>
+          </a>
+        </template>
+      </h1>
+      <h2 v-if="data.subTitle">{{ data.subTitle }}</h2>
+      <img v-if="data.imgUrl" v-fallback :src="data.imgUrl" loading="lazy" />
+      <template v-if="data.officialUrl">
+        <a v-external-link class="outer-link" :href="data.officialUrl">
+          <SvgIcon type="link" height="1.5em"></SvgIcon>
+          {{ t('official.link') }}
         </a>
       </template>
-    </h1>
+    </section>
     <ul
       ref="navListRef"
       :class="{ 'fade-top': showTopFade, 'fade-bottom': showBottomFade }"
@@ -40,7 +50,7 @@
         @click.stop="navigateTo(i)"
       >
         <span :title="props.options[i].label">{{ props.options[i].label }} </span>
-        <span>{{ props.options[i].count }} </span>
+        <span class="badge">{{ props.options[i].count }} </span>
       </li>
     </ul>
   </nav>
@@ -48,17 +58,25 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import SvgIcon from '@/components/SvgIcon.vue';
 import { ElementTracker } from '@/utils/element-tracker';
 import { scrollToY } from '@/utils/dom-utils';
 
+const { t } = useI18n();
 const props = defineProps<{
-  title: string;
+  data: {
+    title: string;
+    subTitle?: string;
+    imgUrl?: string;
+    officialUrl?: string;
+  };
   sortConfig?: {
     options: { label: string; value: string }[];
     current: string;
   };
-  target: HTMLElement[];
   options: { label: string; count: number }[];
+  targetNodes?: HTMLElement[];
 }>();
 const emit = defineEmits(['update:sort']);
 const showSortMenu = ref(false);
@@ -71,7 +89,9 @@ const showBottomFade = ref(false);
 const tracker = new ElementTracker((entries) => {
   const entry = entries.find((x) => x.isIntersecting);
   if (entry) {
-    const idx = Math.floor(props.target.indexOf(entry!.target as HTMLElement));
+    const idx = Math.floor(
+      (props.targetNodes ?? []).indexOf(entry!.target as HTMLElement)
+    );
     activeIndex.value = idx;
   }
 });
@@ -93,11 +113,11 @@ onUnmounted(() => {
 });
 
 watch(
-  () => props.target,
+  () => props.targetNodes ?? [],
   async (elRef) => {
     tracker.disconnect();
     activeIndex.value = 0;
-    if (elRef.length) {
+    if (elRef?.length) {
       const nums: number[] = [0];
       const sum = elRef
         .map((x) => x.offsetHeight)
@@ -131,7 +151,10 @@ async function navigateTo(idx: number) {
   activeIndex.value = idx;
   tracker.disconnect();
 
-  const el = props.target[idx];
+  if (!props.targetNodes) {
+    return;
+  }
+  const el = props.targetNodes[idx];
   scrollToY(el.getBoundingClientRect().top + window.scrollY - 80, () => {
     scrollHandler = () => {
       window.removeEventListener('scroll', scrollHandler!);

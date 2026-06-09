@@ -17,7 +17,6 @@
   </div>
   <Container :loading="loading">
     <section
-      class="list-group"
       v-for="(group, i) in computedGameGroups"
       :key="group.name"
       :ref="
@@ -35,8 +34,8 @@
           group.localeNames[computedMainLang]
         }}
       </h1>
-      <ul class="group-content">
-        <li class="content-item" v-for="game in group.games" :key="game.id">
+      <ul class="commom-grid">
+        <li class="commom-grid-item" v-for="game in group.games" :key="game.id">
           <router-link :to="`/game/${game.id}`" :title="game.$title">
             <img v-fallback :src="game.$imgPath" loading="lazy" />
             <span>{{ game.$title }}</span>
@@ -111,17 +110,19 @@ useNavigationr({
       return () => {
         if (!computedGameGroups.value.length) return null;
         return h(SideNav, {
-          title: t('common.game'),
+          data: {
+            title: t('common.game'),
+          },
           sortConfig: {
             options: computedGameGroupBy.value,
             current: selectedGroupBy.value,
           },
-          target: groupRefs.value,
-          options: computedGroupList.value,
           'onUpdate:sort'(val: GameGroupBy) {
             selectedGroupBy.value = val;
             changeGroupBy(val);
           },
+          options: computedGroupList.value,
+          targetNodes: groupRefs.value,
         });
       };
     },
@@ -181,5 +182,15 @@ function changeGroupBy(value: GameGroupBy) {
   width: 100%;
   padding: 1rem 0 2rem;
   text-align: right;
+}
+
+section {
+  margin-bottom: calc(var(--root-gap-width-0) * 2);
+
+  h1 {
+    margin: 0;
+    margin-bottom: var(--root-gap-width-0);
+    font-size: 1.125rem;
+  }
 }
 </style>
