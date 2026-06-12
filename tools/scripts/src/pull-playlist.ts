@@ -136,9 +136,11 @@ let hasError = false;
 
             if (playlist.type === <PlaylistType>'MULTIPLE') {
               playlistGameData.push(
-                ...[...new Set<string>(rawData.tracks.map((x: any) => x.game.id))].map(
-                  (x) => [playlist.id, x]
-                )
+                ...[
+                  ...new Set<string>(
+                    rawData.tracks.filter((x: any) => x.game).map((x: any) => x.game.id)
+                  ),
+                ].map((x) => [playlist.id, x])
               );
             }
           }

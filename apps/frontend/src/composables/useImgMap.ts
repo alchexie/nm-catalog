@@ -24,7 +24,7 @@ const api = {
             const mainFileName = item['img_en_US'];
             const imgPath = `/assets/img_${
               fileName === mainFileName ? DEFAULT_LANG : lang
-            }/${fileName}.jpg`;
+            }/${fileName}.webp`;
             imgMap.value.set(key, imgPath);
           }
         }

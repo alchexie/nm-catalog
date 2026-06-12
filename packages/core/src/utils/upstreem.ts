@@ -96,7 +96,16 @@ export const upstreem = {
     );
   },
 
-  async getCharacterPlaylistInfo():Promise<any>{
-    return await request(`${UPSTREAM_API_BASE_URL}sections/home/f8d54567-6275-43d6-8fab-549343b688a3?country=JP&lang=zh-CN`)
-  }
+  async getCharacterPlaylistInfo(): Promise<any> {
+    return await request(
+      `${UPSTREAM_API_BASE_URL}sections/home/f8d54567-6275-43d6-8fab-549343b688a3?country=JP&lang=zh-CN`
+    );
+  },
+
+  async getImage(assetId: string): Promise<any> {
+    const res = await fetch(`${UPSTREAM_IMG_BASE_URL}${assetId}`);
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    return buffer;
+  },
 };

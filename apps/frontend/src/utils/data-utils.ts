@@ -15,9 +15,7 @@ export const isShowTitle = (target: NMData, lang: string): boolean => {
 };
 
 export const getSourceImg = (target: NMData, lang: string): string => {
-  return `https://image-assets.m.nintendo.com/${
-    (target as any)[`img_${LocalizationString.convertLangCode(lang)}`]
-  }`;
+  return `/api/common/image/${(target as any)[`img_${LocalizationString.convertLangCode(lang)}`]}`;
 };
 
 export const openSourceImg = (target: NMData, lang: string): void => {
