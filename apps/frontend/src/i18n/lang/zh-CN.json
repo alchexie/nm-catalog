@@ -7,28 +7,34 @@
     "minute": "分钟"
   },
   "game": {
+    "all": "所有",
     "groupBy": {
-      "PLATFORM": "按平台分组",
-      "RELEASE": "按发售年份分组",
-      "ADDED": "按最新添加排序",
-      "SERIES": "按系列分组"
+      "PLATFORM": "按平台",
+      "ADDED": "最新排序",
+      "RELEASE": "发售顺序",
+      "SERIES": "按系列"
     },
     "dataSection": {
-      "TRACK": "{count} 首乐曲",
-      "PLAYLIST": "{count} 个相关播放列表",
-      "RELATED": "{count} 个相关游戏"
+      "TRACK": "乐曲",
+      "PLAYLIST": "播放列表",
+      "RELATED": "相关游戏"
     },
     "playlist": {
-      "SINGLE_GAME": "游戏内主题播放列表",
-      "MULTIPLE": "跨游戏主题播放列表"
+      "SINGLE_GAME": "",
+      "MULTIPLE": "相关播放列表"
     },
     "uncategorized": "（未分类）"
   },
   "track": {
     "tag": {
       "ALL": "所有",
-      "TOP": "精选",
-      "LOOP": "支持更改时长"
+      "STAR": "精选",
+      "EXTEND": "支持更改时长"
+    },
+    "display": {
+      "GRID": "显示画廊",
+      "LIST": "显示列表",
+      "DETAIL": "显示详情"
     }
   },
   "playlist": {
@@ -46,9 +52,11 @@
       "SPECIAL": "特别发布",
       "RECOMMEND": "精选集",
       "MOOD": "现在的心情",
-      "SCENE": "游戏中的场景"
+      "SCENE": "游戏中的场景",
+      "CHARACTER": "角色"
     },
-    "expired": "过期播放列表"
+    "expired": "（已下架）",
+    "setting": "显示 / 隐藏游戏"
   },
   "info": {
     "lang": "首选语言",
@@ -56,5 +64,11 @@
   },
   "punctuation": {
     "colon": "："
+  },
+  "official": {
+    "site": "官方网站",
+    "link": "官方链接",
+    "goPrefix": "前往",
+    "goSuffix": ""
   }
 }

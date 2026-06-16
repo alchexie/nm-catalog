@@ -16,13 +16,14 @@ pnpm update-latest
 
 该命令会依次执行以下4个操作：
 
-| -   | 命令                          | 作用                                     |
-| --- | ----------------------------- | ---------------------------------------- |
-| 1   | pnpm pull-game                | 拉取 Game 与 Track 数据                  |
-| 2   | pnpm pull-playlist            | 拉取游戏相关的 Playlist 数据             |
-| 3   | pnpm pull-playlist -- section | 更新 Playlist Section 中的 Playlist 数据 |
-| 4   | pnpm get-img -- original      | 下载本次更新相关的所有图片（包括原图）   |
-| 4   | pnpm set-series               | 检查最新游戏是否能进行系列归类           |
+| -   | 命令                            | 作用                                     |
+| --- | ------------------------------- | ---------------------------------------- |
+| 1   | pnpm pull-game                  | 拉取 Game 与 Track 数据                  |
+| 2   | pnpm pull-playlist              | 拉取游戏相关的 Playlist 数据             |
+| 3   | pnpm pull-playlist -- section   | 更新 Playlist Section 中的 Playlist 数据 |
+| 3   | pnpm pull-playlist -- character | 标记角色歌单                             |
+| 4   | pnpm get-img -- original        | 下载本次更新相关的所有图片（包括原图）   |
+| 4   | pnpm set-series                 | 检查最新游戏是否能进行系列归类           |
 
 ## 1. 拉取 Game 与 Track 数据
 
@@ -71,6 +72,9 @@ pnpm pull-playlist
 
 - `-- section <pid>`
   指定 Playlist ID，仅拉取 Playlist Section 中指定歌单的数据
+
+- `-- character`
+  标记角色歌单
 
 - `-- no-exec`
   仅执行拉取与解析逻辑，不写入数据库

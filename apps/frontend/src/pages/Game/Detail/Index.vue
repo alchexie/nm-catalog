@@ -1,29 +1,41 @@
 <template>
   <Container :loading="loading">
-    <main id="detial-main" v-if="data">
-      <section class="common-detail main">
-        <div class="detail-part detail-image">
-          <img
-            v-fallback
-            :src="imgMap.getPath('game', data.game)"
-            @click.stop="openSourceImg(data.game, langStore.mainLang)"
-            loading="lazy"
-          />
-        </div>
-        <div class="detail-part detail-text">
-          <h1 class="text-main" ref="titleRef">
-            {{ computedTitle }}<br />
-            <small>{{ data.game.year }} | {{ data.game.hardware }}</small>
-          </h1>
-          <ul class="text-else">
-            <li v-for="lang of computedLangs" :key="lang" class="prefix-text">
-              <SvgIcon :type="`lang-${lang}`" width="3em" height="1.5em"></SvgIcon>
-              {{ stringMap.getString(data.game, 'title', lang) }}
-            </li>
-          </ul>
+    <div v-if="data" class="detail-container">
+      <section class="title">
+        <img
+          v-fallback
+          class="display-sm"
+          :src="imgMap.getPath('game', data.game)"
+          @click.stop="openSourceImg(data.game, langStore.mainLang)"
+          loading="lazy"
+        />
+        <p class="text-light">{{ data.game.year }} • {{ data.game.hardware }}</p>
+        <h1>{{ computedTitle }}</h1>
+      </section>
+      <section class="brand hidden-sm">
+        <ul>
+          <li v-for="lang of computedLangs" :key="lang">
+            <SvgIcon :type="`lang-${lang}`" width="3em" height="1.5em"></SvgIcon>
+            <span> {{ stringMap.getString(data.game, 'title', lang) }}</span>
+          </li>
+        </ul>
+        <div v-if="computedBrandImage">
+          <div
+            class="base"
+            :style="{ 'background-image': `url(${computedBrandImage.compress})` }"
+          ></div>
+          <div class="blur"></div>
+          <div
+            class="front"
+            :style="{ 'background-image': `url(${computedBrandImage.compress})` }"
+          ></div>
+          <div
+            class="front"
+            :style="{ 'background-image': `url(${computedBrandImage.original})` }"
+          ></div>
         </div>
       </section>
-      <nav class="tabs">
+      <nav class="tabs display-sm">
         <button
           v-for="item in computedSections"
           :key="item.key"
@@ -34,22 +46,38 @@
           }"
           @click.stop="gameDataSection = item.key"
         >
-          {{ item.label }}
+          {{ item.label }} ({{ item.count }})
         </button>
       </nav>
       <section class="detail">
-        <Track
-          :hidden="gameDataSection !== 'TRACK'"
-          :isShowFilter="true"
-          :data="data.tracks"
-        ></Track>
-        <Related :hidden="gameDataSection !== 'RELATED'" :data="data.relateds"></Related>
-        <Playlist
-          :hidden="gameDataSection !== 'PLAYLIST'"
-          :data="data.playlists"
-        ></Playlist>
+        <div :hidden="gameDataSection !== 'TRACK'" :ref="(el) => setRefElement(el, 0)">
+          <h2 class="hidden-sm">{{ t('game.dataSection.TRACK') }}</h2>
+          <Track :data="data.tracks"></Track>
+        </div>
+        <div :hidden="gameDataSection !== 'PLAYLIST'" :ref="(el) => setRefElement(el, 1)">
+          <h2 class="hidden-sm">{{ t('game.dataSection.PLAYLIST') }}</h2>
+          <Playlist :data="data.playlists" ref="playlistRef"></Playlist>
+        </div>
+        <div :hidden="gameDataSection !== 'RELATED'" :ref="(el) => setRefElement(el, 2)">
+          <h2 class="hidden-sm">{{ t('game.dataSection.RELATED') }}</h2>
+          <Related
+            :data="data.relateds"
+            :grid-item-width="computedGridItemWidth"
+          ></Related>
+        </div>
+        <hr />
       </section>
-    </main>
+      <footer>
+        <a
+          v-external-link
+          class="outer-link"
+          :href="`${OFFICIAL_URL}/${langStore.mainLang}/${route.path.slice(1)}`"
+        >
+          <SvgIcon type="link" height="1.5em"></SvgIcon>
+          {{ t('official.site') }} • {{ t('common.game') }} • {{ computedTitle }}
+        </a>
+      </footer>
+    </div>
   </Container>
 </template>
 
@@ -58,18 +86,19 @@ import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useLangStore } from '@/stores';
-import { useHeader } from '@/composables/useHeader';
+import { useNavigationr } from '@/composables/useNavigationr.ts';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
 import Container from '@/components/Container.vue';
+import SideNav from '@/components/SideNav/Index.vue';
+import SvgIcon from '@/components/SvgIcon.vue';
 import Track from './components/Track.vue';
 import Related from './components/Related.vue';
 import Playlist from './components/Playlist.vue';
-import { GameDataSection, type GameDetail } from '@/types';
+import { GameDataSection, OFFICIAL_URL, type GameDetail } from '@/types';
 import { getGameDetail } from '@/api';
-import { isShowTitle, openSourceImg } from '@/utils/data-utils';
-import SvgIcon from '@/components/SvgIcon.vue';
+import { getSourceImg, isShowTitle, openSourceImg } from '@/utils/data-utils';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -80,40 +109,53 @@ const stringMap = useLocalizationString();
 const gid = route.params.gid as string;
 const data = ref<GameDetail>();
 const gameDataSection = ref<GameDataSection>('TRACK');
-const titleRef = ref<HTMLElement>();
+const groupRefs = ref<HTMLElement[]>([]);
+const playlistRef = ref<any>(null);
 
 const computedTitle = computed(() => stringMap.getString(data.value!.game, 'title'));
 const computedLangs = computed(() =>
   langStore.langList.filter((x) => isShowTitle(data.value!.game, x))
 );
+const computedBrandImage = computed(() => {
+  if (!data.value) return;
+  const rTrack = data.value.tracks[Math.floor(Math.random() * data.value.tracks.length)];
+  return {
+    compress: imgMap.getPath('track', rTrack, langStore.mainLang),
+    original: getSourceImg(rTrack, langStore.mainLang),
+  };
+});
 const computedSections = computed(() => {
   const result = [];
   for (const section of GameDataSection) {
-    const propName = `${section.toLowerCase()}s`;
     result.push({
       key: section,
-      label: t(`game.dataSection.${section}`, {
-        count: (data.value as any)[propName]?.length ?? 0,
-      }),
+      label: t(`game.dataSection.${section}`),
+      count: (data.value as any)[`${section.toLowerCase()}s`]?.length ?? 0,
     });
   }
   return result;
 });
+const computedGridItemWidth = computed(() => playlistRef.value?.elementWidth ?? 0);
 
-useHeader(() => ({
-  observeRef: titleRef.value,
-  data: data.value,
-  template: () => {
-    if (data.value) {
-      return [
-        h('h1', computedTitle.value),
-        h('small', `(${data.value.game.year} | ${data.value.game.hardware})`),
-      ];
-    } else {
-      return [];
-    }
+useNavigationr({
+  template: {
+    setup() {
+      return () => {
+        if (!data.value) return null;
+        return h(SideNav, {
+          data: {
+            title: computedTitle.value,
+            subTitle: `${data.value.game.year} • ${data.value.game.hardware}`,
+            imgUrl: imgMap.getPath('game', data.value.game),
+            officialUrl: `${OFFICIAL_URL}/${langStore.mainLang}/${route.path.slice(1)}`,
+          },
+          options: computedSections.value,
+          targetNodes: groupRefs.value,
+        });
+      };
+    },
   },
-}));
+});
 
 onMounted(async () => {
   await getDetail();
@@ -132,6 +174,12 @@ async function getDetail() {
     )
     .setData(result.playlists, 'desc');
   data.value = result;
+}
+
+function setRefElement(el: any, idx: number) {
+  if (el) {
+    groupRefs.value[idx] = el as HTMLElement;
+  }
 }
 </script>
 

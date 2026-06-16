@@ -25,10 +25,11 @@ export const COMMON_PATHS = {
   'new_game.json': path.join(FILES_DIR, 'new_game.json'),
   'updated_playlist.json': path.join(FILES_DIR, 'updated_playlist.json'),
   'error_img.json': path.join(FILES_DIR, 'error_img.json'),
-  'res_playlist_section.json': path.join(RES_DIR, 'playlist_section.json'),
   'res_game_platform.json': path.join(RES_DIR, 'game_platform.json'),
   'res_game_year.json': path.join(RES_DIR, 'game_year.json'),
   'res_game_series.json': path.join(RES_DIR, 'game_series.json'),
+  'res_playlist_section.json': path.join(RES_DIR, 'playlist_section.json'),
+  'res_playlist_character.json': path.join(RES_DIR, 'playlist_character.json'),
 };
 
 if (!fs.existsSync(FILES_DIR)) {

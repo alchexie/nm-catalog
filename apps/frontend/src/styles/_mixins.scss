@@ -1,5 +1,21 @@
 @use 'sass:list';
 
+@mixin verticalFlex($gap) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+
+  > * {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+@mixin flexContentCenter {
+  display: flex;
+  align-items: center;
+}
+
 @mixin transition($props, $duration: 0.3s, $timing: ease) {
   @if list.length($props) > 0 {
     $transitions: ();

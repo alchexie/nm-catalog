@@ -2,9 +2,12 @@
   <div id="top-mark" ref="topRef"></div>
   <footer id="footer">
     <div>
-      <span class="dim">
-        Fan project. Not an official site.
-        <span class="hidden-sm">&nbsp;Data only, no music included.</span>
+      <span>
+        Fan project since 2025. Not an official site.
+        <span class="hidden-sm">
+          Data only, no music included.
+          <b>All data belongs to Nintendo.</b>
+        </span>
       </span>
       <label>
         {{ t('info.lang') }}{{ t('punctuation.colon') }}
@@ -17,7 +20,7 @@
             {{ name }}
           </option>
         </select>
-        <span :class="{ dim: isScrollTop }" @click.stop="scrollToTop()">
+        <span :style="{ opacity: isScrollTop ? 0.5 : 1 }" @click.stop="scrollToTop()">
           {{ t('info.top') }} ↑
         </span>
       </label>
@@ -36,7 +39,6 @@ import type { LocaleType } from '@/i18n';
 
 const { t } = useI18n();
 const langStore = useLangStore();
-const langList = Object.values(LangCode);
 const mainLang = ref<LangCodeValue>(langStore.mainLang);
 const topRef = ref<HTMLElement>();
 const isScrollTop = ref<boolean>(false);
@@ -46,7 +48,7 @@ const tracker = new ElementTracker((entries) => {
 });
 
 onMounted(async () => {
-  langStore.setLangList(langList);
+  langStore.setLangList(Object.values(LangCode));
   tracker.observe(topRef.value as unknown as HTMLElement);
 });
 
@@ -74,58 +76,48 @@ function scrollToTop() {
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 1;
   width: 100%;
-  background-color: rgba($footer-bgColor, 0.8);
+  height: var(--main-footer-height);
+  background-color: rgba(black, 0.85);
   font-size: small;
 
   > div {
     display: flex;
     align-items: center;
-    justify-content: center;
-    max-width: 1200px;
-    height: 3em;
-    margin: 0 auto;
-    padding: 0 3.5rem;
+    height: 100%;
+    padding: 0 var(--root-gap-width-0);
+    color: var(--root-text-color-light);
+
+    span {
+      display: inline-block;
+    }
 
     > label {
       margin-left: auto;
+      white-space: nowrap;
 
       select {
         margin-right: 2rem;
       }
-    }
 
-    span {
-      display: inline-flex;
-      align-items: center;
-      cursor: pointer;
-
-      &.dim {
-        opacity: 0.5;
+      span {
+        cursor: pointer;
       }
     }
   }
 }
 
-@media (prefers-color-scheme: light) {
+@media (max-width: $breakpoint-md) {
   #footer {
-    color: rgba($root-textColor, 0.87);
-  }
-}
+    height: 4.5em;
 
-@media (max-width: 767px) {
-  #footer {
     > div {
       flex-direction: column-reverse;
-      height: 4.5em;
       line-height: 2em;
 
       > label {
         margin-left: initial;
-      }
-
-      .hidden-sm {
-        display: none;
       }
     }
   }

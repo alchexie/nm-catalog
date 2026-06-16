@@ -8,7 +8,6 @@
     "init-db": "tsx src/init-db.ts",
     "init-data": "tsx src/init-data.ts",
     "modify-db": "tsx src/modify-db.ts",
-    "update-latest": "tsx src/update-latest.ts",
     "pull-game": "tsx src/pull-game.ts",
     "pull-playlist": "tsx src/pull-playlist.ts",
     "expire-playlist": "tsx src/expire-playlist.ts",
@@ -17,7 +16,9 @@
     "modify-db:prod": "node dist/modify-db.js",
     "pull-game:prod": "node dist/pull-game.js",
     "pull-playlist:prod": "node dist/pull-playlist.js",
-    "get-img:prod": "node dist/get-img.js"
+    "get-img:prod": "node dist/get-img.js",
+    "update-latest": "tsx src/update-latest.ts",
+    "update-game": "tsx src/update-game.ts"
   },
   "dependencies": {
     "@nm-catalog/core": "workspace:*",

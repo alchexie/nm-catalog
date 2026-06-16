@@ -14,13 +14,12 @@ export const isShowTitle = (target: NMData, lang: string): boolean => {
   return (target as any)[`title_${lang}`].trim() !== target['title_en_US'].trim();
 };
 
-export const openSourceImg = (target: NMData, lang: string) => {
-  window.open(
-    `https://image-assets.m.nintendo.com/${
-      (target as any)[`img_${LocalizationString.convertLangCode(lang)}`]
-    }`,
-    '_blank'
-  );
+export const getSourceImg = (target: NMData, lang: string): string => {
+  return `/api/common/image/${(target as any)[`img_${LocalizationString.convertLangCode(lang)}`]}`;
+};
+
+export const openSourceImg = (target: NMData, lang: string): void => {
+  window.open(getSourceImg(target, lang), '_blank');
 };
 
 export const getTotalDuration = (tracks: Track[]): DurationInfo => {

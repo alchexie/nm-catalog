@@ -124,6 +124,9 @@ for (const lang of langs) {
       .map((x) => (<DataRow>x)[`img_${langStr}`]);
   } else {
     const errors = JSON.parse(readText(COMMON_PATHS['error_img.json']));
+    if (!errors[lang]) {
+      continue;
+    }
     imgIds = errors[lang];
   }
 
@@ -150,7 +153,7 @@ info(`To download ${sum} image(s).`);
 
 const processImage = async (imgId: string, index: number, task: Task) => {
   try {
-    const ext = '.jpg';
+    const ext = '.webp';
     const filename = `${imgId}${ext}`;
     const compressedPath = path.join(task.compressedDir, filename);
     const originalPath = path.join(task.originalDir, filename);
@@ -169,23 +172,21 @@ const processImage = async (imgId: string, index: number, task: Task) => {
       return;
     }
 
-    const res = await fetch(`${UPSTREAM_IMG_BASE_URL}${imgId}`);
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status} ${res.statusText}`);
-    }
-    const arrayBuffer = await res.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
+    let res: Response;
     if (isSaveOriginal) {
+      res = await fetch(`${UPSTREAM_IMG_BASE_URL}${imgId}`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      }
+      const arrayBuffer = await res.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
       fs.writeFileSync(originalPath, buffer);
     }
 
-    const metadata = await sharp(buffer).metadata();
-    await sharp(buffer)
-      .toFormat('jpeg')
-      .jpeg({ quality: 30 })
-      .resize(Math.round(metadata.width / 4), Math.round(metadata.height / 4))
-      .toFile(compressedPath);
+    res = await fetch(`${UPSTREAM_IMG_BASE_URL}${imgId}?im=Resize,width=1000,height=240`);
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    await sharp(buffer).toFormat('webp').toFile(compressedPath);
 
     task.downloadedCount += 1;
     totalDownloaded += 1;

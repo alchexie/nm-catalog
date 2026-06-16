@@ -4,6 +4,7 @@
   -- <gid>         # update playlists of specific games
   -- section       # from playlist_section.json
   -- section <pid> # update a specific playlist from playlist_section.json
+  -- character          # collect character playlists to playlist_character.json
   -- no-exec       # only fetch data and not to operate database
 */
 
@@ -25,11 +26,33 @@ import { LangCode, Playlist, PlaylistType } from '@nm-catalog/shared';
 const args = process.argv.slice(2);
 const specificIds = args.filter((x) => isUuid(x));
 const isFromSection = args.includes('section');
+const isCharacter = args.includes('character');
 const isNoExec = args.includes('no-exec');
 const langs = Object.values(LangCode);
 let hasError = false;
 
 (async () => {
+  if (isCharacter) {
+    let hasError = false;
+    try {
+      const rawData = await upstreem.getCharacterPlaylistInfo();
+      writeText(
+        COMMON_PATHS['res_playlist_character.json'],
+        rawData.playlists.map((x: DataRow) => x.id)
+      );
+
+      info(`√ Character playlist data successfully marked.`);
+      return;
+    } catch (error) {
+      console.error(error);
+      hasError = true;
+    } finally {
+      if (hasError) {
+        process.exit(1);
+      }
+    }
+  }
+
   let updateds: {
     gameIds?: string[];
     playlistIds?: string[];
@@ -113,9 +136,11 @@ let hasError = false;
 
             if (playlist.type === <PlaylistType>'MULTIPLE') {
               playlistGameData.push(
-                ...[...new Set<string>(rawData.tracks.map((x: any) => x.game.id))].map(
-                  (x) => [playlist.id, x]
-                )
+                ...[
+                  ...new Set<string>(
+                    rawData.tracks.filter((x: any) => x.game).map((x: any) => x.game.id)
+                  ),
+                ].map((x) => [playlist.id, x])
               );
             }
           }

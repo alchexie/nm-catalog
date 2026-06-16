@@ -1,14 +1,47 @@
 <template>
-  <nav id="nav" ref="navRef" :class="{ hidden: options.length === 1 }">
-    <div>
-      <slot></slot>
-    </div>
-    <ul>
+  <nav id="side-nav" :class="{ hidden: options.length === 1 }">
+    <section>
+      <h1>
+        {{ data.title }}
+        <template v-if="props.sortConfig">
+          <a
+            class="sorter"
+            :class="{ active: showSortMenu }"
+            @click.stop="showSortMenu = !showSortMenu"
+          >
+            {{ computedSortLabel }}
+            <ul :class="{ active: showSortMenu }">
+              <li
+                v-for="option in props.sortConfig?.options"
+                :key="option.value"
+                :class="{ active: option.value === sortConfig?.current }"
+                @click.stop="onSelectSort(option.value)"
+              >
+                <span>{{ option.label }}</span>
+              </li>
+            </ul>
+          </a>
+        </template>
+      </h1>
+      <h2 v-if="data.subTitle">{{ data.subTitle }}</h2>
+      <img v-if="data.imgUrl" v-fallback :src="data.imgUrl" loading="lazy" />
+      <template v-if="data.officialUrl">
+        <a v-external-link class="outer-link" :href="data.officialUrl">
+          <SvgIcon type="link" height="1.5em"></SvgIcon>
+          {{ t('official.link') }}
+        </a>
+      </template>
+    </section>
+    <ul
+      ref="navListRef"
+      :class="{ 'fade-top': showTopFade, 'fade-bottom': showBottomFade }"
+      @scroll="onNavScroll"
+      @wheel="onWheel"
+    >
       <li
         v-for="(option, i) in options"
-        :key="option"
-        :data-name="getLabel(i, step)"
-        :class="{ active: i === activeIndex, hidden: !!step && i % step > 0 }"
+        :key="option.label"
+        :class="{ active: i === activeIndex }"
         :style="{
           transform: `translateY(${
             navheight * (percentages[i] + (1 - percentages[options.length - 1]) / 2)
@@ -16,46 +49,75 @@
         }"
         @click.stop="navigateTo(i)"
       >
-        <span>{{ title }} </span>
+        <span :title="props.options[i].label">{{ props.options[i].label }} </span>
+        <span class="badge">{{ props.options[i].count }} </span>
       </li>
     </ul>
   </nav>
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import SvgIcon from '@/components/SvgIcon.vue';
 import { ElementTracker } from '@/utils/element-tracker';
 import { scrollToY } from '@/utils/dom-utils';
 
+const { t } = useI18n();
 const props = defineProps<{
-  target: HTMLElement[];
-  options: string[];
-  title?: string | number;
-  step?: number;
+  data: {
+    title: string;
+    subTitle?: string;
+    imgUrl?: string;
+    officialUrl?: string;
+  };
+  sortConfig?: {
+    options: { label: string; value: string }[];
+    current: string;
+  };
+  options: { label: string; count: number }[];
+  targetNodes?: HTMLElement[];
 }>();
-const emit = defineEmits(['update:title']);
+const emit = defineEmits(['update:sort']);
+const showSortMenu = ref(false);
 const percentages = ref<number[]>([]);
-const navRef = ref<HTMLElement>();
 const navheight = ref<number>(0);
 const activeIndex = ref<number>(0);
+const navListRef = ref<HTMLUListElement>();
+const showTopFade = ref(false);
+const showBottomFade = ref(false);
 const tracker = new ElementTracker((entries) => {
   const entry = entries.find((x) => x.isIntersecting);
   if (entry) {
-    const step = props.step ?? 1;
-    const idx = Math.floor(props.target.indexOf(entry!.target as HTMLElement));
-    const normalizedIdx = idx - (idx % step);
-    activeIndex.value = normalizedIdx;
-    emit('update:title', props.options[normalizedIdx]);
+    const idx = Math.floor(
+      (props.targetNodes ?? []).indexOf(entry!.target as HTMLElement)
+    );
+    activeIndex.value = idx;
   }
 });
 let scrollHandler!: (() => void) | null;
 
+const computedSortLabel = computed(() => {
+  return props.sortConfig?.options.find((x) => x.value === props.sortConfig?.current)
+    ?.label;
+});
+
+onMounted(() => {
+  if (!props.sortConfig) return;
+  document.addEventListener('click', onClickOutside);
+});
+
+onUnmounted(() => {
+  if (!props.sortConfig) return;
+  document.removeEventListener('click', onClickOutside);
+});
+
 watch(
-  () => props.target,
+  () => props.targetNodes ?? [],
   async (elRef) => {
     tracker.disconnect();
     activeIndex.value = 0;
-    if (elRef.length) {
+    if (elRef?.length) {
       const nums: number[] = [0];
       const sum = elRef
         .map((x) => x.offsetHeight)
@@ -71,25 +133,28 @@ watch(
   { immediate: true }
 );
 
-onMounted(() => {
-  const observer = new ResizeObserver((entries) => {
-    navheight.value = entries[0].contentRect.height;
-  });
-  observer.observe(navRef.value!);
-});
+watch(
+  () => props.options,
+  async () => {
+    showTopFade.value = false;
+    showBottomFade.value = false;
+    await nextTick();
+    navListRef.value?.scrollTo(0, 0);
+  }
+);
 
 async function navigateTo(idx: number) {
   if (scrollHandler) {
     window.removeEventListener('scroll', scrollHandler);
     scrollHandler = null;
   }
-  const step = props.step ?? 1;
-  const normalizedIdx = idx - (idx % step);
-  activeIndex.value = normalizedIdx;
-  emit('update:title', props.options[normalizedIdx]);
+  activeIndex.value = idx;
   tracker.disconnect();
 
-  const el = props.target[idx];
+  if (!props.targetNodes) {
+    return;
+  }
+  const el = props.targetNodes[idx];
   scrollToY(el.getBoundingClientRect().top + window.scrollY - 80, () => {
     scrollHandler = () => {
       window.removeEventListener('scroll', scrollHandler!);
@@ -101,12 +166,32 @@ async function navigateTo(idx: number) {
   });
 }
 
-function getLabel(i: number, step = 1): string {
-  if (step === 1) {
-    return props.options[i];
-  } else {
-    const next = props.options[i + step - 1];
-    return `${next ? `${next}-` : 'By '}${props.options[i]}`;
+function onSelectSort(value: string) {
+  emit('update:sort', value);
+  showSortMenu.value = false;
+}
+
+function onClickOutside(e: MouseEvent) {
+  const target = e.target as HTMLElement;
+  if (!target.closest('.sorter')) {
+    showSortMenu.value = false;
+  }
+}
+
+function onNavScroll() {
+  const el = navListRef.value;
+  if (!el) return;
+  showTopFade.value = el.scrollTop > 0;
+  showBottomFade.value = el.scrollTop < el.scrollHeight - el.clientHeight - 1;
+}
+
+function onWheel(e: WheelEvent) {
+  e.preventDefault();
+  e.stopPropagation();
+  const el = navListRef.value;
+  if (el) {
+    el.scrollTop += e.deltaY;
+    onNavScroll();
   }
 }
 </script>

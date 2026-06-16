@@ -7,28 +7,34 @@
     "minute": "m"
   },
   "game": {
+    "all": "All",
     "groupBy": {
-      "PLATFORM": "Group by Platform",
-      "RELEASE": "Group by Release Year",
-      "ADDED": "Sort by Latest",
-      "SERIES": "Group by Series"
+      "PLATFORM": "Platform",
+      "ADDED": "Added",
+      "RELEASE": "Release",
+      "SERIES": "Series"
     },
     "dataSection": {
-      "TRACK": "{count} Track | {count} Tracks",
-      "PLAYLIST": "{count} Related Playlist | {count} Related Playlists",
-      "RELATED": "{count} Related Game | {count} Related Games "
+      "TRACK": "Tracks",
+      "PLAYLIST": "Playlists",
+      "RELATED": "Related Games "
     },
     "playlist": {
-      "SINGLE_GAME": "In-Game Theme Playlist | In-Game Theme Playlists",
-      "MULTIPLE": "Cross-Game Theme Playlist | Cross-Game Theme Playlists"
+      "SINGLE_GAME": "",
+      "MULTIPLE": "Related Playlists"
     },
     "uncategorized": "(uncategorized)"
   },
   "track": {
     "tag": {
       "ALL": "All",
-      "TOP": "Top",
-      "LOOP": "Extended-Playback"
+      "STAR": "Top",
+      "EXTEND": "Extended-Playback"
+    },
+    "display": {
+      "GRID": "Gallery view",
+      "LIST": "List view",
+      "DETAIL": "Detail view"
     }
   },
   "playlist": {
@@ -46,9 +52,11 @@
       "SPECIAL": "Special Release",
       "RECOMMEND": "Top Recommendations",
       "MOOD": "Match your Mood",
-      "SCENE": "Set the Scene"
+      "SCENE": "Set the Scene",
+      "CHARACTER": "Characters"
     },
-    "expired": "Expired Playlist"
+    "expired": "(Unavailable)",
+    "setting": "Show / Hide Games"
   },
   "info": {
     "lang": "Preferred Language",
@@ -56,5 +64,11 @@
   },
   "punctuation": {
     "colon": ":"
+  },
+  "official": {
+    "site": "Official Website",
+    "link": "Official Link",
+    "goPrefix": "Go to ",
+    "goSuffix": ""
   }
 }

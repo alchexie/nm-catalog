@@ -31,5 +31,10 @@ export const useLoadMore = <T>(data: T[], batchSize = 50) => {
 
   const hasRemainedData = () => toDisplayData.length > 0;
 
-  return { displayData, resetData, loadMore, hasRemainedData };
+  const loadAll = () => {
+    (displayData.value as T[]).push(...toDisplayData);
+    toDisplayData = [];
+  };
+
+  return { displayData, resetData, loadMore, hasRemainedData, loadAll };
 };

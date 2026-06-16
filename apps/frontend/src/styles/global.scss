@@ -1,20 +1,44 @@
-@use '@/styles/variables' as *;
-@use '@/styles/mixins' as *;
 @use '@/styles/common' as *;
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: $root-textColor;
-  background-color: $root-bgColor;
+  color-scheme: dark;
+  color: var(--root-text-color);
+  background-color: var(--root-bg-color-0);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --root-brand-color: #e60012;
+
+  --root-bg-color-0: #111111;
+  --root-bg-color-1: #1d1d1d;
+  --root-bg-color-2: #282828;
+  --root-bg-color-3: #3d3d3d;
+  --root-bg-color-4: #3c3c3c;
+  --root-bg-color-5: #4f4f4f;
+
+  --root-text-color: #f4f4f4;
+  --root-text-color-light: #9e9e9e;
+
+  --root-gap-width-0: 24px;
+  --root-gap-width-1: 16px;
+  --root-gap-width-2: 8px;
+  --root-gap-width-3: 4px;
+
+  --main-nav-width: 240px;
+  --main-header-height: 80px;
+  --main-footer-height: 48px;
 }
 
 *,
@@ -24,12 +48,8 @@
 }
 
 a {
-  color: #646cff;
+  color: var(--root-text-color);
   text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
 }
 
 body {
@@ -46,29 +66,53 @@ ol {
 #app {
   width: 100%;
   margin: 0 auto;
-  padding-bottom: 2rem;
-  text-align: center;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: $root-textColor-light;
-    background-color: $root-bgColor-light;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
+.display-sm {
+  display: none;
 }
 
-@media (min-width: 1200px) {
-  #app {
-    width: 1200px;
-  }
+.hidden-sm {
+  display: block;
 }
 
-@media (max-width: 767px) {
+@media (max-width: $breakpoint-md) {
   html {
     font-size: 80%;
+  }
+
+  .display-sm {
+    display: block;
+  }
+
+  .hidden-sm {
+    display: none !important;
+  }
+}
+
+@media (min-width: $breakpoint-xl) {
+  :root {
+    /* --------- main-nav --------- */
+    --main-nav-width: 280px;
+  }
+}
+
+* {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: rgb(from var(--root-text-color) r g b / 10%);
+
+    &:hover {
+      background-color: rgb(from var(--root-text-color) r g b / 30%);
+    }
   }
 }

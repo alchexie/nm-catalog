@@ -85,7 +85,7 @@ router.get('/recent', (_req: Request, res: Response) => {
     const result = getGameList('ADDED');
     res.json([
       {
-        name: '',
+        localeNameTag: 'game.all',
         games: result,
       },
     ]);
