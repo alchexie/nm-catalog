@@ -116,7 +116,7 @@ import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useGameStore, useLangStore } from '@/stores';
-import { useNavigationr } from '@/composables/useNavigationr';
+import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
@@ -190,7 +190,7 @@ const computedIsChangalbePlaylist = computed(() => {
   );
 });
 
-useNavigationr({
+useNavigation({
   template: {
     setup() {
       return () => {

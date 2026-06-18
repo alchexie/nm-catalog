@@ -86,7 +86,7 @@ import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useLangStore } from '@/stores';
-import { useNavigationr } from '@/composables/useNavigationr.ts';
+import { useNavigation } from '@/composables/useNavigation.ts';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
@@ -137,7 +137,7 @@ const computedSections = computed(() => {
 });
 const computedGridItemWidth = computed(() => playlistRef.value?.elementWidth ?? 0);
 
-useNavigationr({
+useNavigation({
   template: {
     setup() {
       return () => {

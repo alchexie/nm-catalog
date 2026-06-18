@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useNavigationr } from '@/composables/useNavigationr';
+import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
@@ -81,7 +81,7 @@ const computedPlaylistGroups = computed(() =>
   }))
 );
 
-useNavigationr({
+useNavigation({
   template: {
     setup() {
       return () => {

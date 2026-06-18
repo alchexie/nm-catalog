@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import SvgIcon from './SvgIcon.vue';
 
 const props = defineProps<{
@@ -25,10 +25,24 @@ const props = defineProps<{
 const scrollPanelRef = ref<HTMLElement>();
 const isAtStart = ref(true);
 const isAtEnd = ref(false);
+let resizeObserver: ResizeObserver | null = null;
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick();
   checkScrollPosition();
   scrollPanelRef.value?.addEventListener('scroll', checkScrollPosition);
+
+  resizeObserver = new ResizeObserver(() => {
+    checkScrollPosition();
+  });
+  if (scrollPanelRef.value) {
+    resizeObserver.observe(scrollPanelRef.value);
+  }
+});
+
+onUnmounted(() => {
+  scrollPanelRef.value?.removeEventListener('scroll', checkScrollPosition);
+  resizeObserver?.disconnect();
 });
 
 watch(scrollPanelRef, () => {

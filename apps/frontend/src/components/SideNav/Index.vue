@@ -57,13 +57,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
+import { useNavigation } from '@/composables/useNavigation';
 import SvgIcon from '@/components/SvgIcon.vue';
 import { ElementTracker } from '@/utils/element-tracker';
 import { scrollToY } from '@/utils/dom-utils';
 
 const { t } = useI18n();
+const { setRouteScroll, getRouteScroll } = useNavigation();
 const props = defineProps<{
   data: {
     title: string;
@@ -79,6 +82,7 @@ const props = defineProps<{
   targetNodes?: HTMLElement[];
 }>();
 const emit = defineEmits(['update:sort']);
+const currentRoutePath = useRoute().path;
 const showSortMenu = ref(false);
 const percentages = ref<number[]>([]);
 const navheight = ref<number>(0);
@@ -105,11 +109,13 @@ const computedSortLabel = computed(() => {
 onMounted(() => {
   if (!props.sortConfig) return;
   document.addEventListener('click', onClickOutside);
+  navListRef.value?.scrollTo(0, getRouteScroll(currentRoutePath));
 });
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (!props.sortConfig) return;
   document.removeEventListener('click', onClickOutside);
+  setRouteScroll(currentRoutePath, navListRef.value?.scrollTop ?? 0);
 });
 
 watch(
