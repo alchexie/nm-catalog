@@ -52,7 +52,8 @@ const tbPlaylist: DBTableConfig = {
         WHEN 'LOOP' THEN 3
         WHEN 'SINGLE_GAME' THEN 4
         ELSE 99
-      END;
+      END,
+	    pg.sort;
   `,
   insert: (lang: LangCodeValue) => {
     const sLang = lang.replace('-', '_');

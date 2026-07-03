@@ -15,6 +15,11 @@
   ],
   "特别发布": [
     {
+      "id": "d594984a-04ff-4972-9856-c27a39953002",
+      "name": "特别发布《节奏天国 奇迹之星》",
+      "type": "SPECIAL"
+    },
+    {
       "id": "2469486e-923d-4111-a6af-e2b639da160a",
       "name": "特别发布《Star Fox (星际火狐)》",
       "type": "SPECIAL"
@@ -54,8 +59,8 @@
       "type": "MULTIPLE"
     },
     {
-      "id": "e31b2abb-32c8-4d01-9e8c-83629ff792e3",
-      "name": "Nintendo Music精选",
+      "id": "7594c358-db86-404f-9c6f-bf7b507fd3e7",
+      "name": "Nintendo 64精选",
       "type": "MULTIPLE"
     },
     {
@@ -66,6 +71,11 @@
     {
       "id": "5db39d9d-9633-4f8f-8c49-c9356777eeb0",
       "name": "NES精选",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "e31b2abb-32c8-4d01-9e8c-83629ff792e3",
+      "name": "Nintendo Music精选",
       "type": "MULTIPLE"
     },
     {

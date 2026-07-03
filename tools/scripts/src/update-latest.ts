@@ -31,10 +31,12 @@ const runCommand = (exec: string, interactive = false) => {
 };
 
 (async () => {
+  await runCommand(`pnpm backup-db`);
   await runCommand('pnpm pull-game');
   await runCommand('pnpm pull-playlist');
   await runCommand('pnpm pull-playlist -- section');
   await runCommand('pnpm pull-playlist -- character');
   await runCommand('pnpm get-img -- original');
-  await runCommand('pnpm set-series', true); // 交互模式
+  await runCommand('pnpm set-series', true);
+  await runCommand(`pnpm vacuum-db`);
 })();

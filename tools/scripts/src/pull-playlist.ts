@@ -113,7 +113,7 @@ let hasError = false;
           }
 
           if (!langs.indexOf(lang)) {
-            playlistGameData.push(...playlistData.map((x) => [x[0], gameId]));
+            playlistGameData.push(...playlistData.map((x, i) => [x[0], gameId, i]));
           }
         }
 
@@ -140,7 +140,7 @@ let hasError = false;
                   ...new Set<string>(
                     rawData.tracks.filter((x: any) => x.game).map((x: any) => x.game.id)
                   ),
-                ].map((x) => [playlist.id, x])
+                ].map((x) => [playlist.id, x, -1])
               );
             }
           }

@@ -34,8 +34,10 @@ const runCommand = (exec: string) => {
 };
 
 (async () => {
+  await runCommand(`pnpm backup-db`);
   await runCommand(`pnpm pull-game -- ${gid}`);
   await runCommand(`pnpm pull-playlist -- ${gid}`);
   await runCommand(`pnpm get-img -- original`);
   await runCommand(`pnpm pull-playlist -- section`);
+  await runCommand(`pnpm vacuum-db`);
 })();

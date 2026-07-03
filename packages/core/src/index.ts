@@ -12,3 +12,4 @@ export { default as updateSql251120 } from './db/update/sql_251120.js';
 export { default as updateSql260121 } from './db/update/sql_260121.js';
 export { default as updateSql260424 } from './db/update/sql_260424.js';
 export { default as updateSql260527 } from './db/update/sql_260527.js';
+export { default as updateSql260703 } from './db/update/sql_260703.js';

@@ -18,7 +18,9 @@
     "pull-playlist:prod": "node dist/pull-playlist.js",
     "get-img:prod": "node dist/get-img.js",
     "update-latest": "tsx src/update-latest.ts",
-    "update-game": "tsx src/update-game.ts"
+    "update-game": "tsx src/update-game.ts",
+    "vacuum-db": "tsx src/vacuum-db.ts",
+    "backup-db": "tsx src/backup-db.ts"
   },
   "dependencies": {
     "@nm-catalog/core": "workspace:*",
