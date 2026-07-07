@@ -1,4 +1,17 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import { ProxyAgent, setGlobalDispatcher } from 'undici';
 import { DEFAULT_LANG, LangCodeValue } from '@nm-catalog/shared';
+
+dotenv.config({
+  path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../.env'),
+});
+
+const proxyUrl = process.env.HTTPS_PROXY;
+if (proxyUrl) {
+  setGlobalDispatcher(new ProxyAgent(proxyUrl));
+}
 
 export const UPSTREAM_API_BASE_URL = 'https://api.m.nintendo.com/catalog/';
 export const UPSTREAM_IMG_BASE_URL = 'https://image-assets.m.nintendo.com/';

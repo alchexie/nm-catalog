@@ -109,6 +109,12 @@ importers:
       better-sqlite3:
         specifier: ^12.8.0
         version: 12.8.0
+      dotenv:
+        specifier: ^16.6.1
+        version: 16.6.1
+      undici:
+        specifier: ^8.7.0
+        version: 8.7.0
       xlsx:
         specifier: ^0.18.5
         version: 0.18.5
@@ -2642,6 +2648,10 @@ packages:
 
   undici-types@7.18.2:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
+
+  undici@8.7.0:
+    resolution: {integrity: sha512-N7iQtfyLhIMOFgQubvmLV26svHpO0bqKnAiWotTQCVKCmWrcGbBotPuW1x+xwYZ2VHdSTVUfPQQnlEt1/LouTQ==}
+    engines: {node: '>=22.19.0'}
 
   union-value@1.0.1:
     resolution: {integrity: sha512-tJfXmxMeWYnczCVs7XAEvIV7ieppALdyepWMkHkwciRpZraG/xwT+s2JN8+pr1+8jCRf80FFzvr+MpQeeoF4Xg==}
@@ -5390,6 +5400,8 @@ snapshots:
   undefsafe@2.0.5: {}
 
   undici-types@7.18.2: {}
+
+  undici@8.7.0: {}
 
   union-value@1.0.1:
     dependencies:
