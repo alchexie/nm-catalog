@@ -27,6 +27,7 @@ const tbPlaylistGame: DBTableConfig = {
     `;
   },
   delete: () => `DELETE FROM playlist_game`,
+  deleteByGid: () => `DELETE FROM playlist_game WHERE gid = ?`,
 };
 
 export default tbPlaylistGame;

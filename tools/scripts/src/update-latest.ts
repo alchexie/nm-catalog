@@ -1,41 +1,10 @@
-import { spawn } from 'child_process';
-
-const runCommand = (exec: string, interactive = false) => {
-  const execParts = exec.split(' ');
-  const [cmd, ...args] = execParts;
-
-  return new Promise<void>((resolve, reject) => {
-    const child = spawn(cmd, args, {
-      stdio: interactive ? 'inherit' : 'pipe',
-      shell: true,
-    });
-
-    if (!interactive) {
-      child.stdout!.on('data', (data) => {
-        const text = data.toString();
-        process.stdout.write(text);
-        if (text.includes('STOP')) {
-          child.kill();
-          process.exit(0);
-        }
-      });
-
-      child.stderr!.on('data', (data) => process.stderr.write(data.toString()));
-    }
-
-    child.on('close', (code) => {
-      if (code !== 0) reject(new Error(`${cmd} exited with ${code}`));
-      else resolve();
-    });
-  });
-};
+import { runCommand } from './utils/runCommand.js';
 
 (async () => {
   await runCommand(`pnpm backup-db`);
   await runCommand('pnpm pull-game');
   await runCommand('pnpm pull-playlist');
   await runCommand('pnpm pull-playlist -- section');
-  await runCommand('pnpm pull-playlist -- character');
   await runCommand('pnpm get-img -- original');
   await runCommand('pnpm set-series', true);
   await runCommand(`pnpm vacuum-db`);

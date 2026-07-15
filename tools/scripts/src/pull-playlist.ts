@@ -2,9 +2,10 @@
   Pull data of playlists from Nintendo APIs (run [pull-game] first when update)
   
   -- <gid>         # update playlists of specific games
+  -- order         # update playlist sort order for all games + character playlists
   -- section       # from playlist_section.json
   -- section <pid> # update a specific playlist from playlist_section.json
-  -- character          # collect character playlists to playlist_character.json
+  -- character     # collect character playlists to playlist_character.json
   -- no-exec       # only fetch data and not to operate database
 */
 
@@ -28,6 +29,7 @@ const specificIds = args.filter((x) => isUuid(x));
 const isFromSection = args.includes('section');
 const isCharacter = args.includes('character');
 const isNoExec = args.includes('no-exec');
+const isOrder = args.includes('order');
 const langs = Object.values(LangCode);
 let hasError = false;
 
@@ -42,6 +44,45 @@ let hasError = false;
       );
 
       info(`√ Character playlist data successfully marked.`);
+      return;
+    } catch (error) {
+      console.error(error);
+      hasError = true;
+    } finally {
+      if (hasError) {
+        process.exit(1);
+      }
+    }
+  }
+
+  if (isOrder) {
+    let hasError = false;
+    try {
+      const allGames = (stmt.game.select().all() as DataRow[]).filter(
+        (x) => !(<string>x.link)
+      );
+      for (const game of allGames) {
+        const gameId = <string>game.id;
+        const rawPlaylistData = await upstreem.getPlaylistInfoOfGame(gameId, langs[0]);
+        const playlistGameData: DataCell[][] = [];
+        const allPlaylists = [
+          rawPlaylistData.allPlaylist,
+          rawPlaylistData.bestPlaylist,
+          ...rawPlaylistData.miscPlaylistSet.officialPlaylists,
+        ];
+
+        allPlaylists.forEach((playlist, i) => {
+          playlistGameData.push([playlist.id, gameId, i]);
+        });
+
+        if (!isNoExec) {
+          stmt.playlist_game.deleteByGid().run(gameId);
+          const trans = getTransactionByStatement(stmt.playlist_game.insert());
+          trans(playlistGameData);
+        }
+      }
+
+      info(`√ Playlist order successfully updated.`);
       return;
     } catch (error) {
       console.error(error);
@@ -153,6 +194,7 @@ let hasError = false;
         updateds.gameIds.push(<string>gameId);
 
         if (!isNoExec) {
+          stmt.playlist_game.deleteByGid().run(gameId);
           trans = getTransactionByStatement(stmt.playlist_game.insert());
           trans(playlistGameData);
           trans = getTransactionByStatement(stmt.playlist_track.insert());

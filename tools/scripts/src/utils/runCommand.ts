@@ -1,0 +1,31 @@
+import { spawn } from 'child_process';
+
+export const runCommand = (exec: string, interactive = false) => {
+  const execParts = exec.split(' ');
+  const [cmd, ...args] = execParts;
+
+  return new Promise<void>((resolve, reject) => {
+    const child = spawn(cmd, args, {
+      stdio: interactive ? 'inherit' : 'pipe',
+      shell: true,
+    });
+
+    if (!interactive) {
+      child.stdout!.on('data', (data) => {
+        const text = data.toString();
+        process.stdout.write(text);
+        if (text.includes('STOP')) {
+          child.kill();
+          process.exit(0);
+        }
+      });
+
+      child.stderr!.on('data', (data) => process.stderr.write(data.toString()));
+    }
+
+    child.on('close', (code) => {
+      if (code !== 0) reject(new Error(`${cmd} exited with ${code}`));
+      else resolve();
+    });
+  });
+};

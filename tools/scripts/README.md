@@ -66,6 +66,9 @@ pnpm pull-playlist
 - `-- <gid>`
   指定 Game ID，仅拉取对应的 Playlist 数据
 
+- `-- order`
+  更新每个游戏的 Playlist 顺序
+
 - `-- section`
   拉取 Playlist Section 的内容，已有内容会自动更新或跳过
   （需要将抓包得到的playlist_section.json 放在 /backend/files/response）

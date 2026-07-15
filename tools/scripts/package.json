@@ -19,6 +19,7 @@
     "get-img:prod": "node dist/get-img.js",
     "update-latest": "tsx src/update-latest.ts",
     "update-game": "tsx src/update-game.ts",
+    "update-playlist": "tsx src/update-playlist.ts",
     "vacuum-db": "tsx src/vacuum-db.ts",
     "backup-db": "tsx src/backup-db.ts"
   },
