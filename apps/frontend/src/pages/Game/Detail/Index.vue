@@ -58,7 +58,11 @@
           <h2 class="hidden-sm">{{ t('game.dataSection.PLAYLIST') }}</h2>
           <Playlist :data="data.playlists" ref="playlistRef"></Playlist>
         </div>
-        <div :hidden="gameDataSection !== 'RELATED'" :ref="(el) => setRefElement(el, 2)">
+        <div
+          :hidden="gameDataSection !== 'RELATED'"
+          :ref="(el) => setRefElement(el, 2)"
+          v-if="data.relateds.length"
+        >
           <h2 class="hidden-sm">{{ t('game.dataSection.RELATED') }}</h2>
           <Related
             :data="data.relateds"
@@ -96,7 +100,12 @@ import SvgIcon from '@/components/SvgIcon.vue';
 import Track from './components/Track.vue';
 import Related from './components/Related.vue';
 import Playlist from './components/Playlist.vue';
-import { GameDataSection, OFFICIAL_URL, type GameDetail } from '@/types';
+import {
+  GameDataSections,
+  OFFICIAL_URL,
+  type GameDetail,
+  type GameDataSection,
+} from '@/types';
 import { getGameDetail } from '@/api';
 import { getSourceImg, isShowTitle, openSourceImg } from '@/utils/data-utils';
 
@@ -126,7 +135,7 @@ const computedBrandImage = computed(() => {
 });
 const computedSections = computed(() => {
   const result = [];
-  for (const section of GameDataSection) {
+  for (const section of GameDataSections) {
     result.push({
       key: section,
       label: t(`game.dataSection.${section}`),

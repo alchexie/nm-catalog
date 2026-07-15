@@ -2,28 +2,28 @@
   <section>
     <div class="switch">
       <MultiSwitcher
-        v-model="trackViewMode[0]"
+        v-model="trackTagFilter"
         :options="['all', 'star', 'extend']"
         desc-prefix="track.tag"
         expand
       ></MultiSwitcher>
       <MultiSwitcher
-        v-model="trackViewMode[1]"
+        v-model="trackViewMode"
         :options="['grid', 'list', 'detail']"
         desc-prefix="track.display"
         :class="{ 'hidden-sm': true }"
       ></MultiSwitcher>
     </div>
-    <ul class="switch-view" :class="trackViewMode[1]">
+    <ul class="switch-view" :class="trackViewMode">
       <li
         v-for="track in displayData"
         :key="track.id"
         :hidden="
-          (trackViewMode[0] === 'star' && !track.isbest) ||
-          (trackViewMode[0] === 'extend' && !track.isloop)
+          (trackTagFilter === 'star' && !track.isbest) ||
+          (trackTagFilter === 'extend' && !track.isloop)
         "
       >
-        <TrackItem :data="track" :view-mode="trackViewMode[1]"></TrackItem>
+        <TrackItem :data="track" :view-mode="trackViewMode"></TrackItem>
       </li>
     </ul>
     <div ref="loadMoreRef" class="load-more display-sm"></div>
@@ -31,23 +31,26 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useLoadMore } from '@/composables/useLoadMore';
 import MultiSwitcher from '@/components/MultiSwitcher.vue';
 import TrackItem from '@/components/TrackItem/Index.vue';
 import { type Track } from '@/types';
 import { ElementTracker } from '@/utils/element-tracker';
+import { useTrackViewStore } from '@/stores';
 
 const props = defineProps<{
   data: Track[];
 }>();
 
+const trackViewStore = useTrackViewStore();
 const { displayData, loadMore, hasRemainedData, loadAll } = useLoadMore(props.data);
-const trackViewMode = ref<['all' | 'star' | 'extend', 'grid' | 'list' | 'detail']>([
-  'all',
-  'detail',
-]);
 const loadMoreRef = ref<HTMLElement>();
+const trackTagFilter = ref<'all' | 'star' | 'extend'>('all');
+const trackViewMode = computed({
+  get: () => trackViewStore.viewMode,
+  set: (value) => trackViewStore.setViewMode(value),
+});
 const tracker = new ElementTracker(async (entries) => {
   const entry = entries[0];
   if (entry.isIntersecting) {

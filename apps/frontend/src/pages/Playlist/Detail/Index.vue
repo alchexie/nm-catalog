@@ -34,12 +34,12 @@
           <div>
             <a
               class="toggle"
-              :class="{ active: isShowGame }"
+              :class="{ active: trackViewStore.isShowGame }"
               :title="t('playlist.setting')"
-              @click.stop="isShowGame = !isShowGame"
+              @click.stop="trackViewStore.setIsShowGame(!trackViewStore.isShowGame)"
               v-if="data.playlist.type !== 'SPECIAL'"
             >
-              <SvgIcon :type="isShowGame ? 'game' : 'game-hide'" height="1.5em"></SvgIcon>
+              <SvgIcon :type="trackViewStore.isShowGame ? 'game' : 'game-hide'" height="1.5em"></SvgIcon>
             </a>
             <MultiSwitcher
               v-model="trackViewMode"
@@ -57,7 +57,7 @@
               <li
                 v-if="data.playlist.type !== 'SPECIAL'"
                 class="full-row"
-                :hidden="!isShowGame"
+                :hidden="!trackViewStore.isShowGame"
               >
                 <template v-if="group.game">
                   <router-link :to="`/game/${group.game.id}`" class="jump-link">
@@ -115,7 +115,7 @@
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import { useGameStore, useLangStore } from '@/stores';
+import { useGameStore, useLangStore, useTrackViewStore } from '@/stores';
 import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
@@ -144,10 +144,13 @@ const stringMap = useLocalizationString();
 const trackLoader = useLoadMore<PlaylistTrack>([]);
 const pid = route.params.pid as string;
 const langStore = useLangStore();
+const trackViewStore = useTrackViewStore();
 const data = ref<PlaylistDetail & { duration: DurationInfo }>();
-const trackViewMode = ref<'grid' | 'list' | 'detail'>('detail');
-const isShowGame = ref(true);
 const loadMoreRef = ref<HTMLElement>();
+const trackViewMode = computed({
+  get: () => trackViewStore.viewMode,
+  set: (value) => trackViewStore.setViewMode(value),
+});
 const tracker = new ElementTracker(async (entries) => {
   const entry = entries[0];
   if (entry.isIntersecting) {

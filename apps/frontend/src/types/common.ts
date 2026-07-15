@@ -10,7 +10,12 @@ export const STORAGE_KEY = {
   LOCALE: 'LOCALE',
   LANG: 'LANG',
   GAME_GROUPBY: 'GAME_GROUPBY',
+  TRACK_VIEW_MODE: 'TRACK_VIEW_MODE',
+  TRACK_SHOW_GAME: 'TRACK_SHOW_GAME',
 };
+
+export const TrackViewModes = ['grid', 'list', 'detail'] as const;
+export type TrackViewMode = (typeof TrackViewModes)[number];
 
 export interface DurationInfo {
   hour: number;

@@ -38,20 +38,21 @@
       @scroll="onNavScroll"
       @wheel="onWheel"
     >
-      <li
-        v-for="(option, i) in options"
-        :key="option.label"
-        :class="{ active: i === activeIndex }"
-        :style="{
-          transform: `translateY(${
-            navheight * (percentages[i] + (1 - percentages[options.length - 1]) / 2)
-          }px)`,
-        }"
-        @click.stop="navigateTo(i)"
-      >
-        <span :title="props.options[i].label">{{ props.options[i].label }} </span>
-        <span class="badge">{{ props.options[i].count }} </span>
-      </li>
+      <template v-for="(option, i) in options" :key="option.label">
+        <li
+          v-if="props.options[i].count"
+          :class="{ active: i === activeIndex }"
+          :style="{
+            transform: `translateY(${
+              navheight * (percentages[i] + (1 - percentages[options.length - 1]) / 2)
+            }px)`,
+          }"
+          @click.stop="navigateTo(i)"
+        >
+          <span :title="props.options[i].label">{{ props.options[i].label }} </span>
+          <span class="badge">{{ props.options[i].count }} </span>
+        </li>
+      </template>
     </ul>
   </nav>
 </template>

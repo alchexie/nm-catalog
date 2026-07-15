@@ -75,12 +75,13 @@ const playlistGroups: { label: string; playlists: Playlist[] }[] = (() => {
         break;
     }
     const selfList = groupMap.get('SINGLE_GAME')!;
-    const [star, extend, other] = [
+    const [all, star, extend, other] = [
+      selfList.filter((x) => x.type === 'SINGLE_GAME_ALL'),
       selfList.filter((x) => x.type === 'BEST'),
       selfList.filter((x) => x.type === 'LOOP'),
-      selfList.filter((x) => !['BEST', 'LOOP'].includes(x.type)),
+      selfList.filter((x) => !['SINGLE_GAME_ALL', 'BEST', 'LOOP'].includes(x.type)),
     ];
-    groupMap.set('SINGLE_GAME', [...other, ...extend, ...star]);
+    groupMap.set('SINGLE_GAME', [...all, ...star, ...other, ...extend]);
   });
 
   return Array.from(groupMap, ([label, playlists]) => ({ label, playlists }));
