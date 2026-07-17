@@ -34,15 +34,17 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/base/SvgIcon.vue';
+
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { MAIN_TITLE, OFFICIAL_URL } from '@/types';
-import SvgIcon from '@/components/SvgIcon.vue';
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+
 const title = MAIN_TITLE;
 
 const computedMenu = computed(() => [

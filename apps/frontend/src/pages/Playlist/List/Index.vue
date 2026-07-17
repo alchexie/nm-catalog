@@ -1,5 +1,5 @@
 <template>
-  <Container :loading="loading">
+  <LoadingContainer :loading="loading">
     <section
       class="list-group"
       v-for="(section, i) in computedPlaylistSections"
@@ -39,19 +39,20 @@
         </li>
       </ul>
     </section>
-  </Container>
+  </LoadingContainer>
 </template>
 
 <script setup lang="ts">
+import LoadingContainer from '@/components/base/LoadingContainer.vue';
+import SvgIcon from '@/components/base/SvgIcon.vue';
+import SideNav from '@/components/display/SideNav/Index.vue';
+
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
-import Container from '@/components/Container.vue';
-import SideNav from '@/components/SideNav/Index.vue';
-import SvgIcon from '@/components/SvgIcon.vue';
 import { getPlaylistSections } from '@/api';
 import type { PlaylistSection } from '@/types';
 
@@ -59,6 +60,7 @@ const { t } = useI18n();
 const { loading, request } = useRequest();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
+
 const playlistSections = ref<PlaylistSection[]>([]);
 const groupRefs = ref<HTMLElement[]>([]);
 
@@ -69,11 +71,10 @@ const computedPlaylistSections = computed(() =>
     playlists: x.playlists.map((y) => ({
       ...y,
       $title: stringMap.getString(y, 'title'),
-      $imgPath: imgMap.getPath('game', y),
+      $imgPath: imgMap.getPath('playlist', y),
     })),
   }))
 );
-
 const computedPlaylistGroups = computed(() =>
   computedPlaylistSections.value.map((x) => ({
     label: x.name,
@@ -101,7 +102,7 @@ useNavigation({
 onMounted(async () => {
   const result = await request(getPlaylistSections());
   const playlistList = result.map((x) => x.playlists).reduce((a, b) => [...a, ...b]);
-  imgMap.setData('game', playlistList);
+  imgMap.setData('playlist', playlistList);
   stringMap.setData(playlistList, 'title');
   playlistSections.value = result;
 });

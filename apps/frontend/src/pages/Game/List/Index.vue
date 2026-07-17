@@ -15,7 +15,7 @@
       </option>
     </select>
   </div>
-  <Container :loading="loading">
+  <LoadingContainer :loading="loading">
     <section
       v-for="(group, i) in computedGameGroups"
       :key="group.name"
@@ -43,42 +43,35 @@
         </li>
       </ul>
     </section>
-  </Container>
+  </LoadingContainer>
 </template>
 
 <script setup lang="ts">
+import LoadingContainer from '@/components/base/LoadingContainer.vue';
+import SideNav from '@/components/display/SideNav/Index.vue';
+
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
-import Container from '@/components/Container.vue';
-import SideNav from '@/components/SideNav/Index.vue';
-import { STORAGE_KEY, GameGroupBy, type GameGroup } from '@/types';
 import { getGames } from '@/api';
+import { STORAGE_KEY, GAME_GROUP_BY, type GameGroup, type GameGroupBy } from '@/types';
 import { useGameStore, useLangStore } from '@/stores';
 
 const { t } = useI18n();
 const { loading, request } = useRequest();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
-const gameDict: Record<
-  GameGroupBy,
-  { key: 'hardware' | 'release' | 'recent' | 'series'; content: GameGroup[] }
-> = {
-  PLATFORM: { key: 'hardware', content: [] },
-  RELEASE: { key: 'release', content: [] },
-  ADDED: { key: 'recent', content: [] },
-  SERIES: { key: 'series', content: [] },
-};
+
 const selectedGroupBy = ref<GameGroupBy>('PLATFORM');
 const gameGroups = ref<GameGroup[]>([]);
 const selectRef = ref<HTMLElement>();
 const groupRefs = ref<HTMLElement[]>([]);
 
 const computedGameGroupBy = computed(() => {
-  return GameGroupBy.map((x) => ({
+  return GAME_GROUP_BY.map((x) => ({
     label: t(`game.groupBy.${x}`),
     value: x,
   }));
@@ -103,6 +96,16 @@ const computedGroupList = computed(() =>
   }))
 );
 const computedMainLang = computed(() => useLangStore().mainLang);
+
+const gameDict: Record<
+  GameGroupBy,
+  { key: 'hardware' | 'release' | 'recent' | 'series'; content: GameGroup[] }
+> = {
+  PLATFORM: { key: 'hardware', content: [] },
+  RELEASE: { key: 'release', content: [] },
+  ADDED: { key: 'recent', content: [] },
+  SERIES: { key: 'series', content: [] },
+};
 
 useNavigation({
   template: {

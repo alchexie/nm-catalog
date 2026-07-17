@@ -29,7 +29,7 @@ const getGameList = (groupBy: GameGroupBy): Game[] => {
   return rows;
 };
 
-const getGameByYear = async (): Promise<GameGroup[]> => {
+export const getGameByYear = async (): Promise<GameGroup[]> => {
   const fileName = COMMON_PATHS['res_game_year.json'];
   const data = readText(fileName);
 

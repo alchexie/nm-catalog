@@ -70,8 +70,28 @@ const tbGame: DBTableConfig = {
       JOIN chain c ON t.link = c.id
       WHERE instr(c.visited, t.id) = 0
     )
-    SELECT DISTINCT id, link
-    FROM chain`,
+    SELECT DISTINCT id, link FROM chain`,
+  selectAllByIds: (ids: string[] = []) =>
+    `WITH RECURSIVE chain(id, link, visited) AS (
+      SELECT id, link, id
+      FROM game
+      WHERE id IN (${ids.map((id) => `'${id}'`).join(',')})
+
+      UNION ALL
+      
+      SELECT t.id, t.link, c.visited || ',' || t.id
+      FROM game t
+      JOIN chain c ON t.id = c.link
+      WHERE instr(c.visited, t.id) = 0
+
+      UNION ALL
+
+      SELECT t.id, t.link, c.visited || ',' || t.id
+      FROM game t
+      JOIN chain c ON t.link = c.id
+      WHERE instr(c.visited, t.id) = 0
+    )
+    SELECT * FROM game WHERE id IN (SELECT DISTINCT id FROM chain)`,
   selectNoSeries: () => `SELECT * FROM game WHERE sid IS NULL ORDER BY inserted`,
   selectGroupBy: (groupBy: GameGroupBy) => {
     switch (groupBy) {

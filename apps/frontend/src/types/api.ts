@@ -1,6 +1,7 @@
 export type {
   GameGroup,
   GameDetail,
-  PlaylistTrack,
   PlaylistDetail,
+  PlaylistTrack,
+  PlaylistTrackGroup,
 } from '@nm-catalog/shared';

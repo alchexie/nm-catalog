@@ -12,10 +12,10 @@ export const LangCode = {
 export type LangCode = keyof typeof LangCode;
 export type LangCodeValue = (typeof LangCode)[keyof typeof LangCode];
 
-export const GameGroupBy = ['PLATFORM', 'ADDED', 'RELEASE', 'SERIES'] as const;
-export type GameGroupBy = (typeof GameGroupBy)[number];
+export const GAME_GROUP_BY = ['PLATFORM', 'ADDED', 'RELEASE', 'SERIES'] as const;
+export type GameGroupBy = (typeof GAME_GROUP_BY)[number];
 
-export const PlaylistType = [
+export const PLAYLIST_TYPE = [
   'SINGLE_GAME_ALL',
   'BEST',
   'LOOP',
@@ -23,9 +23,9 @@ export const PlaylistType = [
   'MULTIPLE',
   'SPECIAL',
 ] as const;
-export type PlaylistType = (typeof PlaylistType)[number];
+export type PlaylistType = (typeof PLAYLIST_TYPE)[number];
 
-export const PlaylistSectionType = [
+export const PLAYLIST_SECTION_TYPE = [
   'ANNUAL',
   'SPECIAL',
   'RECOMMEND',
@@ -33,4 +33,4 @@ export const PlaylistSectionType = [
   'SCENE',
   'CHARACTER',
 ] as const;
-export type PlaylistSectionType = (typeof PlaylistSectionType)[number];
+export type PlaylistSectionType = (typeof PLAYLIST_SECTION_TYPE)[number];

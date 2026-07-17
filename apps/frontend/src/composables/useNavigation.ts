@@ -12,19 +12,19 @@ const getRouteScroll = (route: string): number => {
 };
 
 export const useNavigation = (config?: NavigationConfig | (() => NavigationConfig)) => {
-  const navigationrStore = useNavigationStore();
+  const navigationStore = useNavigationStore();
 
   onActivated(() => {
     const getConfig = () => (typeof config === 'function' ? config() : config);
     const cfg = getConfig();
     if (cfg) {
       if (cfg.template) {
-        navigationrStore.setTemplate(cfg);
+        navigationStore.setTemplate(cfg);
       }
     } else {
-      navigationrStore.clearTemplate();
+      navigationStore.clearTemplate();
     }
   });
 
-  return { navigationrStore, setRouteScroll, getRouteScroll };
+  return { navigationStore, setRouteScroll, getRouteScroll };
 };

@@ -58,16 +58,15 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/base/SvgIcon.vue';
+
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useNavigation } from '@/composables/useNavigation';
-import SvgIcon from '@/components/SvgIcon.vue';
 import { ElementTracker } from '@/utils/element-tracker';
 import { scrollToY } from '@/utils/dom-utils';
 
-const { t } = useI18n();
-const { setRouteScroll, getRouteScroll } = useNavigation();
 const props = defineProps<{
   data: {
     title: string;
@@ -83,7 +82,11 @@ const props = defineProps<{
   targetNodes?: HTMLElement[];
 }>();
 const emit = defineEmits(['update:sort']);
+
+const { t } = useI18n();
+const { setRouteScroll, getRouteScroll } = useNavigation();
 const currentRoutePath = useRoute().path;
+
 const showSortMenu = ref(false);
 const percentages = ref<number[]>([]);
 const navheight = ref<number>(0);
@@ -91,6 +94,12 @@ const activeIndex = ref<number>(0);
 const navListRef = ref<HTMLUListElement>();
 const showTopFade = ref(false);
 const showBottomFade = ref(false);
+
+const computedSortLabel = computed(() => {
+  return props.sortConfig?.options.find((x) => x.value === props.sortConfig?.current)
+    ?.label;
+});
+
 const tracker = new ElementTracker((entries) => {
   const entry = entries.find((x) => x.isIntersecting);
   if (entry) {
@@ -101,11 +110,6 @@ const tracker = new ElementTracker((entries) => {
   }
 });
 let scrollHandler!: (() => void) | null;
-
-const computedSortLabel = computed(() => {
-  return props.sortConfig?.options.find((x) => x.value === props.sortConfig?.current)
-    ?.label;
-});
 
 onMounted(() => {
   if (!props.sortConfig) return;

@@ -1,11 +1,11 @@
 <template>
-  <a :class="{ expand: expand }">
+  <a :class="{ expand: props.expand }">
     <span
-      v-for="option in options"
+      v-for="option in props.options"
       :key="option"
-      :class="{ active: modelValue === option }"
-      :title="t(`${descPrefix}.${option.toUpperCase()}`)"
-      @click="$emit('update:modelValue', option)"
+      :class="{ active: props.modelValue === option }"
+      :title="t(`${props.descPrefix}.${option.toUpperCase()}`)"
+      @click="emit('update:modelValue', option)"
     >
       <SvgIcon :type="option" width="16px"></SvgIcon>
     </span>
@@ -13,17 +13,17 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import SvgIcon from '@/components/SvgIcon.vue';
+import SvgIcon from '@/components/base/SvgIcon.vue';
 
-defineProps<{
+import { useI18n } from 'vue-i18n';
+
+const props = defineProps<{
   options: string[];
   descPrefix: string;
   modelValue?: string;
   expand?: boolean;
 }>();
-
-defineEmits<{
+const emit = defineEmits<{
   'update:modelValue': [value: string];
 }>();
 

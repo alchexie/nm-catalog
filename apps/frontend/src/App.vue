@@ -13,8 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import MainNav from '@/components/MainNav/Index.vue';
-import Footer from '@/components/Footer.vue';
+import MainNav from '@/components/layouts/MainNav/Index.vue';
+import Footer from '@/components/layouts/Footer.vue';
+
 import { useNavigationStore } from './stores';
 
 const navigationStore = useNavigationStore();

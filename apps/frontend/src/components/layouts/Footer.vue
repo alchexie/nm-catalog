@@ -39,9 +39,11 @@ import type { LocaleType } from '@/i18n';
 
 const { t } = useI18n();
 const langStore = useLangStore();
+
 const mainLang = ref<LangCodeValue>(langStore.mainLang);
 const topRef = ref<HTMLElement>();
 const isScrollTop = ref<boolean>(false);
+  
 const tracker = new ElementTracker((entries) => {
   const entry = entries[0];
   isScrollTop.value = entry.isIntersecting;

@@ -12,6 +12,7 @@
 
 .jump-link {
   @include flexContentCenter();
+  display: flex!important;
   gap: calc(var(--root-gap-width-3) * 3);
   padding: calc(var(--root-gap-width-3) * 5) var(--root-gap-width-0);
   border-radius: var(--root-gap-width-2);

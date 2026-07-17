@@ -1,6 +1,6 @@
 import express, { type Request, type Response } from 'express';
 import {
-  PlaylistSectionType,
+  PLAYLIST_SECTION_TYPE,
   type Game,
   type Playlist,
   type PlaylistDetail,
@@ -16,6 +16,7 @@ import {
   DataRow,
   writeText,
 } from '@nm-catalog/core';
+import { getGameByYear } from './game.js';
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.get('/', (_req: Request, res: Response) => {
     const result = [] as PlaylistSection[];
     Object.entries(rawSectionData).forEach((_, i) => {
       result.push({
-        tag: PlaylistSectionType[i],
+        tag: PLAYLIST_SECTION_TYPE[i],
         playlists: rawPlaylistData[i].map((x) => playlistsMap.get(<string>x.id)!),
       });
     });
@@ -72,7 +73,7 @@ router.get('/', (_req: Request, res: Response) => {
   }
 });
 
-router.get('/:id/detail', (req: Request, res: Response) => {
+router.get('/:id/detail', async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     const playlist = stmt.playlist.selectById().get(id) as Playlist;
@@ -80,7 +81,7 @@ router.get('/:id/detail', (req: Request, res: Response) => {
     const trackGroups: PlaylistTrackGroup[] = [];
 
     if (['SINGLE_GAME_ALL', 'BEST', 'LOOP'].includes(playlist.type)) {
-      const game = <Game>stmt.playlist_game.selectGameByPid().get(id);
+      const game = stmt.playlist_game.selectGameByPid().get(id) as Game;
       const allTracks = stmt.track.selectByGid().all(game.id) as PlaylistTrack[];
       tracks.push(
         ...allTracks.filter((x) => {
@@ -171,6 +172,21 @@ router.get('/:id/detail', (req: Request, res: Response) => {
     });
 
     const result: PlaylistDetail = { playlist, trackGroups };
+    if (result.playlist.isrelatedgame) {
+      if (result.playlist.type !== 'MULTIPLE') {
+        const gid = (
+          stmt.game.selectEntityById().get(result.trackGroups[0].game?.id) as Game
+        ).id;
+        result.relatedPlaylists = stmt.playlist.selectByGid().all(gid) as Playlist[];
+      } else {
+        const gids = (stmt.playlist_game.selectGameByPid().all(id) as Game[]).map(
+          (x) => x.id
+        );
+        const rgids = (stmt.game.selectAllByIds(gids).all() as Game[]).map((x) => x.id);
+        const gamesSortByYear = (await getGameByYear()).map((x) => x.games).flat();
+        result.relatedGames = gamesSortByYear.filter((x) => rgids.includes(x.id));
+      }
+    }
     res.json(result);
   } catch (error) {
     const err = toError(error);

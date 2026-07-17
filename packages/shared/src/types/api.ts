@@ -32,4 +32,6 @@ export interface PlaylistTrackGroup {
 export interface PlaylistDetail {
   playlist: Playlist;
   trackGroups: PlaylistTrackGroup[];
+  relatedPlaylists?: Playlist[];
+  relatedGames?: Game[];
 }

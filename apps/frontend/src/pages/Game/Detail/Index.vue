@@ -1,5 +1,5 @@
 <template>
-  <Container :loading="loading">
+  <LoadingContainer :loading="loading">
     <div v-if="data" class="detail-container">
       <section class="title">
         <img
@@ -52,11 +52,11 @@
       <section class="detail">
         <div :hidden="gameDataSection !== 'TRACK'" :ref="(el) => setRefElement(el, 0)">
           <h2 class="hidden-sm">{{ t('game.dataSection.TRACK') }}</h2>
-          <Track :data="data.tracks"></Track>
+          <TrackView :data="data.tracks"></TrackView>
         </div>
         <div :hidden="gameDataSection !== 'PLAYLIST'" :ref="(el) => setRefElement(el, 1)">
           <h2 class="hidden-sm">{{ t('game.dataSection.PLAYLIST') }}</h2>
-          <Playlist :data="data.playlists" ref="playlistRef"></Playlist>
+          <PlaylistView :data="data.playlists"></PlaylistView>
         </div>
         <div
           :hidden="gameDataSection !== 'RELATED'"
@@ -64,10 +64,7 @@
           v-if="data.relateds.length"
         >
           <h2 class="hidden-sm">{{ t('game.dataSection.RELATED') }}</h2>
-          <Related
-            :data="data.relateds"
-            :grid-item-width="computedGridItemWidth"
-          ></Related>
+          <RelatedView :data="data.relateds"></RelatedView>
         </div>
         <hr />
       </section>
@@ -82,31 +79,32 @@
         </a>
       </footer>
     </div>
-  </Container>
+  </LoadingContainer>
 </template>
 
 <script setup lang="ts">
+import LoadingContainer from '@/components/base/LoadingContainer.vue';
+import SvgIcon from '@/components/base/SvgIcon.vue';
+import SideNav from '@/components/display/SideNav/Index.vue';
+import TrackView from '@/components/display/TrackView.vue';
+import RelatedView from '@/components/display/RelatedView.vue';
+import PlaylistView from '@/components/display/PlaylistView.vue';
+
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useLangStore } from '@/stores';
-import { useNavigation } from '@/composables/useNavigation.ts';
+import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
-import Container from '@/components/Container.vue';
-import SideNav from '@/components/SideNav/Index.vue';
-import SvgIcon from '@/components/SvgIcon.vue';
-import Track from './components/Track.vue';
-import Related from './components/Related.vue';
-import Playlist from './components/Playlist.vue';
+import { getGameDetail } from '@/api';
 import {
   GameDataSections,
   OFFICIAL_URL,
   type GameDetail,
   type GameDataSection,
 } from '@/types';
-import { getGameDetail } from '@/api';
 import { getSourceImg, isShowTitle, openSourceImg } from '@/utils/data-utils';
 
 const { t } = useI18n();
@@ -115,11 +113,11 @@ const langStore = useLangStore();
 const { loading, request } = useRequest();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
+
 const gid = route.params.gid as string;
 const data = ref<GameDetail>();
 const gameDataSection = ref<GameDataSection>('TRACK');
 const groupRefs = ref<HTMLElement[]>([]);
-const playlistRef = ref<any>(null);
 
 const computedTitle = computed(() => stringMap.getString(data.value!.game, 'title'));
 const computedLangs = computed(() =>
@@ -144,7 +142,6 @@ const computedSections = computed(() => {
   }
   return result;
 });
-const computedGridItemWidth = computed(() => playlistRef.value?.elementWidth ?? 0);
 
 useNavigation({
   template: {
@@ -172,16 +169,8 @@ onMounted(async () => {
 
 async function getDetail() {
   const result = await request(getGameDetail(gid));
-  imgMap
-    .setData('game', [result.game, ...result.relateds])
-    .setData('track', result.tracks)
-    .setData('playlist', result.playlists);
-  stringMap
-    .setData(
-      [result.game, ...result.relateds, ...result.tracks, ...result.playlists],
-      'title'
-    )
-    .setData(result.playlists, 'desc');
+  imgMap.setData('game', [result.game]);
+  stringMap.setData([result.game], 'title');
   data.value = result;
 }
 

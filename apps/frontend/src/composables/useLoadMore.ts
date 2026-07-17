@@ -6,9 +6,8 @@ export const useLoadMore = <T>(data: T[], batchSize = 50) => {
   let running = false;
 
   const resetData = (data: T[]) => {
-    if (running) {
-      return;
-    }
+    if (running) return;
+
     toDisplayData = [...data];
     displayData.value = [];
   };

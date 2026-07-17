@@ -14,7 +14,9 @@
     </div>
     <div class="info">
       <p>
-        <span class="badge text-bold">{{ idx ?? data.idx }}</span>
+        <span class="badge text-bold">
+          {{ idx ?? (data as PlaylistTrack).pidx ?? data.idx }}
+        </span>
         <span>
           {{ stringMap.getString(data, 'title') }}
         </span>
@@ -37,16 +39,17 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/base/SvgIcon.vue';
+
 import { computed } from 'vue';
 import { useLangStore } from '@/stores';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
-import SvgIcon from '@/components/SvgIcon.vue';
-import type { Game, Track } from '@/types';
+import type { Game, PlaylistTrack, Track } from '@/types';
 import { isShowTitle, openSourceImg } from '@/utils/data-utils';
 
 const props = defineProps<{
-  data: Track;
+  data: Track | PlaylistTrack;
   idx?: number;
   viewMode: 'grid' | 'list' | 'detail';
   hideTag?: boolean;

@@ -1,5 +1,5 @@
 <template>
-  <Container :loading="loading">
+  <LoadingContainer :loading="loading">
     <div v-if="data" class="detail-container">
       <section class="title">
         <img
@@ -24,77 +24,49 @@
         </div>
       </section>
       <section class="detail">
-        <div class="switch">
-          <span class="text-light">
-            {{ t('playlist.trackCount', { count: computedTrackCount }) }} ·
-            <template v-if="data.duration.hour">
-              {{ data.duration.hour }}{{ t('common.hour') }} </template
-            >{{ data.duration.minute }}{{ t('common.minute') }}
-          </span>
-          <div>
-            <a
-              class="toggle"
-              :class="{ active: trackViewStore.isShowGame }"
-              :title="t('playlist.setting')"
-              @click.stop="trackViewStore.setIsShowGame(!trackViewStore.isShowGame)"
-              v-if="data.playlist.type !== 'SPECIAL'"
-            >
-              <SvgIcon :type="trackViewStore.isShowGame ? 'game' : 'game-hide'" height="1.5em"></SvgIcon>
-            </a>
-            <MultiSwitcher
-              v-model="trackViewMode"
-              :options="['grid', 'list', 'detail']"
-              desc-prefix="track.display"
-              :class="{ 'hidden-sm': true }"
-            ></MultiSwitcher>
-          </div>
+        <div class="track" :ref="(el) => setRefElement(el, 0)">
+          <TrackView
+            :data="
+              data.playlist.type !== 'SPECIAL'
+                ? data.trackGroups
+                : data.trackGroups[0].tracks
+            "
+            :group-mode="data.playlist.type !== 'SPECIAL'"
+            playlist-mode
+          />
         </div>
-        <ul class="switch-view" :class="trackViewMode">
-          <template v-for="(group, i) in data.trackGroups">
-            <template
-              v-if="!i || trackLoader.displayData.value.length >= group.tracks[0].pidx"
-            >
-              <li
-                v-if="data.playlist.type !== 'SPECIAL'"
-                class="full-row"
-                :hidden="!trackViewStore.isShowGame"
-              >
-                <template v-if="group.game">
-                  <router-link :to="`/game/${group.game.id}`" class="jump-link">
-                    <img
-                      v-fallback
-                      :src="imgMap.getPath('game', group.game)"
-                      loading="lazy"
-                    />
-                    <div>
-                      <span>{{ stringMap.getString(group.game, 'title') }}</span>
-                      <span class="text-light"
-                        >{{ group.game.year }} · {{ group.game.hardware }}</span
-                      >
-                    </div>
-                    <SvgIcon type="right"></SvgIcon>
-                  </router-link>
-                </template>
-                <template v-else>
-                  <a class="jump-link">{{ t(`playlist.type.SPECIAL`) }}</a>
-                </template>
-              </li>
-              <template v-for="track in group.tracks" :key="track.id">
-                <li v-if="trackLoader.displayData.value.length >= track.pidx">
-                  <TrackItem
-                    :data="track"
-                    :idx="track.pidx"
-                    :view-mode="trackViewMode"
-                    :hideTag="true"
-                    :from-game="group.game"
-                  >
-                  </TrackItem>
-                </li>
-              </template>
-            </template>
-          </template>
-        </ul>
-        <div ref="loadMoreRef" class="load-more display-sm"></div>
+        <template v-if="data.relatedPlaylists">
+          <router-link
+            :to="`/playlist/${data.relatedPlaylists[0].id}`"
+            class="jump-link hidden-sm"
+            v-if="data.playlist.type !== 'SINGLE_GAME_ALL'"
+          >
+            <div>
+              <span>
+                {{ stringMap.getString(data.relatedPlaylists[0], 'title') }}
+                <span class="text-light">({{ data.relatedPlaylists[0].tracksnum }})</span>
+              </span>
+              <span class="text-light">
+                {{ stringMap.getString(data.trackGroups[0].game!, 'title') }}
+              </span>
+            </div>
+            <SvgIcon type="right"></SvgIcon>
+          </router-link>
+          <div class="playlist hidden-sm" :ref="(el) => setRefElement(el, 1)">
+            <h2>{{ t(`game.playlist.MULTIPLE`) }}</h2>
+            <PlaylistView
+              :data="data.relatedPlaylists"
+              no-group
+              ref="playlistRef"
+            ></PlaylistView>
+          </div>
+        </template>
+        <template v-if="data.relatedGames">
+          <div class="related hidden-sm" :ref="(el) => setRefElement(el, 1)">
+            <h2 class="hidden-sm">{{ t('game.dataSection.RELATED') }}</h2>
+            <RelatedView :data="data.relatedGames"></RelatedView>
+          </div>
+        </template>
         <hr />
       </section>
       <footer>
@@ -108,59 +80,39 @@
         </a>
       </footer>
     </div>
-  </Container>
+  </LoadingContainer>
 </template>
 
 <script setup lang="ts">
+import LoadingContainer from '@/components/base/LoadingContainer.vue';
+import SvgIcon from '@/components/base/SvgIcon.vue';
+import SideNav from '@/components/display/SideNav/Index.vue';
+import TrackView from '@/components/display/TrackView.vue';
+import PlaylistView from '@/components/display/PlaylistView.vue';
+import RelatedView from '@/components/display/RelatedView.vue';
+
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import { useGameStore, useLangStore, useTrackViewStore } from '@/stores';
+import { useGameStore, useLangStore } from '@/stores';
 import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
-import Container from '@/components/Container.vue';
-import SideNav from '@/components/SideNav/Index.vue';
-import MultiSwitcher from '@/components/MultiSwitcher.vue';
-import TrackItem from '@/components/TrackItem/Index.vue';
-import SvgIcon from '@/components/SvgIcon.vue';
-import { useLoadMore } from '@/composables/useLoadMore';
-import {
-  type PlaylistTrack,
-  type DurationInfo,
-  type PlaylistDetail,
-  OFFICIAL_URL,
-} from '@/types';
 import { getPlaylistDetail } from '@/api';
-import { openSourceImg, getTotalDuration } from '@/utils/data-utils';
-import { ElementTracker } from '@/utils/element-tracker';
+import { type PlaylistDetail, OFFICIAL_URL } from '@/types';
+import { openSourceImg } from '@/utils/data-utils';
 
 const { t } = useI18n();
 const route = useRoute();
 const { loading, request } = useRequest();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
-const trackLoader = useLoadMore<PlaylistTrack>([]);
-const pid = route.params.pid as string;
 const langStore = useLangStore();
-const trackViewStore = useTrackViewStore();
-const data = ref<PlaylistDetail & { duration: DurationInfo }>();
-const loadMoreRef = ref<HTMLElement>();
-const trackViewMode = computed({
-  get: () => trackViewStore.viewMode,
-  set: (value) => trackViewStore.setViewMode(value),
-});
-const tracker = new ElementTracker(async (entries) => {
-  const entry = entries[0];
-  if (entry.isIntersecting) {
-    await trackLoader.loadMore();
-    if (!trackLoader.hasRemainedData()) {
-      tracker.disconnect();
-    }
-  }
-});
 
+const pid = route.params.pid as string;
+const data = ref<PlaylistDetail>();
+const groupRefs = ref<HTMLElement[]>([]);
 const computedTitle = computed(() => stringMap.getString(data.value!.playlist, 'title'));
 const computedGameTitle = computed(() => {
   if (!data.value) return '';
@@ -192,6 +144,33 @@ const computedIsChangalbePlaylist = computed(() => {
     (!playlist.isrelatedgame || !playlist.tracksnum)
   );
 });
+const computedSections = computed(() => {
+  const result = [
+    {
+      key: 'TRACK',
+      label: t(`game.dataSection.TRACK`),
+      count: computedTrackCount.value ?? 0,
+    },
+  ];
+  if (data.value?.relatedPlaylists) {
+    result.push({
+      key: 'PLAYLIST',
+      label: t(`game.playlist.MULTIPLE`),
+      count:
+        data.value.relatedPlaylists[0].type === 'SINGLE_GAME_ALL'
+          ? data.value.relatedPlaylists.length - 1
+          : data.value.relatedPlaylists.length,
+    });
+  }
+  if (data.value?.relatedGames) {
+    result.push({
+      key: 'RELATED',
+      label: t(`game.dataSection.RELATED`),
+      count: data.value.relatedGames.length,
+    });
+  }
+  return result;
+});
 
 useNavigation({
   template: {
@@ -205,7 +184,8 @@ useNavigation({
             imgUrl: imgMap.getPath('playlist', data.value.playlist),
             officialUrl: `${OFFICIAL_URL}/${langStore.mainLang}/${route.path.slice(1)}`,
           },
-          options: [],
+          options: computedSections.value,
+          targetNodes: groupRefs.value,
         });
       };
     },
@@ -213,39 +193,25 @@ useNavigation({
 });
 
 onMounted(async () => {
-  await getDetail();
-  trackLoader.resetData(data.value!.trackGroups.map((x) => x.tracks).flat());
-
-  const setupObserver = () => {
-    const isVisible = window.getComputedStyle(loadMoreRef.value!).display !== 'none';
-    if (isVisible) {
-      tracker.observe(loadMoreRef.value!);
-    } else {
-      tracker.disconnect();
-      trackLoader.loadAll();
-      window.removeEventListener('resize', setupObserver);
-    }
-  };
-
-  setupObserver();
-  if (trackLoader.hasRemainedData()) {
-    window.addEventListener('resize', setupObserver);
-  }
-});
-
-async function getDetail() {
   const result = await request(getPlaylistDetail(pid));
   const playlist = result.playlist;
-  const games = result.trackGroups.filter((x) => x.game).map((x) => x.game!);
-  const tracks = result.trackGroups.map((x) => x.tracks).flat(1);
-  imgMap.setData('playlist', [playlist]).setData('game', games).setData('track', tracks);
-  stringMap
-    .setData([result.playlist, ...games, ...tracks], 'title')
-    .setData([result.playlist], 'desc');
-  data.value = { ...result, duration: getTotalDuration(tracks) };
+  imgMap.setData('playlist', [playlist]);
+  stringMap.setData([result.playlist], 'title').setData([result.playlist], 'desc');
+  if (result.relatedPlaylists) {
+    result.relatedPlaylists = result.relatedPlaylists.filter(
+      (x) => x.id !== result.playlist.id
+    );
+  }
+  data.value = result;
 
   if (computedIsChangalbePlaylist.value) {
     useGameStore().markAsInitialized(true);
+  }
+});
+
+function setRefElement(el: any, idx: number) {
+  if (el) {
+    groupRefs.value[idx] = el as HTMLElement;
   }
 }
 </script>

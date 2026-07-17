@@ -27,39 +27,19 @@
   }
 
   > .detail {
-    @include verticalFlex(var(--root-gap-width-1));
+    @include verticalFlex(calc(var(--root-gap-width-0) * 2));
 
-    > .switch {
-      @include flexContentCenter();
-      > div {
-        @include flexContentCenter();
-        gap: var(--root-gap-width-1);
-        margin-left: auto;
-
-        .toggle {
-          display: flex;
-          padding: var(--root-gap-width-3) var(--root-gap-width-1);
-          border-radius: 9999px;
-          background-color: var(--root-bg-color-2);
-          color: var(--root-text-color-light);
-          font-size: 0.875rem;
-          cursor: pointer;
-
-          &.active {
-            color: var(--root-text-color);
-            background-color: var(--root-bg-color-4);
-          }
-
-          &:hover {
-            background-color: var(--root-bg-color-5);
-          }
-        }
-      }
+    > .track {
+      @include verticalFlex(var(--root-gap-width-1));
     }
 
-    hr {
-      margin-top: calc(var(--root-gap-width-0) * 2);
+    > .playlist {
+      @include verticalFlex(var(--root-gap-width-0));
     }
+  }
+
+  hr {
+    margin-top: calc(var(--root-gap-width-0) * 2);
   }
 }
 

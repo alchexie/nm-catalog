@@ -2,7 +2,9 @@
   "hello": "こんにちは",
   "common": {
     "game": "ゲーム",
-    "playlist": "プレイリスト"
+    "playlist": "プレイリスト",
+    "hour": "時間",
+    "minute": "分"
   },
   "game": {
     "all": "すべて",

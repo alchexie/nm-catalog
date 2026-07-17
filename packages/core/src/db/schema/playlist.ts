@@ -49,8 +49,8 @@ const tbPlaylist: DBTableConfig = {
       CASE p.type
         WHEN 'SINGLE_GAME_ALL' THEN 1
         WHEN 'BEST' THEN 2
-        WHEN 'LOOP' THEN 3
-        WHEN 'SINGLE_GAME' THEN 4
+        WHEN 'SINGLE_GAME' THEN 3
+        WHEN 'LOOP' THEN 4
         ELSE 99
       END,
 	    pg.sort;
