@@ -2,18 +2,18 @@
   "name": "nm-catalog",
   "private": true,
   "packageManager": "pnpm@10.20.0",
+  "type": "module",
   "scripts": {
     "dev": "pnpm run build:packages && pnpm -r --parallel --filter @nm-catalog/shared --filter @nm-catalog/core --filter @nm-catalog/backend --filter @nm-catalog/frontend dev",
     "build": "pnpm run clean:dist && pnpm build:packages && pnpm -r --filter ./apps/** build && pnpm --filter ./tools/** build && pnpm run sync-dist",
     "build:packages": "pnpm --filter ./packages/** build",
-    "sync-dist": "node sync-dist.js",
+    "sync-dist": "node scripts/sync-dist.js",
     "clean": "pnpm run clean:dist && pnpm run clean:deps",
-    "clean:dist": "rimraf --glob \"**/dist\"",
-    "clean:deps": "rimraf --glob \"**/node_modules\" pnpm-lock.yaml || true",
+    "clean:dist": "node scripts/clean.js dist",
+    "clean:deps": "node scripts/clean.js deps",
     "scripts": "pnpm --filter @nm-catalog/scripts"
   },
   "devDependencies": {
-    "rimraf": "^6.1.2",
     "typescript": "~5.8.3"
   }
 }

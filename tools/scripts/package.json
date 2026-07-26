@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true}))\" && tsc",
     "init-db": "tsx src/init-db.ts",
     "init-data": "tsx src/init-data.ts",
     "modify-db": "tsx src/modify-db.ts",

@@ -1,10 +1,9 @@
-const { mkdirSync, cpSync, rmSync, writeFileSync } = require('fs');
+import { mkdirSync, cpSync, rmSync, writeFileSync } from 'node:fs';
 
 const serverItems = [
   { src: 'apps/backend', dest: 'server/apps/backend' },
   { src: 'packages/core', dest: 'server/packages/core' },
   { src: 'packages/shared', dest: 'server/packages/shared' },
-  // { src: 'tools/scripts', dest: 'server/tools/scripts' },
 ];
 for (const { src, dest } of serverItems) {
   const targetDir = `dist/${dest}`;

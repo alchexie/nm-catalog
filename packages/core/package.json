@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "tsc -w",
-    "build": "rimraf dist && tsc"
+    "build": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true}))\" && tsc"
   },
   "dependencies": {
     "@nm-catalog/shared": "workspace:*",
