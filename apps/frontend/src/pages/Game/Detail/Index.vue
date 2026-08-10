@@ -7,7 +7,6 @@
           class="display-sm"
           :src="imgMap.getPath('game', data.game)"
           @click.stop="openSourceImg(data.game, langStore.mainLang)"
-          loading="lazy"
         />
         <p class="text-light">{{ data.game.year }} • {{ data.game.hardware }}</p>
         <h1>{{ computedTitle }}</h1>

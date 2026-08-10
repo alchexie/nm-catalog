@@ -9,7 +9,7 @@
           :style="{ width: computedItemWidth ? `${computedItemWidth}px` : 'auto' }"
         >
           <router-link :to="`/game/${relate.id}`">
-            <img v-fallback :src="imgMap.getPath('game', relate)" loading="lazy" />
+            <img v-fallback :src="imgMap.getPath('game', relate)" />
             <span>
               {{ stringMap.getString(relate, 'title') }}
             </span>

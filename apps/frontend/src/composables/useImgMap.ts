@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import { DEFAULT_LANG, LangCode, type LangCodeValue, type NMData } from '@/types';
 import { useLangStore } from '@/stores';
 import { LocalizationString } from '@/utils/localization-string';
-import { fallbackSrc } from '@/plugins/fallbackImage';
+import { FALLBACK_SRC } from '@/plugins/fallbackImage';
 
 type DataTypeName = 'game' | 'track' | 'playlist';
 
@@ -37,7 +37,7 @@ const api = {
     const id = typeof data === 'string' ? data : data.id;
     const key = `${dataType}:${id}:${lang ?? useLangStore().mainLang}`;
     const alterKey = `${dataType}:${id}:${DEFAULT_LANG}`;
-    return imgMap.value.get(key) ?? imgMap.value.get(alterKey) ?? fallbackSrc;
+    return imgMap.value.get(key) ?? imgMap.value.get(alterKey) ?? FALLBACK_SRC;
   },
 };
 

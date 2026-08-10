@@ -51,11 +51,7 @@
             <li class="full-row" :hidden="!isShowGame">
               <template v-if="group.game">
                 <router-link :to="`/game/${group.game.id}`" class="jump-link">
-                  <img
-                    v-fallback
-                    :src="imgMap.getPath('game', group.game)"
-                    loading="lazy"
-                  />
+                  <img v-fallback :src="imgMap.getPath('game', group.game)" />
                   <div>
                     <span>{{ stringMap.getString(group.game, 'title') }}</span>
                     <span class="text-light">

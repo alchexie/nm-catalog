@@ -6,7 +6,6 @@
           v-fallback
           :src="imgMap.getPath('playlist', data.playlist)"
           @click.stop="openSourceImg(data.playlist, langStore.mainLang)"
-          loading="lazy"
         />
         <div>
           <h1>

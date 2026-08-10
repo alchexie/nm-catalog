@@ -5,7 +5,6 @@
         v-fallback
         :src="imgMap.getPath('track', data)"
         @click.stop="openSourceImg(data, langStore.mainLang)"
-        loading="lazy"
         :title="
           fromGame &&
           `${stringMap.getString(data, 'title')} - ${stringMap.getString(fromGame, 'title')}`

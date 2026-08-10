@@ -21,11 +21,7 @@
               v-if="!props.noGroup ? i + j : playlist.type !== 'SINGLE_GAME_ALL'"
             >
               <router-link :to="`/playlist/${playlist.id}`">
-                <img
-                  v-fallback
-                  :src="imgMap.getPath('playlist', playlist)"
-                  loading="lazy"
-                />
+                <img v-fallback :src="imgMap.getPath('playlist', playlist)" />
                 <span>
                   {{ stringMap.getString(playlist, 'title') }}
                   <span class="text-light">({{ playlist.tracksnum }})</span>

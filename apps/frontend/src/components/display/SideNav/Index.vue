@@ -24,7 +24,7 @@
         </template>
       </h1>
       <h2 v-if="data.subTitle">{{ data.subTitle }}</h2>
-      <img v-if="data.imgUrl" v-fallback :src="data.imgUrl" loading="lazy" />
+      <img v-if="data.imgUrl" v-fallback :src="data.imgUrl" />
       <template v-if="data.officialUrl">
         <a v-external-link class="outer-link" :href="data.officialUrl">
           <SvgIcon type="link" height="1.5em"></SvgIcon>

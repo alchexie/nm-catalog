@@ -13,6 +13,7 @@ const tbHardware: DBTableConfig = {
     ['Nintendo Entertainment System', 1983],
     ['Game Boy', 1989],
     ['Super Nintendo Entertainment System', 1990],
+    ['Virtual Boy', 1995],
     ['Nintendo 64', 1996],
     ['Game Boy Advance', 2001],
     ['Nintendo GameCube', 2002],

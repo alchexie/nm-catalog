@@ -26,14 +26,10 @@
               playlist.$title + (playlist.isexpired ? ` ${t('playlist.expired')}` : '')
             "
           >
-            <img v-fallback :src="playlist.$imgPath" loading="lazy" />
+            <img v-fallback :src="playlist.$imgPath" />
             <span>
               {{ playlist.$title }}
-              <SvgIcon
-                type="expired"
-                fill="#00ACC1"
-                v-if="playlist.isexpired"
-              ></SvgIcon>
+              <SvgIcon type="expired" fill="#00ACC1" v-if="playlist.isexpired"></SvgIcon>
             </span>
           </router-link>
         </li>
