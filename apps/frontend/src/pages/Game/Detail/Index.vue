@@ -89,7 +89,7 @@ import TrackView from '@/components/display/TrackView.vue';
 import RelatedView from '@/components/display/RelatedView.vue';
 import PlaylistView from '@/components/display/PlaylistView.vue';
 
-import { computed, h, onMounted, ref } from 'vue';
+import { computed, h, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useLangStore } from '@/stores';
@@ -103,6 +103,7 @@ import {
   OFFICIAL_URL,
   type GameDetail,
   type GameDataSection,
+  type Track,
 } from '@/types';
 import { getSourceImg, isShowTitle, openSourceImg } from '@/utils/data-utils';
 
@@ -116,6 +117,7 @@ const stringMap = useLocalizationString();
 const gid = route.params.gid as string;
 const data = ref<GameDetail>();
 const gameDataSection = ref<GameDataSection>('TRACK');
+const brandTrack = ref<Track>();
 const groupRefs = ref<HTMLElement[]>([]);
 
 const computedTitle = computed(() => stringMap.getString(data.value!.game, 'title'));
@@ -123,8 +125,9 @@ const computedLangs = computed(() =>
   langStore.langList.filter((x) => isShowTitle(data.value!.game, x))
 );
 const computedBrandImage = computed(() => {
-  if (!data.value) return;
-  const rTrack = data.value.tracks[Math.floor(Math.random() * data.value.tracks.length)];
+  const rTrack = brandTrack.value;
+  if (!rTrack) return;
+
   return {
     compress: imgMap.getPath('track', rTrack, langStore.mainLang),
     original: getSourceImg(rTrack, langStore.mainLang),
@@ -166,10 +169,21 @@ onMounted(async () => {
   await getDetail();
 });
 
+watch(
+  () => langStore.mainLang,
+  () => {
+    if (data.value?.tracks.length) {
+      brandTrack.value =
+        data.value.tracks[Math.floor(Math.random() * data.value.tracks.length)];
+    }
+  }
+);
+
 async function getDetail() {
   const result = await request(getGameDetail(gid));
   imgMap.setData('game', [result.game]);
   stringMap.setData([result.game], 'title');
+  brandTrack.value = result.tracks[Math.floor(Math.random() * result.tracks.length)];
   data.value = result;
 }
 
