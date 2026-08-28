@@ -5,6 +5,7 @@ const tbPlaylistGame: DBTableConfig = {
     CREATE TABLE IF NOT EXISTS playlist_game (
         pid TEXT,
         gid TEXT,
+        sort INTEGER,
         UNIQUE (pid, gid)
       );
   `,

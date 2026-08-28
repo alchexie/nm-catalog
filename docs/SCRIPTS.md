@@ -3,10 +3,17 @@
 每次拉取数据前请先备份数据库，所有命令可在 tools/scripts 或项目根目录下执行。
 
 > 以下脚本中的所有命令参数均为可选参数，未提供时将使用默认行为。
->
-> 命令示例是在 tools/scripts 下执行的样子
->
-> 若在项目根目录执行，命令为：pnpm scripts (script_name) ( -- params)
+
+## 命令执行位置
+
+所有脚本既可在 `tools/scripts` 目录下执行，也可在项目根目录执行，两种写法等价：
+
+| 执行位置               | 写法                                       | 示例                                    |
+| ---------------------- | ------------------------------------------ | --------------------------------------- |
+| `tools/scripts` 目录下 | `pnpm <script_name> [-- <params>]`         | `pnpm pull-playlist -- section`         |
+| 项目根目录             | `pnpm scripts <script_name> [-- <params>]` | `pnpm scripts pull-playlist -- section` |
+
+> 本文其余章节的命令示例均为在 `tools/scripts` 目录下执行的写法；在项目根目录执行时，只需将 `pnpm <script_name>` 替换为 `pnpm scripts <script_name>`，参数部分（`-- ...`）写法不变。
 
 ## 0. 每周例行数据更新
 

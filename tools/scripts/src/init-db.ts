@@ -1,6 +1,6 @@
 /*
   Initialized database
-  
+
   -- force    # force to create new database file
 */
 
@@ -16,6 +16,19 @@ const schemas = [
   DB_TABLES.game,
   DB_TABLES.track,
   DB_TABLES.game_related,
+  DB_TABLES.playlist,
+  DB_TABLES.playlist_game,
+  DB_TABLES.playlist_track,
+  DB_TABLES.series,
+];
+const indexes = [
+  `CREATE INDEX idx_game_hardware ON game(hardware)`,
+  `CREATE INDEX idx_track_gid ON track(gid)`,
+  `CREATE INDEX idx_track_gid_idx ON track(gid, idx)`,
+  `CREATE INDEX idx_playlist_type ON playlist(type)`,
+  `CREATE INDEX idx_playlist_game_pid ON playlist_game(pid)`,
+  `CREATE INDEX idx_playlist_game_gid ON playlist_game(gid)`,
+  `CREATE INDEX idx_playlist_track_pid_idx ON playlist_track(pid, idx)`,
 ];
 
 if (isForced) {
@@ -35,6 +48,14 @@ if (!fs.existsSync(DB_PATH)) {
         trans(x.preparedData);
       }
     });
+    db.exec('BEGIN');
+    try {
+      indexes.forEach((sql) => db.exec(sql));
+      db.exec('COMMIT');
+    } catch (error) {
+      db.exec('ROLLBACK');
+      throw error;
+    }
     db.close();
 
     console.log('Database initialized!');

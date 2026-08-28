@@ -26,6 +26,7 @@ const tbGame: DBTableConfig = {
       img_ko_KR TEXT,
       img_zh_CN TEXT,
       img_zh_TW TEXT,
+      sid TEXT,
       inserted INTEGER
     );
   `,
