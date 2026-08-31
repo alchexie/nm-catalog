@@ -18,6 +18,9 @@
         </span>
         <span>
           {{ stringMap.getString(data, 'title') }}
+          <span class="text-light" v-if="fromGame && !hideGame">
+            {{ stringMap.getString(fromGame, 'title') }}
+          </span>
         </span>
         <span class="text-light">{{ data.duration }}</span>
       </p>
@@ -53,6 +56,7 @@ const props = defineProps<{
   viewMode: 'grid' | 'list' | 'detail';
   hideTag?: boolean;
   fromGame?: Game;
+  hideGame?: boolean;
 }>();
 
 const langStore = useLangStore();

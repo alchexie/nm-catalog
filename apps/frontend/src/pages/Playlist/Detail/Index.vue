@@ -55,6 +55,11 @@
             <h2>{{ t(`game.playlist.MULTIPLE`) }}</h2>
             <PlaylistView
               :data="data.relatedPlaylists"
+              :belonging="
+                data.relatedPlaylists && data.playlist.type !== 'MULTIPLE'
+                  ? data.trackGroups[0].game
+                  : undefined
+              "
               no-group
               ref="playlistRef"
             ></PlaylistView>

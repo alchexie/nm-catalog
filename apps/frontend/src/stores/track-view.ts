@@ -10,7 +10,7 @@ export const useTrackViewStore = defineStore('trackView', {
         : 'detail';
     })(),
     isShowGame: (() => {
-      const cached = localStorage.getItem(STORAGE_KEY.TRACK_SHOW_GAME);
+      const cached = localStorage.getItem(STORAGE_KEY.TRACK_SHOW_GROUP);
       return cached === null ? true : cached === 'true';
     })(),
   }),
@@ -19,9 +19,9 @@ export const useTrackViewStore = defineStore('trackView', {
       this.viewMode = viewMode;
       localStorage.setItem(STORAGE_KEY.TRACK_VIEW_MODE, viewMode);
     },
-    setIsShowGame(isShowGame: boolean) {
+    setIsShowGroup(isShowGame: boolean) {
       this.isShowGame = isShowGame;
-      localStorage.setItem(STORAGE_KEY.TRACK_SHOW_GAME, String(isShowGame));
+      localStorage.setItem(STORAGE_KEY.TRACK_SHOW_GROUP, String(isShowGame));
     },
   },
 });

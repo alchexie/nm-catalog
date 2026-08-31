@@ -14,11 +14,11 @@
         <a
           v-if="props.groupMode"
           class="toggle"
-          :class="{ active: isShowGame }"
+          :class="{ active: isShowGroup }"
           :title="t('playlist.setting')"
-          @click.stop="isShowGame = !isShowGame"
+          @click.stop="isShowGroup = !isShowGroup"
         >
-          <SvgIcon :type="isShowGame ? 'game' : 'game-hide'" height="1.5em"></SvgIcon>
+          <SvgIcon :type="isShowGroup ? 'group' : 'ungroup'" height="1.5em"></SvgIcon>
         </a>
         <MultiSwitcher
           v-model="trackViewMode"
@@ -48,7 +48,7 @@
       <template v-else>
         <template v-for="(group, i) in groups">
           <template v-if="!i || displayData.length >= group.tracks[0].pidx">
-            <li class="full-row" :hidden="!isShowGame">
+            <li class="full-row" :hidden="!isShowGroup">
               <template v-if="group.game">
                 <router-link :to="`/game/${group.game.id}`" class="jump-link">
                   <img v-fallback :src="imgMap.getPath('game', group.game)" />
@@ -73,6 +73,7 @@
                   :view-mode="trackViewMode"
                   :hide-tag="true"
                   :from-game="group.game"
+                  :hide-game="isShowGroup"
                 >
                 </TrackItem>
               </li>
@@ -135,9 +136,9 @@ const duration = computed(() => {
     `${duration.minute}${t('common.minute')}`;
   return `${t('playlist.trackCount', { count })} · ${timeStr}`;
 });
-const isShowGame = computed({
+const isShowGroup = computed({
   get: () => trackViewStore.isShowGame,
-  set: (value) => trackViewStore.setIsShowGame(value),
+  set: (value) => trackViewStore.setIsShowGroup(value),
 });
 const trackViewMode = computed({
   get: () => trackViewStore.viewMode,

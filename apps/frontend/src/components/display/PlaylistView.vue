@@ -26,6 +26,14 @@
                   {{ stringMap.getString(playlist, 'title') }}
                   <span class="text-light">({{ playlist.tracksnum }})</span>
                 </span>
+                <span
+                  class="text-light"
+                  v-if="props.belonging && playlist.type !== 'MULTIPLE'"
+                >
+                  <router-link :to="`/game/${props.belonging.id}`">
+                    {{ stringMap.getString(props.belonging!, 'title') }}
+                  </router-link>
+                </span>
               </router-link>
             </li>
           </template>
@@ -42,10 +50,11 @@ import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
-import type { Playlist } from '@/types';
+import type { Game, Playlist } from '@/types';
 
 const props = defineProps<{
   data: Playlist[];
+  belonging?: Game;
   noGroup?: boolean;
 }>();
 

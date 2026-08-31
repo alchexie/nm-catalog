@@ -11,7 +11,7 @@ export const STORAGE_KEY = {
   LANG: 'LANG',
   GAME_GROUPBY: 'GAME_GROUPBY',
   TRACK_VIEW_MODE: 'TRACK_VIEW_MODE',
-  TRACK_SHOW_GAME: 'TRACK_SHOW_GAME',
+  TRACK_SHOW_GROUP: 'TRACK_SHOW_GROUP',
 };
 
 export const TrackViewModes = ['grid', 'list', 'detail'] as const;

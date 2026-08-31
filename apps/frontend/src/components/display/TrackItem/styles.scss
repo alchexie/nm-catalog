@@ -24,6 +24,14 @@
       gap: calc(var(--root-gap-width-3) * 3);
       width: 100%;
       margin: 0;
+
+      > span {
+        .text-light {
+          @include maxLine(2);
+          margin-top: var(--root-gap-width-3);
+          font-size: 0.875rem;
+        }
+      }
     }
 
     > div {

@@ -14,9 +14,8 @@ const api = {
       for (const item of data) {
         if (
           String(lang) === DEFAULT_LANG ||
-          (String(lang) !== DEFAULT_LANG &&
-            (item as any)[`img_${LocalizationString.convertLangCode(lang)}`] !==
-              (item as any)[`img_${LocalizationString.convertLangCode(DEFAULT_LANG)}`])
+          (item as any)[`img_${LocalizationString.convertLangCode(lang)}`] !==
+            (item as any)[`img_${LocalizationString.convertLangCode(DEFAULT_LANG)}`]
         ) {
           const key = `${dataType}:${item.id}:${lang}`;
           if (!imgMap.value.has(key)) {

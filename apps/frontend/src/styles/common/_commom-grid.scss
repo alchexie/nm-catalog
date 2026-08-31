@@ -2,9 +2,10 @@
 @use '@/styles/mixins.scss' as *;
 
 .commom-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(175px, 100%), 1fr));
-  gap: calc(var(--root-gap-width-1) * 2) var(--root-gap-width-0);
+  @include gridAutoFill(
+    175px,
+    calc(var(--root-gap-width-1) * 2) var(--root-gap-width-0)
+  );
 
   .commom-grid-item {
     > a {
@@ -19,15 +20,22 @@
       }
 
       > span {
-        $maxLine: 3;
-
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        line-clamp: $maxLine;
-        -webkit-line-clamp: $maxLine;
-        overflow: hidden;
-        max-height: calc(1.1rem * $maxLine * 1.5);
+        @include maxLine();
         cursor: pointer;
+
+        &.text-light {
+          @include maxLine(2);
+          margin-top: var(--root-gap-width-3);
+          font-size: 0.875rem;
+
+          > a {
+            color: var(--root-text-color-light);
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
       }
     }
 

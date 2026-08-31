@@ -47,9 +47,7 @@ a {
     &.active {
       background-color: var(--root-bg-color-4);
     }
-  }
 
-  > span {
     &:hover {
       background-color: var(--root-bg-color-5);
     }

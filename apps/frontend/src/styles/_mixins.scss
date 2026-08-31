@@ -35,3 +35,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+@mixin maxLine($maxLine: 3) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: $maxLine;
+  -webkit-line-clamp: $maxLine;
+  overflow: hidden;
+  max-height: calc(1.1rem * $maxLine * 1.5);
+}
+
+@mixin gridAutoFill($min: 175px, $gap: var(--root-gap-width-0)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min($min, 100%), 1fr));
+  gap: $gap;
+}
