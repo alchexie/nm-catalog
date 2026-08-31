@@ -4,5 +4,4 @@ export * from './db/statements.js';
 export * from './db/transaction.js';
 export * from './utils/paths.js';
 export * from './utils/tools.js';
-export * from './utils/excel.js';
 export * from './utils/upstreem.js';

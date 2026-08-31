@@ -64,13 +64,12 @@
 
 ```text
 init-db 建 9 表 + 种子 + 索引
-  └─> init-data 从 xlsx 导入（game / track / game_related）
-        └─> pull-game 增量拉取游戏与曲目
-              ├─> pull-playlist 拉取歌单数据
-              │     ├─> get-img 下载图片
-              │     ├─> set-series 设置系列
-              │     └─> expire-playlist 标记过期歌单
-              └─> （重复日常更新流程）
+  └─> pull-game 增量拉取游戏与曲目
+        ├─> pull-playlist 拉取歌单数据
+        │     ├─> get-img 下载图片
+        │     ├─> set-series 设置系列
+        │     └─> expire-playlist 标记过期歌单
+        └─> （重复日常更新流程）
 ```
 
 ### 各步骤做什么
@@ -78,12 +77,11 @@ init-db 建 9 表 + 种子 + 索引
 | 步骤 | 命令 | 作用 |
 | --- | --- | --- |
 | 1 | `pnpm init-db [-- force]` | 创建最新结构的空库。`-- force` 会先删除已有库文件再重建 |
-| 2 | `pnpm init-data [-- full]` | 从 `files/xlsx/*.xlsx` 导入初始数据（`game` / `track` / `game_related`）。`-- full` 会先清空 `game`、`track` 再全量写入；默认增量（只写新游戏） |
-| 3 | `pnpm pull-game` | 从上游 API 增量拉取游戏与曲目，写入 `game` / `track`，并输出本次新增游戏 ID 到 `files/new_game.json` |
-| 4 | `pnpm pull-playlist` | 拉取游戏关联歌单，写入 `playlist` / `playlist_game` / `playlist_track`（`-- order` 更新排序、`-- section` 处理歌单分区、`-- character` 标记角色歌单） |
-| 5 | `pnpm get-img` | 下载游戏/歌单关联图片到 `assets/`（`-- original` 额外保存原图） |
-| 6 | `pnpm set-series` | 交互式给游戏设置系列（写入 `game.sid` 与 `series` 表） |
-| 7 | `pnpm expire-playlist` | 根据 `files/response/playlist_section.json` 的 `expired` 字段更新 `playlist.isexpired` |
+| 2 | `pnpm pull-game` | 从上游 API 增量拉取游戏与曲目，写入 `game` / `track`，并输出本次新增游戏 ID 到 `files/new_game.json` |
+| 3 | `pnpm pull-playlist` | 拉取游戏关联歌单，写入 `playlist` / `playlist_game` / `playlist_track`（`-- order` 更新排序、`-- section` 处理歌单分区、`-- character` 标记角色歌单） |
+| 4 | `pnpm get-img` | 下载游戏/歌单关联图片到 `assets/`（`-- original` 额外保存原图） |
+| 5 | `pnpm set-series` | 交互式给游戏设置系列（写入 `game.sid` 与 `series` 表） |
+| 6 | `pnpm expire-playlist` | 根据 `files/response/playlist_section.json` 的 `expired` 字段更新 `playlist.isexpired` |
 
 ## 2. 更新日志（历史演进）
 
