@@ -194,4 +194,26 @@ router.get('/:id/detail', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/:gid/game', async (req: Request, res: Response) => {
+  try {
+    const gid = req.params.gid;
+    const result = stmt.playlist.selectByGid().all(gid) as Playlist[];
+    res.json(result);
+  } catch (error) {
+    const err = toError(error);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/:tid/track/', async (req: Request, res: Response) => {
+  try {
+    const tid = req.params.tid;
+    const result = stmt.playlist_track.selectPlaylistByTid().all(tid) as Playlist[];
+    res.json(result);
+  } catch (error) {
+    const err = toError(error);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

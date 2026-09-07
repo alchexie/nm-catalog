@@ -1,5 +1,5 @@
 <template>
-  <div class="loading" v-if="loading">
+  <div class="loading" :class="{ 'full-height': fullHeight }" v-if="loading">
     <div>
       <span></span>
       <span></span>
@@ -10,17 +10,25 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+withDefaults(defineProps<{
   loading?: boolean;
-}>();
+  fullHeight?: boolean;
+}>(), {
+  fullHeight: false,
+});
 </script>
 
 <style>
 .loading {
+  position: relative;
+  min-height: 100px;
+
+  &.full-height {
     position: absolute;
     inset: 0;
     height: 100vh;
     top: calc(var(--main-header-height) * -1);
+  }
 
   > div {
     position: absolute;

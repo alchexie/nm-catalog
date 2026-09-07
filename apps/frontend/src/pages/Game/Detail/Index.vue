@@ -1,5 +1,5 @@
 <template>
-  <LoadingContainer :loading="loading">
+  <LoadingContainer :loading="loading" full-height>
     <div v-if="data" class="detail-container">
       <section class="title">
         <img
@@ -18,19 +18,14 @@
             <span> {{ stringMap.getString(data.game, 'title', lang) }}</span>
           </li>
         </ul>
-        <div v-if="computedBrandImage">
+        <div
+          v-if="computedBrandImage"
+          :style="{ '--brand-base': `url(${computedBrandImage.compress})` }"
+        >
           <div
-            class="base"
-            :style="{ 'background-image': `url(${computedBrandImage.compress})` }"
-          ></div>
-          <div class="blur"></div>
-          <div
-            class="front"
-            :style="{ 'background-image': `url(${computedBrandImage.compress})` }"
-          ></div>
-          <div
-            class="front"
-            :style="{ 'background-image': `url(${computedBrandImage.original})` }"
+            :style="{
+              'background-image': `url(${computedBrandImage.original}), url(${computedBrandImage.compress})`,
+            }"
           ></div>
         </div>
       </section>
@@ -92,7 +87,7 @@ import PlaylistView from '@/components/display/PlaylistView.vue';
 import { computed, h, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import { useLangStore } from '@/stores';
+import { useLangStore, usePreloadStore } from '@/stores';
 import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
@@ -111,6 +106,7 @@ const { t } = useI18n();
 const route = useRoute();
 const langStore = useLangStore();
 const { loading, request } = useRequest();
+const preloadStore = usePreloadStore();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
 
@@ -181,8 +177,7 @@ watch(
 
 async function getDetail() {
   const result = await request(getGameDetail(gid));
-  imgMap.setData('game', [result.game]);
-  stringMap.setData([result.game], 'title');
+  preloadStore.setData('game', [result.game]);
   brandTrack.value = result.tracks[Math.floor(Math.random() * result.tracks.length)];
   data.value = result;
 }

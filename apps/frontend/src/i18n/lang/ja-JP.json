@@ -35,6 +35,10 @@
       "GRID": "ギャラリー表示",
       "LIST": "リスト表示",
       "DETAIL": "詳細表示"
+    },
+    "menu": {
+      "goShareLink": "公式サイトで聴く",
+      "inPlaylist": "収録プレイリスト"
     }
   },
   "playlist": {
@@ -60,7 +64,8 @@
   },
   "info": {
     "lang": "優先言語",
-    "top": "トップへ戻る"
+    "top": "トップへ戻る",
+    "blank": "まだ何もありません"
   },
   "punctuation": {
     "colon": "："

@@ -35,24 +35,31 @@
       border-radius: var(--root-gap-width-1);
       overflow: hidden;
 
+      &:before,
+      &:after,
       > div {
         position: absolute;
         inset: 0;
+      }
 
-        &.base {
-          background-size: 100% 100%;
-        }
+      &::before {
+        content: '';
 
-        &.blur {
-          backdrop-filter: blur(25px);
-          background-color: #1a1a1ab8;
-        }
+        background-image: var(--brand-base, none);
+        background-size: 100% 100%;
+      }
 
-        &.front {
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: contain;
-        }
+      &::after {
+        content: '';
+        backdrop-filter: blur(25px);
+        background-color: #1a1a1ab8;
+      }
+
+      > div {
+        z-index: 1;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
       }
     }
   }
@@ -112,6 +119,22 @@
 
     > .detail {
       > div[hidden] {
+        display: none;
+      }
+    }
+  }
+}
+
+@container main-container (max-width: #{$breakpoint-md}) {
+  .detail-container {
+    > .brand {
+      > ul {
+        max-width: initial;
+        padding-top: 0;
+        padding-bottom: var(--root-gap-width-2);
+      }
+
+      > div {
         display: none;
       }
     }

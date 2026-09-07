@@ -39,6 +39,9 @@
   --main-nav-width: 240px;
   --main-header-height: 80px;
   --main-footer-height: 48px;
+
+  --grid-min-width: 175px;
+  --drawer-width: 340px;
 }
 
 *,
@@ -90,10 +93,16 @@ ol {
   }
 }
 
+@media (max-width:#{$breakpoint-lg}) {
+  :root {
+    --drawer-width: 0;
+  }
+}
+
 @media (min-width: $breakpoint-xl) {
   :root {
-    /* --------- main-nav --------- */
     --main-nav-width: 280px;
+    --drawer-width: 430px;
   }
 }
 

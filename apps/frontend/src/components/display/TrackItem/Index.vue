@@ -1,15 +1,17 @@
 <template>
   <div class="track-container" :class="props.viewMode">
-    <div class="img hidden-sm">
+    <div class="img hidden-sm" @click.stop="openSourceImg(data, langStore.mainLang)">
       <img
         v-fallback
         :src="imgMap.getPath('track', data)"
-        @click.stop="openSourceImg(data, langStore.mainLang)"
         :title="
           fromGame &&
           `${stringMap.getString(data, 'title')} - ${stringMap.getString(fromGame, 'title')}`
         "
       />
+      <div v-if="props.viewMode === 'grid'">
+        <TrackDetail :data="data"></TrackDetail>
+      </div>
     </div>
     <div class="info">
       <p>
@@ -31,10 +33,13 @@
             <span>{{ stringMap.getString(data, 'title', lang) }}</span>
           </li>
         </ul>
-        <span class="tag" v-if="!hideTag" v-show="props.viewMode === 'detail'">
-          <SvgIcon type="star" :class="{ active: data.isbest }"></SvgIcon>
-          <SvgIcon type="extend" :class="{ active: data.isloop }"></SvgIcon>
-        </span>
+        <div v-if="props.viewMode !== 'grid'">
+          <span class="tag" v-if="!hideTag" v-show="props.viewMode === 'detail'">
+            <SvgIcon type="star" :class="{ active: data.isbest }"></SvgIcon>
+            <SvgIcon type="extend" :class="{ active: data.isloop }"></SvgIcon>
+          </span>
+          <TrackDetail :data="data"></TrackDetail>
+        </div>
       </div>
     </div>
   </div>
@@ -42,6 +47,7 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/base/SvgIcon.vue';
+import TrackDetail from '../TrackDetail/Index.vue';
 
 import { computed } from 'vue';
 import { useLangStore } from '@/stores';
@@ -50,14 +56,17 @@ import { useLocalizationString } from '@/composables/useLocalizationString';
 import type { Game, PlaylistTrack, Track } from '@/types';
 import { isShowTitle, openSourceImg } from '@/utils/data-utils';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   data: Track | PlaylistTrack;
   idx?: number;
   viewMode: 'grid' | 'list' | 'detail';
   hideTag?: boolean;
-  fromGame?: Game;
   hideGame?: boolean;
-}>();
+  fromGame?: Game;
+}>(), {
+  hideTag: false,
+  hideGame: false,
+});
 
 const langStore = useLangStore();
 const imgMap = useImgMap();

@@ -120,6 +120,7 @@
       @include flexContentCenter();
       gap: var(--root-gap-width-3);
       padding: var(--root-gap-width-2);
+      border-radius: var(--root-gap-width-2);
       cursor: pointer;
       @include textEllipsis();
 

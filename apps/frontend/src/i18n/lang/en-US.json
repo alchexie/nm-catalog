@@ -35,6 +35,10 @@
       "GRID": "Gallery view",
       "LIST": "List view",
       "DETAIL": "Detail view"
+    },
+    "menu": {
+      "goShareLink": "Listen on Official Site",
+      "inPlaylist": "In Playlists"
     }
   },
   "playlist": {
@@ -60,7 +64,8 @@
   },
   "info": {
     "lang": "Preferred Language",
-    "top": "Top"
+    "top": "Top",
+    "blank": "Nothing here yet"
   },
   "punctuation": {
     "colon": ":"

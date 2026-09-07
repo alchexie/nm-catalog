@@ -3,7 +3,7 @@
 
 .commom-grid {
   @include gridAutoFill(
-    175px,
+    var(--grid-min-width),
     calc(var(--root-gap-width-1) * 2) var(--root-gap-width-0)
   );
 

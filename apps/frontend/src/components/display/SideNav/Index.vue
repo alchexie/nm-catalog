@@ -65,7 +65,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useNavigation } from '@/composables/useNavigation';
 import { ElementTracker } from '@/utils/element-tracker';
-import { scrollToY } from '@/utils/dom-utils';
+import { getScrollContainer, getScrollTop, scrollToY } from '@/utils/dom-utils';
 
 const props = defineProps<{
   data: {
@@ -166,13 +166,13 @@ async function navigateTo(idx: number) {
     return;
   }
   const el = props.targetNodes[idx];
-  scrollToY(el.getBoundingClientRect().top + window.scrollY - 80, () => {
+  scrollToY(el.getBoundingClientRect().top + getScrollTop() - 80, () => {
     scrollHandler = () => {
-      window.removeEventListener('scroll', scrollHandler!);
+      getScrollContainer().removeEventListener('scroll', scrollHandler!);
       tracker.reconnect();
     };
     setTimeout(() => {
-      window.addEventListener('scroll', scrollHandler!);
+      getScrollContainer().addEventListener('scroll', scrollHandler!);
     }, 500);
   });
 }

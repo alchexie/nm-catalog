@@ -27,9 +27,13 @@
 
 @media (max-width: $breakpoint-md) {
   .switch-view {
+    &.grid,
     &.detail {
-      grid-template-columns: 1fr;
-      gap: var(--root-gap-width-1);
+      display: block;
+
+      > .full-row {
+        margin: var(--root-gap-width-3) 0;
+      }
     }
   }
 }

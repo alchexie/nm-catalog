@@ -24,6 +24,7 @@
 import HorizontalScrollPanel from '@/components/base/HorizontalScrollPanel.vue';
 
 import { ref, onMounted, onUnmounted } from 'vue';
+import { usePreloadStore } from '@/stores';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
 import type { Game } from '@/types';
@@ -32,33 +33,32 @@ const props = defineProps<{
   data: Game[];
 }>();
 
+const preloadStore = usePreloadStore();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
 
 const sectionRef = ref<HTMLElement | null>(null);
 const computedItemWidth = ref<number | null>(null);
 
-const MIN_ITEM_WIDTH = 175;
-const HORIZONTAL_GAP = 24;
-
 function calculateItemWidth() {
   if (!sectionRef.value) return;
 
   const refWidth = sectionRef.value.clientWidth;
-  const columns = Math.max(
-    1,
-    Math.floor((refWidth + HORIZONTAL_GAP) / (MIN_ITEM_WIDTH + HORIZONTAL_GAP))
+  const minItemWidth = Number.parseFloat(
+    window.getComputedStyle(document.documentElement).getPropertyValue('--grid-min-width')
   );
-  const itemWidth = (refWidth - (columns - 1) * HORIZONTAL_GAP) / columns;
+  const gap = Number.parseFloat(
+    window.getComputedStyle(document.documentElement).getPropertyValue('--root-gap-width-0')
+  );
+  const columns = Math.max(1, Math.floor((refWidth + gap) / (minItemWidth + gap)));
+  const itemWidth = (refWidth - (columns - 1) * gap) / columns;
   computedItemWidth.value = Math.round(itemWidth);
 }
 
 let resizeObserver: ResizeObserver | null = null;
 
 onMounted(() => {
-  imgMap.setData('game', props.data);
-  stringMap.setData(props.data, 'title');
-
+  preloadStore.setData('game', props.data);
   calculateItemWidth();
   resizeObserver = new ResizeObserver(calculateItemWidth);
   if (sectionRef.value) {

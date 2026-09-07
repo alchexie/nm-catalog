@@ -1,5 +1,5 @@
 <template>
-  <LoadingContainer :loading="loading">
+  <LoadingContainer :loading="loading" full-height>
     <section
       class="list-group"
       v-for="(section, i) in computedPlaylistSections"
@@ -45,6 +45,7 @@ import SideNav from '@/components/display/SideNav/Index.vue';
 
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { usePreloadStore } from '@/stores';
 import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
@@ -98,8 +99,7 @@ useNavigation({
 onMounted(async () => {
   const result = await request(getPlaylistSections());
   const playlistList = result.map((x) => x.playlists).reduce((a, b) => [...a, ...b]);
-  imgMap.setData('playlist', playlistList);
-  stringMap.setData(playlistList, 'title');
+  await usePreloadStore().ensureLoaded('playlist', playlistList);
   playlistSections.value = result;
 });
 </script>

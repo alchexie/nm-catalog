@@ -1,5 +1,5 @@
 <template>
-  <LoadingContainer :loading="loading">
+  <LoadingContainer :loading="loading" full-height>
     <div v-if="data" class="detail-container">
       <section class="title">
         <img
@@ -98,7 +98,7 @@ import RelatedView from '@/components/display/RelatedView.vue';
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import { useGameStore, useLangStore } from '@/stores';
+import { useLangStore, usePreloadStore } from '@/stores';
 import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
@@ -110,9 +110,10 @@ import { openSourceImg } from '@/utils/data-utils';
 const { t } = useI18n();
 const route = useRoute();
 const { loading, request } = useRequest();
+const langStore = useLangStore();
+const preloadStore = usePreloadStore();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
-const langStore = useLangStore();
 
 const pid = route.params.pid as string;
 const data = ref<PlaylistDetail>();
@@ -199,8 +200,7 @@ useNavigation({
 onMounted(async () => {
   const result = await request(getPlaylistDetail(pid));
   const playlist = result.playlist;
-  imgMap.setData('playlist', [playlist]);
-  stringMap.setData([result.playlist], 'title').setData([result.playlist], 'desc');
+  preloadStore.setData('playlist', [playlist]);
   if (result.relatedPlaylists) {
     result.relatedPlaylists = result.relatedPlaylists.filter(
       (x) => x.id !== result.playlist.id
@@ -209,7 +209,7 @@ onMounted(async () => {
   data.value = result;
 
   if (computedIsChangalbePlaylist.value) {
-    useGameStore().markAsInitialized(true);
+    await preloadStore.ensureLoaded('game');
   }
 });
 

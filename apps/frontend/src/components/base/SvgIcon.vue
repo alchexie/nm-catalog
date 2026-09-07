@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  type?: string;
+  type: string;
   fill?: string;
   width?: string;
   height?: string;

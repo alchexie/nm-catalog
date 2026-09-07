@@ -48,17 +48,24 @@ import SvgIcon from '@/components/base/SvgIcon.vue';
 
 import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { usePreloadStore } from '@/stores';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
 import type { Game, Playlist } from '@/types';
 
-const props = defineProps<{
-  data: Playlist[];
-  belonging?: Game;
-  noGroup?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    data: Playlist[];
+    belonging?: Game;
+    noGroup?: boolean;
+  }>(),
+  {
+    noGroup: false,
+  }
+);
 
 const { t } = useI18n();
+const preloadStore = usePreloadStore();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
 
@@ -91,8 +98,7 @@ const playlistGroups: { label: string; playlists: Playlist[] }[] = (() => {
 const allPlaylist = playlistGroups[0].playlists[0];
 
 onMounted(() => {
-  imgMap.setData('playlist', props.data);
-  stringMap.setData(props.data, 'title').setData(props.data, 'desc');
+  preloadStore.setData('playlist', props.data);
 });
 </script>
 

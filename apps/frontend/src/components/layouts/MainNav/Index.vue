@@ -9,8 +9,8 @@
     </button>
     <nav class="menu">
       <router-link
-        v-for="(item, index) in computedMenu"
-        :key="index"
+        v-for="(item, i) in computedMenu"
+        :key="i"
         :to="item.path"
         :class="{ active: route.path.startsWith(item.path) }"
       >

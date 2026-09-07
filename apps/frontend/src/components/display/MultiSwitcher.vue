@@ -17,12 +17,14 @@ import SvgIcon from '@/components/base/SvgIcon.vue';
 
 import { useI18n } from 'vue-i18n';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   options: string[];
   descPrefix: string;
   modelValue?: string;
   expand?: boolean;
-}>();
+}>(), {
+  expand: false,
+});
 const emit = defineEmits<{
   'update:modelValue': [value: string];
 }>();

@@ -25,13 +25,22 @@ const navigationStore = useNavigationStore();
 #main-container {
   position: relative;
   padding: 72px 24px;
+  container-type: inline-size;
+  container-name: main-container;
+  overflow-y: auto;
 }
 
 @media (min-width:#{$breakpoint-md + 1px}) {
   #main-container {
     margin-top: var(--main-header-height);
     margin-left: var(--main-nav-width);
+    height: calc(100vh - var(--main-header-height) - var(--main-footer-height));
     padding: 8px 32px 64px;
+    transition: margin-right 0.25s ease;
+
+    &:has(.track-detail-drawer:not(.drawer-slide-leave-active)) {
+      margin-right: calc(var(--drawer-width) + var(--root-gap-width-2) + 1px);
+    }
   }
 }
 </style>

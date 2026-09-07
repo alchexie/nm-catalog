@@ -4,6 +4,7 @@ import GameDetailComponent from '@/pages/Game/Detail/Index.vue';
 import PlaylistListComponent from '@/pages/Playlist/List/Index.vue';
 import PlaylistDetailComponent from '@/pages/Playlist/Detail/Index.vue';
 import { STORAGE_KEY } from '@/types';
+import { getScrollContainer, getScrollTop } from '@/utils/dom-utils';
 
 const routes = [
   {
@@ -20,16 +21,20 @@ const routes = [
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
+const scrollPositions = new Map<string, number>();
+
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(_to, _from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { top: 0 };
-    }
+  scrollBehavior(to) {
+    getScrollContainer().scrollTo(0, scrollPositions.get(to.fullPath) ?? 0);
   },
+});
+
+router.beforeEach((to, from) => {
+  if (from.fullPath && from.fullPath !== to.fullPath) {
+    scrollPositions.set(from.fullPath, getScrollTop());
+  }
 });
 
 router.afterEach(({ path }) => {

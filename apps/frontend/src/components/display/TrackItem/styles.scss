@@ -1,3 +1,29 @@
+@mixin listLayout() {
+  padding: 8px;
+
+  .img {
+    width: 64px;
+    height: 48px;
+    border-radius: calc(var(--root-gap-width-3) / 2);
+
+    img {
+      height: 100%;
+    }
+  }
+
+  .info {
+    @include flexContentCenter();
+
+    p {
+      > span {
+        &:last-child {
+          margin-left: auto;
+        }
+      }
+    }
+  }
+}
+
 .track-container {
   display: flex;
   gap: calc(var(--root-gap-width-3) * 3);
@@ -32,22 +58,31 @@
           font-size: 0.875rem;
         }
       }
+
+      >.text-light{
+        @include flexContentCenter();
+      }
     }
 
     > div {
       display: flex;
       gap: calc(var(--root-gap-width-3) * 3);
 
-      > .tag {
+      > div {
+        @include verticalFlex(var(--root-gap-width-2));
         margin-left: auto;
-        display: flex;
-        gap: var(--root-gap-width-3);
 
-        .svg-icon {
-          opacity: 0.2;
+        > .tag {
+          display: flex;
+          gap: var(--root-gap-width-3);
+          justify-content: right;
 
-          &.active {
-            opacity: 0.5;
+          .svg-icon {
+            opacity: 0.2;
+
+            &.active {
+              opacity: 0.5;
+            }
           }
         }
       }
@@ -60,11 +95,31 @@
     gap: var(--root-gap-width-2);
 
     .img {
+      position: relative;
       width: 100%;
       aspect-ratio: 4 / 3;
 
       img {
         height: 100%;
+      }
+
+      > div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: right;
+        width: 100%;
+        padding: var(--root-gap-width-2);
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+        visibility: hidden;
+        cursor: pointer;
+      }
+
+      &:hover {
+        > div {
+          visibility: visible;
+        }
       }
     }
 
@@ -81,29 +136,7 @@
   }
 
   &.list {
-    padding: 8px;
-
-    .img {
-      width: 64px;
-      height: 48px;
-      border-radius: calc(var(--root-gap-width-3) / 2);
-
-      img {
-        height: 100%;
-      }
-    }
-
-    .info {
-      @include flexContentCenter();
-
-      p {
-        > span {
-          &:last-child {
-            margin-left: auto;
-          }
-        }
-      }
-    }
+    @include listLayout();
   }
 
   &.detail {
@@ -140,6 +173,30 @@
 
           > span {
             flex: 1;
+          }
+        }
+      }
+
+      :deep(.track-detail-button) {
+        transform: translateX(var(--root-gap-width-3));
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .track-container {
+    &.grid,
+    &.detail {
+      @include listLayout();
+
+      .info {
+        p {
+          > span {
+            &:first-child,
+            &:last-child {
+              display: inline;
+            }
           }
         }
       }

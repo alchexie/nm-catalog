@@ -35,6 +35,10 @@
       "GRID": "显示画廊",
       "LIST": "显示列表",
       "DETAIL": "显示详情"
+    },
+    "menu": {
+      "goShareLink": "前往官网收听",
+      "inPlaylist": "所在播放列表"
     }
   },
   "playlist": {
@@ -60,7 +64,8 @@
   },
   "info": {
     "lang": "首选语言",
-    "top": "回到顶部"
+    "top": "回到顶部",
+    "blank": "空空如也"
   },
   "punctuation": {
     "colon": "："

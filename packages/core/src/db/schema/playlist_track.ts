@@ -16,6 +16,21 @@ const tbPlaylistTrack: DBTableConfig = {
     WHERE pt.pid = ?
     ORDER BY pt.idx
   `,
+  selectPlaylistByTid: () => `
+    SELECT DISTINCT p.*, pg.gid, g.year
+    FROM playlist_track pt
+    INNER JOIN playlist p ON pt.pid = p.id
+    LEFT JOIN playlist_game pg ON pg.pid = p.id AND p.type != 'MULTIPLE'
+    LEFT JOIN game g ON g.id = pg.gid
+    WHERE pt.tid = ?
+    ORDER BY
+      CASE p.type
+        WHEN 'SINGLE_GAME' THEN 1
+        WHEN 'MULTIPLE' THEN 2
+        ELSE 99
+      END,
+      g.year
+  `,
   selectPlaylistByTids: (tids: string[] = []) => `
     SELECT DISTINCT p.*
     FROM playlist_track pt

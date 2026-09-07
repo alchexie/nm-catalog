@@ -93,21 +93,28 @@ import SvgIcon from '@/components/base/SvgIcon.vue';
 
 import { onMounted, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { usePreloadStore, useTrackViewStore } from '@/stores';
+import { useImgMap } from '@/composables/useImgMap';
+import { useLocalizationString } from '@/composables/useLocalizationString';
 import { useLoadMore } from '@/composables/useLoadMore';
 import { type Track, type PlaylistTrack, type PlaylistTrackGroup } from '@/types';
 import { ElementTracker } from '@/utils/element-tracker';
-import { useTrackViewStore } from '@/stores';
-import { useImgMap } from '@/composables/useImgMap';
-import { useLocalizationString } from '@/composables/useLocalizationString';
 import { getTotalDuration } from '@/utils/data-utils';
 
-const props = defineProps<{
-  data: Track[] | PlaylistTrackGroup[];
-  groupMode?: boolean;
-  playlistMode?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    data: Track[] | PlaylistTrackGroup[];
+    groupMode?: boolean;
+    playlistMode?: boolean;
+  }>(),
+  {
+    groupMode: false,
+    playlistMode: false,
+  }
+);
 
 const trackViewStore = useTrackViewStore();
+const preloadStore = usePreloadStore();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
 const { displayData, loadMore, hasRemainedData, loadAll, resetData } = useLoadMore<
@@ -161,11 +168,10 @@ onMounted(async () => {
     const trackGroups = props.data as PlaylistTrackGroup[];
     const tracks = trackGroups.map((x) => x.tracks).flat();
     const games = trackGroups.filter((x) => x.game).map((x) => x.game!);
-    imgMap.setData('game', games).setData('track', tracks as Track[]);
-    stringMap.setData([...games, ...tracks], 'title');
+    preloadStore.setData('game', games);
+    preloadStore.setData('track', tracks);
   } else {
-    imgMap.setData('track', props.data as Track[]);
-    stringMap.setData(props.data as Track[], 'title');
+    preloadStore.setData('track', props.data as Track[]);
   }
 
   const setupObserver = () => {

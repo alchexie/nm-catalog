@@ -15,7 +15,7 @@
       </option>
     </select>
   </div>
-  <LoadingContainer :loading="loading">
+  <LoadingContainer :loading="loading" full-height>
     <section
       v-for="(group, i) in computedGameGroups"
       :key="group.name"
@@ -52,13 +52,14 @@ import SideNav from '@/components/display/SideNav/Index.vue';
 
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useLangStore, usePreloadStore } from '@/stores';
 import { useNavigation } from '@/composables/useNavigation';
 import { useRequest } from '@/composables/useRequest';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
 import { getGames } from '@/api';
 import { STORAGE_KEY, GAME_GROUP_BY, type GameGroup, type GameGroupBy } from '@/types';
-import { useGameStore, useLangStore } from '@/stores';
+import { scrollToY } from '@/utils/dom-utils';
 
 const { t } = useI18n();
 const { loading, request } = useRequest();
@@ -147,9 +148,7 @@ async function getGamesByGroup(groupBy: GameGroupBy): Promise<GameGroup[]> {
 
   if (!gameGroups.value.length) {
     const gameList = result.map((x) => x.games).reduce((a, b) => [...a, ...b]);
-    imgMap.setData('game', gameList);
-    stringMap.setData(gameList, 'title');
-    useGameStore().markAsInitialized();
+    await usePreloadStore().ensureLoaded('game', gameList);
   }
 
   return result;
@@ -168,7 +167,7 @@ async function onGroupByChange(event?: Event) {
   localStorage.setItem(STORAGE_KEY.GAME_GROUPBY, value);
 
   groupRefs.value = [];
-  window.scrollTo(0, 0);
+  scrollToY(0);
 }
 
 function changeGroupBy(value: GameGroupBy) {

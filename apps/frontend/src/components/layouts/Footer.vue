@@ -1,5 +1,4 @@
 <template>
-  <div id="top-mark" ref="topRef"></div>
   <footer id="footer">
     <div>
       <span>
@@ -29,29 +28,30 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { LangCode, LangNameMap, type LangCodeValue } from '@/types';
 import { getLocale, useLangStore } from '@/stores';
-import { scrollToY } from '@/utils/dom-utils';
-import { ElementTracker } from '@/utils/element-tracker';
+import { LangCode, LangNameMap, type LangCodeValue } from '@/types';
+import { getScrollTop, scrollToY } from '@/utils/dom-utils';
 import type { LocaleType } from '@/i18n';
 
 const { t } = useI18n();
 const langStore = useLangStore();
 
 const mainLang = ref<LangCodeValue>(langStore.mainLang);
-const topRef = ref<HTMLElement>();
-const isScrollTop = ref<boolean>(false);
-  
-const tracker = new ElementTracker((entries) => {
-  const entry = entries[0];
-  isScrollTop.value = entry.isIntersecting;
-});
+const isScrollTop = ref<boolean>(true);
+
+const onScroll = () => {
+  isScrollTop.value = getScrollTop() === 0;
+};
 
 onMounted(async () => {
   langStore.setLangList(Object.values(LangCode));
-  tracker.observe(topRef.value as unknown as HTMLElement);
+  window.addEventListener('scroll', onScroll, true);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll, true);
 });
 
 function onLangChange(event: Event) {
@@ -66,13 +66,6 @@ function scrollToTop() {
 </script>
 
 <style lang="scss" scoped>
-#top-mark {
-  position: absolute;
-  top: 0;
-  width: 1px;
-  height: 1px;
-}
-
 #footer {
   position: fixed;
   left: 0;

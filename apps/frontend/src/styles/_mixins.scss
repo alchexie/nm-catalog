@@ -45,7 +45,7 @@
   max-height: calc(1.1rem * $maxLine * 1.5);
 }
 
-@mixin gridAutoFill($min: 175px, $gap: var(--root-gap-width-0)) {
+@mixin gridAutoFill($min: var(--grid-min-width), $gap: var(--root-gap-width-0)) {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min($min, 100%), 1fr));
   gap: $gap;
