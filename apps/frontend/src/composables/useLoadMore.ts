@@ -13,13 +13,10 @@ export const useLoadMore = <T>(data: T[], batchSize = 50) => {
   };
 
   const loadMore = async () => {
-    if (running) {
-      return false;
-    }
+    if (running) return false;
     if (!toDisplayData.length) {
       return false;
     }
-
     running = true;
     const nextBatch = toDisplayData.splice(0, batchSize);
     (displayData.value as T[]).push(...nextBatch);
@@ -30,10 +27,37 @@ export const useLoadMore = <T>(data: T[], batchSize = 50) => {
 
   const hasRemainedData = () => toDisplayData.length > 0;
 
-  const loadAll = () => {
-    (displayData.value as T[]).push(...toDisplayData);
-    toDisplayData = [];
+  let batchTimer: ReturnType<typeof setInterval> | null = null;
+  const loadAll = (onComplete?: () => void) => {
+    if (batchTimer) return;
+
+    batchTimer = setInterval(() => {
+      if (!toDisplayData.length) {
+        if (batchTimer) {
+          clearInterval(batchTimer);
+        }
+        batchTimer = null;
+        onComplete?.();
+        return;
+      }
+      const nextBatch = toDisplayData.splice(0, batchSize);
+      (displayData.value as T[]).push(...nextBatch);
+    }, 50);
   };
 
-  return { displayData, resetData, loadMore, hasRemainedData, loadAll };
+  const stopLoadAll = () => {
+    if (batchTimer) {
+      clearInterval(batchTimer);
+      batchTimer = null;
+    }
+  };
+
+  return {
+    displayData,
+    resetData,
+    loadMore,
+    hasRemainedData,
+    loadAll,
+    stopLoadAll,
+  };
 };

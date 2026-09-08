@@ -90,7 +90,7 @@
     @include flexContentCenter();
     gap: var(--root-gap-width-1);
     padding: var(--root-gap-width-1);
-    border-bottom: 1px rgb(from var(--root-text-color-light) r g b / 0.3) solid;
+    border-bottom: 1px rgb(from var(--root-text-color-light) r g b / 15%) solid;
     font-weight: bold;
 
     > h1 {

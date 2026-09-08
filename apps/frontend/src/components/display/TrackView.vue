@@ -91,7 +91,7 @@ import MultiSwitcher from './MultiSwitcher.vue';
 import TrackItem from './TrackItem/Index.vue';
 import SvgIcon from '@/components/base/SvgIcon.vue';
 
-import { onMounted, ref, computed } from 'vue';
+import { onBeforeUnmount, onMounted, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { usePreloadStore, useTrackViewStore } from '@/stores';
 import { useImgMap } from '@/composables/useImgMap';
@@ -117,9 +117,8 @@ const trackViewStore = useTrackViewStore();
 const preloadStore = usePreloadStore();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
-const { displayData, loadMore, hasRemainedData, loadAll, resetData } = useLoadMore<
-  PlaylistTrack | Track
->([]);
+const { displayData, loadMore, hasRemainedData, loadAll, stopLoadAll, resetData } =
+  useLoadMore<PlaylistTrack | Track>([]);
 const { t } = useI18n();
 
 const loadMoreRef = ref<HTMLElement>();
@@ -162,6 +161,16 @@ const tracker = new ElementTracker(async (entries) => {
   }
 });
 
+const setupObserver = () => {
+  const isVisible = window.getComputedStyle(loadMoreRef.value!).display !== 'none';
+  if (isVisible) {
+    tracker.observe(loadMoreRef.value!);
+  } else {
+    tracker.disconnect();
+    loadAll(() => window.removeEventListener('resize', setupObserver));
+  }
+};
+
 onMounted(async () => {
   resetData(flatTracks.value);
   if (props.groupMode) {
@@ -174,21 +183,15 @@ onMounted(async () => {
     preloadStore.setData('track', props.data as Track[]);
   }
 
-  const setupObserver = () => {
-    const isVisible = window.getComputedStyle(loadMoreRef.value!).display !== 'none';
-    if (isVisible) {
-      tracker.observe(loadMoreRef.value!);
-    } else {
-      tracker.disconnect();
-      loadAll();
-      window.removeEventListener('resize', setupObserver);
-    }
-  };
-
   setupObserver();
   if (hasRemainedData()) {
     window.addEventListener('resize', setupObserver);
   }
+});
+
+onBeforeUnmount(() => {
+  stopLoadAll();
+  window.removeEventListener('resize', setupObserver);
 });
 </script>
 
