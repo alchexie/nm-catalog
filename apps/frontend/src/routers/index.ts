@@ -26,8 +26,8 @@ const scrollPositions = new Map<string, number>();
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(to) {
-    getScrollContainer().scrollTo(0, scrollPositions.get(to.fullPath) ?? 0);
+  scrollBehavior(to, _from, savedPosition) {
+    getScrollContainer().scrollTo(0, savedPosition ? (scrollPositions.get(to.fullPath) ?? 0) : 0);
   },
 });
 

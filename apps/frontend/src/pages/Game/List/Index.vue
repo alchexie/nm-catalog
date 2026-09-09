@@ -145,12 +145,10 @@ async function getGamesByGroup(groupBy: GameGroupBy): Promise<GameGroup[]> {
 
   const result = await request(getGames(target.key));
   target.content = result;
-
   if (!gameGroups.value.length) {
     const gameList = result.map((x) => x.games).reduce((a, b) => [...a, ...b]);
-    await usePreloadStore().ensureLoaded('game', gameList);
+    await usePreloadStore().ensureGameData(gameList);
   }
-
   return result;
 }
 

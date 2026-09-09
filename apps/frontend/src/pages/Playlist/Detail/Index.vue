@@ -209,7 +209,7 @@ onMounted(async () => {
   data.value = result;
 
   if (computedIsChangalbePlaylist.value) {
-    await preloadStore.ensureLoaded('game');
+    await preloadStore.ensureGameData();
   }
 });
 

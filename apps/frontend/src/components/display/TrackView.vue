@@ -164,6 +164,7 @@ const tracker = new ElementTracker(async (entries) => {
 const setupObserver = () => {
   const isVisible = window.getComputedStyle(loadMoreRef.value!).display !== 'none';
   if (isVisible) {
+    stopLoadAll();
     tracker.observe(loadMoreRef.value!);
   } else {
     tracker.disconnect();

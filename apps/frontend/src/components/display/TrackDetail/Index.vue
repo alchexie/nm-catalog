@@ -124,7 +124,7 @@ import { useImgMap } from '@/composables/useImgMap';
 import { useRequest } from '@/composables/useRequest';
 import type { Playlist, PlaylistTrack, Track } from '@nm-catalog/shared';
 import { OFFICIAL_URL } from '@/types';
-import { getPlaylistByGame, getPlaylistsByTrack } from '@/api';
+import { getPlaylistsByTrack } from '@/api';
 
 const props = defineProps<{
   data: Track | PlaylistTrack;
@@ -184,12 +184,9 @@ function openMenu() {
     const margin = 8;
     const gap = 4;
     const drawerWidth = activeTrack.value
-      ? Math.min(
-          Number.parseFloat(
-            window.getComputedStyle(document.documentElement).getPropertyValue('--drawer-width')
-          ) || 0,
-          window.innerWidth * 0.9
-        )
+      ? (Number.parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue('--drawer-width')
+        ) ?? 0)
       : 0;
     const drawerLeft = window.innerWidth - drawerWidth;
     let top = rect.bottom + gap;
@@ -215,8 +212,9 @@ async function openDrawer() {
 
   if (playlists.value) return;
   const preloadStore = usePreloadStore();
-  const playlistList = (await preloadStore.ensureLoaded('playlist')) as Playlist[];
-  const playlistIndex = new Map(playlistList.map((x, i) => [x.id, i]));
+  const sectionPlaylistList =
+    (await preloadStore.ensureSectionPlaylistData()) as Playlist[];
+  const sectionPlaylistIndex = new Map(sectionPlaylistList.map((x, i) => [x.id, i]));
   playlists.value = await request(getPlaylistsByTrack(props.data.id));
   playlists.value.sort((a, b) => {
     const aOrdered = a.type === 'MULTIPLE' || a.type === 'SPECIAL';
@@ -227,13 +225,14 @@ async function openDrawer() {
       if (aRelated !== bRelated) {
         return aRelated ? -1 : 1;
       }
-      return (playlistIndex.get(a.id) ?? 0) - (playlistIndex.get(b.id) ?? 0);
+      return (
+        (sectionPlaylistIndex.get(a.id) ?? 0) - (sectionPlaylistIndex.get(b.id) ?? 0)
+      );
     }
     return 0;
   });
   if (props.data.gid) {
-    const gamePlaylists = await request(getPlaylistByGame(props.data.gid));
-    preloadStore.setData('playlist', gamePlaylists);
+    await preloadStore.ensureGamePlaylistData(props.data.gid);
   }
 }
 </script>

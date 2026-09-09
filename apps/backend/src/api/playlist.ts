@@ -36,7 +36,9 @@ router.get('/', (_req: Request, res: Response) => {
     Object.entries(rawSectionData).forEach((_, i) => {
       result.push({
         tag: PLAYLIST_SECTION_TYPE[i],
-        playlists: rawPlaylistData[i].map((x) => playlistsMap.get(<string>x.id)!),
+        playlists: rawPlaylistData[i]
+          .map((x) => playlistsMap.get(<string>x.id))
+          .filter((p): p is Playlist => p !== undefined),
       });
     });
 

@@ -34,7 +34,9 @@ const tbPlaylist: DBTableConfig = {
       desc_ja_JP TEXT,
       desc_ko_KR TEXT,
       desc_zh_CN TEXT,
-      desc_zh_TW TEXT
+      desc_zh_TW TEXT,
+      fetchstrategy TEXT,
+      isexpired INTEGER DEFAULT 0
     );
   `,
   selectById: () => `SELECT * FROM playlist WHERE id = ?`,

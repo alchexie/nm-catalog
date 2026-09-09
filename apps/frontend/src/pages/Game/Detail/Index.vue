@@ -168,7 +168,7 @@ onMounted(async () => {
 watch(
   () => langStore.mainLang,
   () => {
-    if (data.value?.tracks.length) {
+    if (data.value?.tracks?.length) {
       brandTrack.value =
         data.value.tracks[Math.floor(Math.random() * data.value.tracks.length)];
     }

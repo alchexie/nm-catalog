@@ -115,8 +115,11 @@ export const upstreem = {
     );
   },
 
-  async getImage(assetId: string): Promise<any> {
+  async getImage(assetId: string): Promise<Buffer | null> {
     const res = await fetch(`${UPSTREAM_IMG_BASE_URL}${assetId}`);
+    if (!res.ok) {
+      return null;
+    }
     const arrayBuffer = await res.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     return buffer;

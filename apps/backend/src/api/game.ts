@@ -41,7 +41,7 @@ export const getGameByYear = async (): Promise<GameGroup[]> => {
 
       const gameListMap = new Map(gameList.map((x) => [x.id, x]));
       const result: GameGroup[] = (await upstreem.getGamesByYear()).map((x: DataRow) => ({
-        name: x.releasedYear,
+        name: <string>x.releasedYear,
         games: (<any>x.items)
           .map((y: DataRow) => gameListMap.get(<string>y.id))
           .filter((y: DataRow) => !!y) as Game[],

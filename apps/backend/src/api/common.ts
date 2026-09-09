@@ -24,12 +24,19 @@ router.get('/hardware', (_req: Request, res: Response) => {
 });
 
 router.get('/image/:assetId', async (req: Request, res: Response) => {
-  const assetId = req.params.assetId;
-  const buffer = await upstreem.getImage(<string>assetId);
-
-  res.header('Content-Type', 'image/webp');
-  res.header('Cache-Control', 'private, no-transform, max-age=1695605');
-  return res.send(buffer);
+  try {
+    const assetId = req.params.assetId;
+    const buffer = await upstreem.getImage(<string>assetId);
+    if (!buffer) {
+      return res.status(404).json({ error: 'Image not found.' });
+    }
+    res.header('Content-Type', 'image/webp');
+    res.header('Cache-Control', 'private, no-transform, max-age=1695605');
+    return res.send(buffer);
+  } catch (error) {
+    const err = toError(error);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

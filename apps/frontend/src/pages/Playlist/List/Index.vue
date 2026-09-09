@@ -98,8 +98,10 @@ useNavigation({
 
 onMounted(async () => {
   const result = await request(getPlaylistSections());
-  const playlistList = result.map((x) => x.playlists).reduce((a, b) => [...a, ...b]);
-  await usePreloadStore().ensureLoaded('playlist', playlistList);
+  const sectionPlaylistList = result
+    .map((x) => x.playlists)
+    .reduce((a, b) => [...a, ...b]);
+  await usePreloadStore().ensureSectionPlaylistData(sectionPlaylistList);
   playlistSections.value = result;
 });
 </script>
