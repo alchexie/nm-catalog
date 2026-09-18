@@ -29,6 +29,7 @@ export const PLAYLIST_SECTION_TYPE = [
   'ANNUAL',
   'SPECIAL',
   'RECOMMEND',
+  'WHILE',
   'MOOD',
   'SCENE',
   'CHARACTER',

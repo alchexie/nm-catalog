@@ -115,6 +115,28 @@
       "type": "MULTIPLE"
     }
   ],
+  "想一直聆听时": [
+    {
+      "id": "da002aeb-7cd0-4f36-9a31-5eb27279fe82",
+      "name": "Nintendo Switch精选集",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "cff77719-3c21-4c48-b4fc-3c07bf95c81b",
+      "name": "Nintendo 64精选集",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "f3882bb5-d450-4381-b936-a0caa4c2f00e",
+      "name": "Super NES精选集",
+      "type": "MULTIPLE"
+    },
+    {
+      "id": "3f794e8a-8855-4044-b3b3-4eaf0d2d5a21",
+      "name": "NES精选集",
+      "type": "MULTIPLE"
+    }
+  ],
   "从现在的心情开始": [
     {
       "id": "fd918c30-cde7-4297-8f0a-1fafdea84a0b",
