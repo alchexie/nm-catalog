@@ -1,10 +1,32 @@
 import fs from 'fs';
 
+type TextCacheEntry = {
+  mtimeMs: number;
+  size: number;
+  data: string;
+};
+
+const textCache = new Map<string, TextCacheEntry>();
+
 export const readText = (fileName: string): string => {
-  if (fs.existsSync(fileName)) {
-    return fs.readFileSync(fileName, 'utf8');
+  try {
+    const stat = fs.statSync(fileName);
+    const cached = textCache.get(fileName);
+    if (cached && cached.mtimeMs === stat.mtimeMs && cached.size === stat.size) {
+      return cached.data;
+    }
+
+    const data = fs.readFileSync(fileName, 'utf8');
+    textCache.set(fileName, {
+      mtimeMs: stat.mtimeMs,
+      size: stat.size,
+      data,
+    });
+    return data;
+  } catch {
+    textCache.delete(fileName);
+    return '';
   }
-  return '';
 };
 
 export const writeText = (fileName: string, data: string | object) => {
@@ -13,6 +35,7 @@ export const writeText = (fileName: string, data: string | object) => {
     typeof data === 'object' ? JSON.stringify(data) : data,
     'utf8'
   );
+  textCache.delete(fileName);
 };
 
 export const info = (message: any, color = '\x1b[32m%s\x1b[0m') => {
