@@ -44,21 +44,24 @@
         </button>
       </nav>
       <section class="detail">
-        <div :hidden="gameDataSection !== 'TRACK'" :ref="(el) => setRefElement(el, 0)">
+        <div :hidden="gameDataSection !== 'TRACK'" :ref="(el) => setRefElement(el, 'TRACK')">
           <h2 class="hidden-sm">{{ t('game.dataSection.TRACK') }}</h2>
           <TrackView :data="data.tracks"></TrackView>
         </div>
-        <div :hidden="gameDataSection !== 'PLAYLIST'" :ref="(el) => setRefElement(el, 1)">
+        <div :hidden="gameDataSection !== 'PLAYLIST'" :ref="(el) => setRefElement(el, 'PLAYLIST')">
           <h2 class="hidden-sm">{{ t('game.dataSection.PLAYLIST') }}</h2>
           <PlaylistView :data="data.playlists"></PlaylistView>
         </div>
         <div
           :hidden="gameDataSection !== 'RELATED'"
-          :ref="(el) => setRefElement(el, 2)"
+          :ref="(el) => setRefElement(el, 'RELATED')"
           v-if="data.relateds.length"
         >
           <h2 class="hidden-sm">{{ t('game.dataSection.RELATED') }}</h2>
-          <RelatedView :data="data.relateds"></RelatedView>
+          <HorizontalScrollView
+            :data="data.relateds"
+            dataType="game"
+          ></HorizontalScrollView>
         </div>
         <hr />
       </section>
@@ -81,7 +84,7 @@ import LoadingContainer from '@/components/base/LoadingContainer.vue';
 import SvgIcon from '@/components/base/SvgIcon.vue';
 import SideNav from '@/components/display/SideNav/Index.vue';
 import TrackView from '@/components/display/TrackView.vue';
-import RelatedView from '@/components/display/RelatedView.vue';
+import HorizontalScrollView from '@/components/display/HorizontalScrollView.vue';
 import PlaylistView from '@/components/display/PlaylistView.vue';
 
 import { computed, h, onMounted, ref, watch } from 'vue';
@@ -114,7 +117,7 @@ const gid = route.params.gid as string;
 const data = ref<GameDetail>();
 const gameDataSection = ref<GameDataSection>('TRACK');
 const brandTrack = ref<Track>();
-const groupRefs = ref<HTMLElement[]>([]);
+const groupRefs = ref<Record<string, HTMLElement>>({});
 
 const computedTitle = computed(() => stringMap.getString(data.value!.game, 'title'));
 const computedLangs = computed(() =>
@@ -182,9 +185,9 @@ async function getDetail() {
   data.value = result;
 }
 
-function setRefElement(el: any, idx: number) {
+function setRefElement(el: any, key: string) {
   if (el) {
-    groupRefs.value[idx] = el as HTMLElement;
+    groupRefs.value[key] = el as HTMLElement;
   }
 }
 </script>

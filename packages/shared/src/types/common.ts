@@ -44,3 +44,8 @@ export interface GameRelation {
   gid: string;
   rgid: string;
 }
+
+export interface PlaylistSeries {
+  pid: string;
+  sid: string;
+}

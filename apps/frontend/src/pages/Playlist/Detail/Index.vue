@@ -23,7 +23,7 @@
         </div>
       </section>
       <section class="detail">
-        <div class="track" :ref="(el) => setRefElement(el, 0)">
+        <div class="track" :ref="(el) => setRefElement(el, 'TRACK')">
           <TrackView
             :data="
               data.playlist.type !== 'SPECIAL'
@@ -51,7 +51,7 @@
             </div>
             <SvgIcon type="right"></SvgIcon>
           </router-link>
-          <div class="playlist hidden-sm" :ref="(el) => setRefElement(el, 1)">
+          <div class="playlist hidden-sm" :ref="(el) => setRefElement(el, 'PLAYLIST')">
             <h2>{{ t(`game.playlist.MULTIPLE`) }}</h2>
             <PlaylistView
               :data="data.relatedPlaylists"
@@ -66,9 +66,12 @@
           </div>
         </template>
         <template v-if="data.relatedGames">
-          <div class="related hidden-sm" :ref="(el) => setRefElement(el, 1)">
+          <div class="related hidden-sm" :ref="(el) => setRefElement(el, 'RELATED')">
             <h2 class="hidden-sm">{{ t('game.dataSection.RELATED') }}</h2>
-            <RelatedView :data="data.relatedGames"></RelatedView>
+            <HorizontalScrollView
+              :data="data.relatedGames"
+              dataType="game"
+            ></HorizontalScrollView>
           </div>
         </template>
         <hr />
@@ -93,7 +96,7 @@ import SvgIcon from '@/components/base/SvgIcon.vue';
 import SideNav from '@/components/display/SideNav/Index.vue';
 import TrackView from '@/components/display/TrackView.vue';
 import PlaylistView from '@/components/display/PlaylistView.vue';
-import RelatedView from '@/components/display/RelatedView.vue';
+import HorizontalScrollView from '@/components/display/HorizontalScrollView.vue';
 
 import { computed, h, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -117,7 +120,7 @@ const stringMap = useLocalizationString();
 
 const pid = route.params.pid as string;
 const data = ref<PlaylistDetail>();
-const groupRefs = ref<HTMLElement[]>([]);
+const groupRefs = ref<Record<string, HTMLElement>>({});
 const computedTitle = computed(() => stringMap.getString(data.value!.playlist, 'title'));
 const computedGameTitle = computed(() => {
   if (!data.value) return '';
@@ -213,9 +216,9 @@ onMounted(async () => {
   }
 });
 
-function setRefElement(el: any, idx: number) {
+function setRefElement(el: any, key: string) {
   if (el) {
-    groupRefs.value[idx] = el as HTMLElement;
+    groupRefs.value[key] = el as HTMLElement;
   }
 }
 </script>

@@ -18,7 +18,7 @@
   <LoadingContainer :loading="loading" full-height>
     <section
       v-for="(group, i) in computedGameGroups"
-      :key="group.name"
+      :key="i"
       :ref="
         (el) => {
           if (el) {
@@ -63,13 +63,14 @@ import { scrollToY } from '@/utils/dom-utils';
 
 const { t } = useI18n();
 const { loading, request } = useRequest();
+const langStore = useLangStore();
 const imgMap = useImgMap();
 const stringMap = useLocalizationString();
 
 const selectedGroupBy = ref<GameGroupBy>('PLATFORM');
 const gameGroups = ref<GameGroup[]>([]);
 const selectRef = ref<HTMLElement>();
-const groupRefs = ref<HTMLElement[]>([]);
+const groupRefs = ref<Record<string, HTMLElement>>({});
 
 const computedGameGroupBy = computed(() => {
   return GAME_GROUP_BY.map((x) => ({
@@ -88,7 +89,8 @@ const computedGameGroups = computed(() =>
   }))
 );
 const computedGroupList = computed(() =>
-  computedGameGroups.value.map((x) => ({
+  computedGameGroups.value.map((x, i) => ({
+    key: i.toString(),
     label:
       x.name ??
       (x.localeNameTag && t(x.localeNameTag)) ??
@@ -96,7 +98,7 @@ const computedGroupList = computed(() =>
     count: x.games.length,
   }))
 );
-const computedMainLang = computed(() => useLangStore().mainLang);
+const computedMainLang = computed(() => langStore.mainLang);
 
 const gameDict: Record<
   GameGroupBy,
@@ -164,7 +166,7 @@ async function onGroupByChange(event?: Event) {
   gameGroups.value = await getGamesByGroup(value as GameGroupBy);
   localStorage.setItem(STORAGE_KEY.GAME_GROUPBY, value);
 
-  groupRefs.value = [];
+  groupRefs.value = {};
   scrollToY(0);
 }
 
@@ -190,7 +192,7 @@ section {
   h1 {
     margin: 0;
     margin-bottom: var(--root-gap-width-0);
-    font-size: 1.125rem;
+    font-size: 1.25rem;
   }
 }
 </style>

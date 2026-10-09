@@ -1,5 +1,9 @@
 import type { GameDetail, GameGroup, PlaylistDetail } from '@/types';
-import type { Playlist, PlaylistSection } from '@nm-catalog/shared';
+import type {
+  CharacterPlaylistSection,
+  Playlist,
+  PlaylistSection,
+} from '@nm-catalog/shared';
 
 const call = async (url: string): Promise<any> => {
   const res = await fetch(url);
@@ -20,7 +24,11 @@ export const getGameDetail = (gid: string): Promise<GameDetail> => {
 };
 
 export const getPlaylistSections = (): Promise<PlaylistSection[]> => {
-  return call(`/api/playlist`);
+  return call(`/api/playlist/section`);
+};
+
+export const getCharacterPlaylistSections = (): Promise<CharacterPlaylistSection[]> => {
+  return call(`/api/playlist/character`);
 };
 
 export const getPlaylistDetail = (pid: string): Promise<PlaylistDetail> => {

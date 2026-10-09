@@ -1,6 +1,9 @@
 import express, { type Request, type Response } from 'express';
 import {
+  CharacterPlaylistSection,
   PLAYLIST_SECTION_TYPE,
+  PlaylistSeries,
+  Series,
   type Game,
   type Playlist,
   type PlaylistDetail,
@@ -15,12 +18,13 @@ import {
   COMMON_PATHS,
   DataRow,
   writeText,
+  upstreem,
 } from '@nm-catalog/core';
 import { getGameByYear } from './game.js';
 
 const router = express.Router();
 
-router.get('/', (_req: Request, res: Response) => {
+router.get('/section', (_req: Request, res: Response) => {
   try {
     let fileName = COMMON_PATHS['res_playlist_section.json'];
     const rawSectionData: Record<string, DataRow[]> = JSON.parse(readText(fileName));
@@ -42,32 +46,80 @@ router.get('/', (_req: Request, res: Response) => {
       });
     });
 
-    fileName = COMMON_PATHS['res_playlist_character.json'];
-    let rawCharacterData: any[];
-    try {
-      rawCharacterData = JSON.parse(readText(fileName));
-    } catch (error) {
-      rawCharacterData = [];
+    res.json(result);
+  } catch (error) {
+    const err = toError(error);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/character', async (req: Request, res: Response) => {
+  const fileName = COMMON_PATHS['res_playlist_character.json'];
+  let data: any = readText(fileName);
+
+  try {
+    if (!data) {
+      data = (await upstreem.getCharacterPlaylistInfo()).playlists.map(
+        (x: DataRow) => x.id
+      );
+    } else {
+      data = JSON.parse(readText(fileName)) as any[];
     }
 
-    if (rawCharacterData.length > 0) {
-      let characterPlaylistData: Playlist[];
-      if (typeof rawCharacterData[0] === 'string') {
-        const playlistIdMap = new Map(rawCharacterData.map((id, i) => [id, i]));
-        characterPlaylistData = (
-          stmt.playlist.selectByIds(rawCharacterData).all() as Playlist[]
-        ).sort((a, b) => playlistIdMap.get(a.id)! - playlistIdMap.get(b.id)!);
-
-        writeText(fileName, characterPlaylistData);
-      } else {
-        characterPlaylistData = rawCharacterData;
-      }
-      result.push({
-        tag: 'CHARACTER',
-        playlists: characterPlaylistData,
+    let result: CharacterPlaylistSection[] = [];
+    if (typeof data[0] === 'string') {
+      const playlistSeries = stmt.playlist_game
+        .selectRelatedSeries(data)
+        .all() as PlaylistSeries[];
+      const seriesIdSet = new Set<string>(playlistSeries.map((x) => x.sid));
+      result = (
+        [...seriesIdSet].map((x) => ({
+          series: stmt.series.selectById().get(x) as Series | undefined,
+          playlists: (
+            stmt.playlist
+              .selectByIds(playlistSeries.filter((y) => y.sid === x).map((y) => y.pid))
+              .all() as Playlist[]
+          ).sort((a, b) => data.indexOf(a.id) - data.indexOf(b.id)),
+        })) as CharacterPlaylistSection[]
+      ).sort((a, b) => {
+        if (!a.series !== !b.series) {
+          return a.series ? -1 : 1;
+        }
+        return data.indexOf(a.playlists[0].id) - data.indexOf(b.playlists[0].id);
       });
-    }
 
+      const unclassified = result.at(-1);
+      if (unclassified && !unclassified.series) {
+        const classifiedPids = playlistSeries.filter((x) => !!x.sid).map((x) => x.pid);
+        unclassified.playlists = unclassified.playlists.filter(
+          (x) => classifiedPids.indexOf(x.id) < 0
+        );
+      }
+
+      const gameIdsByYear = (await getGameByYear())
+        .map((x) => x.games)
+        .flat()
+        .map((x) => x.id);
+      result.forEach((x) => {
+        x.playlists.forEach((y) => {
+          (y as any).$latestRelatedGameSort = Math.min(
+            ...(stmt.playlist_game.selectGameByPid().all(y.id) as Game[]).map((x) =>
+              gameIdsByYear.indexOf(x.id)
+            )
+          );
+        });
+        x.playlists.sort(
+          (a: any, b: any) => a.$latestRelatedGameSort - b.$latestRelatedGameSort
+        );
+        x.playlists.forEach((y) => {
+          delete (x as any).$latestRelatedGameSort;
+        });
+      });
+
+      writeText(fileName, result);
+    } else {
+      result = data;
+    }
     res.json(result);
   } catch (error) {
     const err = toError(error);

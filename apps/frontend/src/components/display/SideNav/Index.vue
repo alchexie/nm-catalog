@@ -38,24 +38,54 @@
       @scroll="onNavScroll"
       @wheel="onWheel"
     >
-      <template v-for="(option, i) in options" :key="option.label">
+      <template v-for="(option, i) in options" :key="option.key">
         <li
-          v-if="props.options[i].count"
-          :class="{ active: i === activeIndex }"
-          :style="{
-            transform: `translateY(${
-              navheight * (percentages[i] + (1 - percentages[options.length - 1]) / 2)
-            }px)`,
-          }"
-          @click.stop="navigateTo(i)"
+          v-if="option.count"
+          class="option"
+          :class="{ active: option.key === activeKey }"
+          @click.stop="navigateTo(option.key)"
         >
-          <span :title="props.options[i].label">{{ props.options[i].label }} </span>
-          <span class="badge">{{ props.options[i].count }} </span>
+          <span :title="option.label">{{ option.label }}</span>
+          <span class="badge">{{ option.count }}</span>
+        </li>
+        <li v-else-if="option.children" :class="{ expanded: expandedSet.has(i) }">
+          <span class="option" :title="option.label" @click.stop="toggleNav(i)">
+            {{ option.label }}
+            <SvgIcon class="chevron" type="right" width="0.75em" />
+          </span>
+          <ul>
+            <li
+              v-for="child in option.children"
+              :key="child.key"
+              class="option"
+              :class="{ active: child.key === activeKey }"
+              @click.stop="navigateTo(child.key)"
+            >
+              <span :title="child.label">{{ child.label }}</span>
+              <span class="badge">{{ child.count }}</span>
+            </li>
+          </ul>
         </li>
       </template>
     </ul>
   </nav>
 </template>
+
+<script lang="ts">
+interface SideNavOptionBase {
+  label: string;
+  key: string;
+}
+interface SideNavOptionWithCount extends SideNavOptionBase {
+  count: number;
+  children?: never;
+}
+interface SideNavOptionWithChildren extends SideNavOptionBase {
+  count?: never;
+  children: SideNavOptionWithCount[];
+}
+export type SideNavOption = SideNavOptionWithCount | SideNavOptionWithChildren;
+</script>
 
 <script setup lang="ts">
 import SvgIcon from '@/components/base/SvgIcon.vue';
@@ -78,8 +108,8 @@ const props = defineProps<{
     options: { label: string; value: string }[];
     current: string;
   };
-  options: { label: string; count: number }[];
-  targetNodes?: HTMLElement[];
+  options: SideNavOption[];
+  targetNodes?: Record<string, HTMLElement>;
 }>();
 const emit = defineEmits(['update:sort']);
 
@@ -88,25 +118,30 @@ const { setRouteScroll, getRouteScroll } = useNavigation();
 const currentRoutePath = useRoute().path;
 
 const showSortMenu = ref(false);
-const percentages = ref<number[]>([]);
-const navheight = ref<number>(0);
-const activeIndex = ref<number>(0);
+const activeKey = ref('');
 const navListRef = ref<HTMLUListElement>();
 const showTopFade = ref(false);
 const showBottomFade = ref(false);
+const expandedSet = ref(new Set<number>());
 
 const computedSortLabel = computed(() => {
   return props.sortConfig?.options.find((x) => x.value === props.sortConfig?.current)
     ?.label;
 });
+const computedTargetElements = computed(() =>
+  props.options
+    .flatMap((o) => o.children ?? [o])
+    .map((leaf) => ({ key: leaf.key, el: props.targetNodes?.[leaf.key] }))
+    .filter((x): x is { key: string; el: HTMLElement } => !!x.el)
+);
 
 const tracker = new ElementTracker((entries) => {
   const entry = entries.find((x) => x.isIntersecting);
   if (entry) {
-    const idx = Math.floor(
-      (props.targetNodes ?? []).indexOf(entry!.target as HTMLElement)
-    );
-    activeIndex.value = idx;
+    const key = computedTargetElements.value.find((x) => x.el === entry.target)?.key;
+    if (key) {
+      activeKey.value = key;
+    }
   }
 });
 let scrollHandler!: (() => void) | null;
@@ -124,21 +159,13 @@ onBeforeUnmount(() => {
 });
 
 watch(
-  () => props.targetNodes ?? [],
-  async (elRef) => {
+  computedTargetElements,
+  async (elements) => {
     tracker.disconnect();
-    activeIndex.value = 0;
-    if (elRef?.length) {
-      const nums: number[] = [0];
-      const sum = elRef
-        .map((x) => x.offsetHeight)
-        .reduce((a, b) => {
-          nums.push(a);
-          return a + b;
-        });
-      percentages.value = nums.map((x) => x / sum);
+    activeKey.value = '';
+    if (elements.length) {
       await nextTick();
-      tracker.observe(elRef);
+      tracker.observe(elements.map((x) => x.el));
     }
   },
   { immediate: true }
@@ -154,18 +181,17 @@ watch(
   }
 );
 
-async function navigateTo(idx: number) {
+async function navigateTo(key: string) {
   if (scrollHandler) {
     window.removeEventListener('scroll', scrollHandler);
     scrollHandler = null;
   }
-  activeIndex.value = idx;
+  activeKey.value = key;
   tracker.disconnect();
 
-  if (!props.targetNodes) {
-    return;
-  }
-  const el = props.targetNodes[idx];
+  const el = props.targetNodes?.[key];
+  if (!el) return;
+
   scrollToY(el.getBoundingClientRect().top + getScrollTop() - 80, () => {
     scrollHandler = () => {
       getScrollContainer().removeEventListener('scroll', scrollHandler!);
@@ -203,6 +229,14 @@ function onWheel(e: WheelEvent) {
   if (el) {
     el.scrollTop += e.deltaY;
     onNavScroll();
+  }
+}
+
+function toggleNav(optionIndex: number) {
+  if (expandedSet.value.has(optionIndex)) {
+    expandedSet.value.delete(optionIndex);
+  } else {
+    expandedSet.value.add(optionIndex);
   }
 }
 </script>

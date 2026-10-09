@@ -15,18 +15,23 @@ const tbPlaylistGame: DBTableConfig = {
     INNER JOIN game g ON pg.gid = g.id
     WHERE pg.pid = ?
   `,
-  insert: () => {
-    return `
-      INSERT INTO playlist_game (
-        pid, gid, sort
-      )
-      VALUES (?, ?, ?)
-      ON CONFLICT(pid, gid) DO
-      UPDATE SET
-        sort=excluded.sort
-      WHERE excluded.sort != -1
-    `;
-  },
+  selectRelatedSeries: (pids: string[] = []) => `
+    SELECT DISTINCT
+      pg.pid, g.sid
+    FROM playlist_game pg
+    INNER JOIN game g ON pg.gid = g.id
+    WHERE pg.pid IN (${pids.map((id) => `'${id}'`).join(',')})
+  `,
+  insert: () => `
+    INSERT INTO playlist_game (
+      pid, gid, sort
+    )
+    VALUES (?, ?, ?)
+    ON CONFLICT(pid, gid) DO
+    UPDATE SET
+      sort=excluded.sort
+    WHERE excluded.sort != -1
+  `,
   delete: () => `DELETE FROM playlist_game`,
   deleteByGid: () => `DELETE FROM playlist_game WHERE gid = ?`,
 };

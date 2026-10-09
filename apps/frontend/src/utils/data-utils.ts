@@ -1,5 +1,11 @@
 import { useLangStore } from '@/stores';
-import { DEFAULT_LANG, type DurationInfo, type NMData, type Track } from '@/types';
+import {
+  DEFAULT_LANG,
+  type DurationInfo,
+  type LangCodeValue,
+  type NMData,
+  type Track,
+} from '@/types';
 import { LocalizationString } from './localization-string';
 
 export const isShowTitle = (target: NMData, lang: string): boolean => {
@@ -13,6 +19,12 @@ export const isShowTitle = (target: NMData, lang: string): boolean => {
   lang = LocalizationString.convertLangCode(lang);
   return (target as any)[`title_${lang}`].trim() !== target['title_en_US'].trim();
 };
+
+export const getLangText = (
+  target: Record<string, string>,
+  propName: string,
+  lang: LangCodeValue
+): string => target[`${propName}_${LocalizationString.convertLangCode(lang)}`];
 
 export const getSourceImg = (target: NMData, lang: string): string => {
   return `/api/common/image/${(target as any)[`img_${LocalizationString.convertLangCode(lang)}`]}`;

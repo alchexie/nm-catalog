@@ -18,25 +18,23 @@ const tbSeries: DBTableConfig = {
   selectById: () => `SELECT * FROM series WHERE id = ?`,
   selectByIds: (ids: string[] = []) =>
     `SELECT * FROM series WHERE id in (${ids.map((id) => `'${id}'`).join(',')})`,
-  insert: () => {
-    return `
-        INSERT INTO series (
-          id, title_de_DE, title_en_US, title_es_ES, title_fr_FR, title_it_IT, title_ja_JP, title_ko_KR, title_zh_CN, title_zh_TW
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(id) DO
-        UPDATE SET
-          title_de_DE=excluded.title_de_DE,
-          title_en_US=excluded.title_en_US,
-          title_es_ES=excluded.title_es_ES,
-          title_fr_FR=excluded.title_fr_FR,
-          title_it_IT=excluded.title_it_IT,
-          title_ja_JP=excluded.title_ja_JP,
-          title_ko_KR=excluded.title_ko_KR,
-          title_zh_CN=excluded.title_zh_CN,
-          title_zh_TW=excluded.title_zh_TW
-      `;
-  },
+  insert: () => `
+      INSERT INTO series (
+        id, title_de_DE, title_en_US, title_es_ES, title_fr_FR, title_it_IT, title_ja_JP, title_ko_KR, title_zh_CN, title_zh_TW
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO
+      UPDATE SET
+        title_de_DE=excluded.title_de_DE,
+        title_en_US=excluded.title_en_US,
+        title_es_ES=excluded.title_es_ES,
+        title_fr_FR=excluded.title_fr_FR,
+        title_it_IT=excluded.title_it_IT,
+        title_ja_JP=excluded.title_ja_JP,
+        title_ko_KR=excluded.title_ko_KR,
+        title_zh_CN=excluded.title_zh_CN,
+        title_zh_TW=excluded.title_zh_TW
+    `,
 };
 
 export default tbSeries;

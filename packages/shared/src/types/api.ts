@@ -1,4 +1,4 @@
-import type { Game, Playlist, Track } from './common.js';
+import type { Game, Playlist, Series, Track } from './common.js';
 import { LangCodeValue, PlaylistSectionType } from './enums.js';
 
 export type GameGroup = (
@@ -16,6 +16,11 @@ export interface GameDetail {
 
 export interface PlaylistSection {
   tag: PlaylistSectionType;
+  playlists: Playlist[];
+}
+
+export interface CharacterPlaylistSection {
+  series?: Series;
   playlists: Playlist[];
 }
 
