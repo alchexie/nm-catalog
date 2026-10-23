@@ -35,11 +35,6 @@
       "type": "SPECIAL"
     },
     {
-      "id": "2469486e-923d-4111-a6af-e2b639da160a",
-      "name": "特别发布《Star Fox (星际火狐)》",
-      "type": "SPECIAL"
-    },
-    {
       "id": "7d43bfb1-a227-479c-bb66-d8bf0764d95e",
       "name": "特别发布《Tomodachi Life 朋友收集 梦想生活》",
       "type": "SPECIAL"
@@ -48,6 +43,12 @@
       "id": "9a8634d9-5a82-4e48-a41c-13125b5263d0",
       "name": "特别发布《密特罗德 究极4 穿越未知》",
       "type": "SPECIAL"
+    },
+    {
+      "id": "2469486e-923d-4111-a6af-e2b639da160a",
+      "name": "特别发布《Star Fox (星际火狐)》",
+      "type": "SPECIAL",
+      "expired": true
     },
     {
       "id": "240a1c69-d321-4d65-9c55-f48eb9b7ad03",
@@ -105,14 +106,15 @@
       "type": "MULTIPLE"
     },
     {
-      "id": "46445c4a-7fba-403c-90b9-5f1d39be404f",
-      "name": "Nintendo Music精选集",
-      "type": "MULTIPLE"
-    },
-    {
       "id": "784581a7-ebb9-44c7-8f0d-cf9b07fb1718",
       "name": "推荐“更改时长”",
       "type": "MULTIPLE"
+    },
+    {
+      "id": "46445c4a-7fba-403c-90b9-5f1d39be404f",
+      "name": "Nintendo Music精选集",
+      "type": "MULTIPLE",
+      "expired": true
     }
   ],
   "想一直聆听时": [

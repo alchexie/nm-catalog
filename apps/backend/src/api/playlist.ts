@@ -96,24 +96,30 @@ router.get('/character', async (req: Request, res: Response) => {
         );
       }
 
-      const gameIdsByYear = (await getGameByYear())
-        .map((x) => x.games)
-        .flat()
-        .map((x) => x.id);
+      const gidByYearIndexMap = new Map(
+        (await getGameByYear())
+          .map((x) => x.games)
+          .flat()
+          .map((x, i) => [x.id, i])
+      );
       result.forEach((x) => {
+        const sortKeyMap = new Map<string, number>();
         x.playlists.forEach((y) => {
-          (y as any).$latestRelatedGameSort = Math.min(
-            ...(stmt.playlist_game.selectGameByPid().all(y.id) as Game[]).map((x) =>
-              gameIdsByYear.indexOf(x.id)
-            )
+          const games = stmt.playlist_game.selectGameByPid().all(y.id) as Game[];
+          sortKeyMap.set(
+            y.id,
+            games.length
+              ? Math.min(
+                  ...games.map((g) => gidByYearIndexMap.get(g.id) ?? Number.MAX_SAFE_INTEGER)
+                )
+              : Number.MAX_SAFE_INTEGER
           );
         });
         x.playlists.sort(
-          (a: any, b: any) => a.$latestRelatedGameSort - b.$latestRelatedGameSort
+          (a, b) =>
+            (sortKeyMap.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
+            (sortKeyMap.get(b.id) ?? Number.MAX_SAFE_INTEGER)
         );
-        x.playlists.forEach((y) => {
-          delete (x as any).$latestRelatedGameSort;
-        });
       });
 
       writeText(fileName, result);
@@ -169,9 +175,13 @@ router.get('/:id/detail', async (req: Request, res: Response) => {
         if (playlist.isrelatedgame) {
           games = stmt.playlist_game.selectGameByPid().all(id) as Game[];
         } else {
+          const gidByYear = (await getGameByYear())
+            .map((x) => x.games.map((y) => y.id))
+            .flat()
+            .reverse();
           games = (
             stmt.game.selectByIds([...new Set(tracks.map((x) => x.gid))]).all() as Game[]
-          ).sort((a, b) => a.year - b.year);
+          ).sort((a, b) => gidByYear.indexOf(a.id) - gidByYear.indexOf(b.id));
 
           const orderMap = new Map(games.map((g, i) => [g.id, i]));
           tracks.sort((a, b) => {

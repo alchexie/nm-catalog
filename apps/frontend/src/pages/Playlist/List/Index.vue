@@ -35,7 +35,7 @@
         </li>
       </ul>
     </section>
-    <section class="list-group">
+    <section class="list-group hidden-sm">
       <h1>{{ t('playlist.section.CHARACTER') }}</h1>
       <section
         v-for="(section, j) in computedCharacterPlaylistSections"
