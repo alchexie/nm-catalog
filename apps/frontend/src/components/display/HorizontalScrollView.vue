@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import SvgIcon from '@/components/base/SvgIcon.vue';
 
-import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
+import { ref, onMounted, onUnmounted, onActivated, nextTick, watch } from 'vue';
 import { usePreloadStore } from '@/stores';
 import { useImgMap } from '@/composables/useImgMap';
 import { useLocalizationString } from '@/composables/useLocalizationString';
@@ -62,6 +62,7 @@ const scrollPanelRef = ref<HTMLElement>();
 const computedItemWidth = ref<number | null>(null);
 
 let resizeObserver: ResizeObserver | null = null;
+let savedScrollLeft = 0;
 
 onMounted(async () => {
   preloadStore.setData(props.dataType, props.data);
@@ -74,11 +75,20 @@ onMounted(async () => {
 
   await nextTick();
   checkScrollPosition();
-  scrollPanelRef.value?.addEventListener('scroll', checkScrollPosition);
+  scrollPanelRef.value?.addEventListener('scroll', onScroll);
+});
+
+onActivated(async () => {
+  if (!savedScrollLeft) return;
+  await nextTick();
+  const el = scrollPanelRef.value;
+  if (!el) return;
+  el.scrollTo({ left: savedScrollLeft, behavior: 'instant' });
+  checkScrollPosition();
 });
 
 onUnmounted(() => {
-  scrollPanelRef.value?.removeEventListener('scroll', checkScrollPosition);
+  scrollPanelRef.value?.removeEventListener('scroll', onScroll);
   resizeObserver?.disconnect();
 });
 
@@ -103,6 +113,13 @@ function calculateItemWidth() {
   const columns = Math.max(1, Math.floor((refWidth + gap) / (minItemWidth + gap)));
   const itemWidth = (refWidth - (columns - 1) * gap) / columns;
   computedItemWidth.value = Math.round(itemWidth);
+}
+
+function onScroll() {
+  const el = scrollPanelRef.value;
+  if (!el || !el.isConnected) return;
+  savedScrollLeft = el.scrollLeft;
+  checkScrollPosition();
 }
 
 function checkScrollPosition() {
